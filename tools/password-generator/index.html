@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Strong Password Generator — Secure & Random | OMIToolKit</title>
+<meta name="description" content="Generate strong, random passwords instantly. Customize length and character sets. Nothing is stored or sent anywhere — runs entirely in your browser.">
+<link rel="canonical" href="/tools/password-generator/">
+<meta property="og:title" content="Free Password Generator | OMIToolKit">
+<meta property="og:description" content="Generate strong, random passwords instantly in your browser.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Password Generator",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any (runs in browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free browser-based password generator. Create strong, random passwords with custom length and character rules."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Are the generated passwords stored anywhere?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. Passwords are generated locally in your browser using the Web Crypto API and are never sent to or stored on any server."}},
+    {"@type": "Question", "name": "How long should my password be?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Most security guidelines recommend at least 12 characters, mixing uppercase, lowercase, numbers and symbols."}},
+    {"@type": "Question", "name": "Is this generator cryptographically secure?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes. It uses the browser's built-in Web Crypto API (crypto.getRandomValues), the same source used for cryptographic operations, instead of Math.random()."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container inner">
+    <a href="/" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links">
+      <a href="/#tools">All tools</a>
+      <a href="/#categories">Categories</a>
+      <a href="/about">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container breadcrumb">
+  <a href="/">Home</a> / <a href="/#tools">Tools</a> / Password Generator
+</div>
+
+<div class="container tool-page-header">
+  <h1>Free Password Generator</h1>
+  <p>Create a strong, random password in one click. Nothing you generate here is ever stored or transmitted.</p>
+</div>
+
+<div class="container">
+  <div class="tool-panel">
+
+    <div class="output-box">
+      <input type="text" id="pw-output" readonly value="">
+      <button class="btn btn-outline" id="copy-pw" title="Copy">Copy</button>
+    </div>
+    <div class="strength-meter"><div class="fill" id="strength-fill"></div></div>
+    <div class="strength-label" id="strength-label"></div>
+
+    <div class="field-row" style="margin-top:26px;">
+      <label class="field-label">Password length</label>
+      <div class="range-row">
+        <input type="range" id="pw-length" min="6" max="64" value="16">
+        <span class="range-value" id="pw-length-val">16</span>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Include</label>
+      <div class="checkbox-grid">
+        <label class="checkbox-item"><input type="checkbox" id="opt-upper" checked> Uppercase (A–Z)</label>
+        <label class="checkbox-item"><input type="checkbox" id="opt-lower" checked> Lowercase (a–z)</label>
+        <label class="checkbox-item"><input type="checkbox" id="opt-numbers" checked> Numbers (0–9)</label>
+        <label class="checkbox-item"><input type="checkbox" id="opt-symbols" checked> Symbols (!@#$%)</label>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="generate-pw" style="width:100%; justify-content:center; padding:13px;">Generate new password</button>
+  </div>
+</div>
+
+<div class="ad-slot container">Ad slot — below tool</div>
+
+<article class="article container">
+  <h2>How to use the password generator</h2>
+  <p>Pick a length, choose which character sets to include, then click <strong>Generate new password</strong>. A new random password appears instantly, along with a strength rating. Click <strong>Copy</strong> to copy it to your clipboard.</p>
+
+  <h2>Why randomness matters</h2>
+  <p>A password is only as strong as its unpredictability. Patterns based on real words, birthdays, or keyboard sequences (like "qwerty123") can be guessed by automated tools in seconds, no matter how long they are. This generator uses your browser's <code>crypto.getRandomValues()</code> function — the same cryptographically secure source used for encryption — instead of ordinary random number functions that can be predictable.</p>
+
+  <h2>How to choose password settings</h2>
+  <p>For most accounts, a 12–16 character password mixing all four character types (uppercase, lowercase, numbers, symbols) offers strong protection against brute-force attacks. For highly sensitive accounts — email, banking, or your password manager's master password — consider going up to 20+ characters. Avoid disabling symbols and numbers purely for convenience; every character set you remove makes the password meaningfully easier to crack.</p>
+
+  <h2>What this tool does not do</h2>
+  <p>This generator does not store, log, or transmit any password it creates — generation happens entirely on your device. It also will not remember your password for you; once you navigate away, it's gone unless you've saved it somewhere secure, such as a dedicated password manager.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>Are the generated passwords stored anywhere?</h3>
+    <p>No. Passwords are generated locally in your browser using the Web Crypto API and are never sent to or stored on any server.</p>
+  </div>
+  <div class="faq-item">
+    <h3>How long should my password be?</h3>
+    <p>Most security guidelines recommend at least 12 characters, mixing uppercase, lowercase, numbers and symbols.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is this generator cryptographically secure?</h3>
+    <p>Yes. It uses the browser's built-in Web Crypto API (crypto.getRandomValues), the same source used for cryptographic operations, instead of Math.random().</p>
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const lenSlider = document.getElementById('pw-length');
+const lenVal = document.getElementById('pw-length-val');
+const output = document.getElementById('pw-output');
+const fill = document.getElementById('strength-fill');
+const label = document.getElementById('strength-label');
+
+const SETS = {
+  upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+  lower: 'abcdefghijkmnpqrstuvwxyz',
+  numbers: '23456789',
+  symbols: '!@#$%^&*()-_=+[]{}'
+};
+
+function secureRandomInt(max) {
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return arr[0] % max;
+}
+
+function generate() {
+  const len = parseInt(lenSlider.value, 10);
+  let pool = '';
+  if (document.getElementById('opt-upper').checked) pool += SETS.upper;
+  if (document.getElementById('opt-lower').checked) pool += SETS.lower;
+  if (document.getElementById('opt-numbers').checked) pool += SETS.numbers;
+  if (document.getElementById('opt-symbols').checked) pool += SETS.symbols;
+
+  if (!pool) {
+    document.getElementById('opt-lower').checked = true;
+    pool = SETS.lower;
+  }
+
+  let pw = '';
+  for (let i = 0; i < len; i++) {
+    pw += pool[secureRandomInt(pool.length)];
+  }
+  output.value = pw;
+  scoreStrength(pw, len);
+}
+
+function scoreStrength(pw, len) {
+  let variety = 0;
+  if (/[A-Z]/.test(pw)) variety++;
+  if (/[a-z]/.test(pw)) variety++;
+  if (/[0-9]/.test(pw)) variety++;
+  if (/[^A-Za-z0-9]/.test(pw)) variety++;
+
+  let score = (variety / 4) * 0.5 + Math.min(len / 24, 1) * 0.5;
+  let pct = Math.round(score * 100);
+  let color = '#E24B4A', text = 'Weak';
+  if (pct >= 80) { color = '#16A34A'; text = 'Very strong'; }
+  else if (pct >= 60) { color = '#0F6E56'; text = 'Strong'; }
+  else if (pct >= 40) { color = '#BA7517'; text = 'Moderate'; }
+
+  fill.style.width = pct + '%';
+  fill.style.background = color;
+  label.textContent = text;
+}
+
+lenSlider.addEventListener('input', () => {
+  lenVal.textContent = lenSlider.value;
+  generate();
+});
+
+['opt-upper','opt-lower','opt-numbers','opt-symbols'].forEach(id => {
+  document.getElementById(id).addEventListener('change', generate);
+});
+
+document.getElementById('generate-pw').addEventListener('click', generate);
+
+document.getElementById('copy-pw').addEventListener('click', () => {
+  navigator.clipboard.writeText(output.value).then(() => {
+    const btn = document.getElementById('copy-pw');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = original, 1200);
+  });
+});
+
+generate();
+</script>
+</body>
+</html>

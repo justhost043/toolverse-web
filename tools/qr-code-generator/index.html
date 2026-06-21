@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free QR Code Generator — Create QR Codes Online | OMIToolKit</title>
+<meta name="description" content="Generate free QR codes for links, text, Wi-Fi or contact info. No sign-up, no watermark, downloads instantly as PNG. Runs entirely in your browser.">
+<link rel="canonical" href="/tools/qr-code-generator/">
+<meta property="og:title" content="Free QR Code Generator | OMIToolKit">
+<meta property="og:description" content="Generate free, watermark-free QR codes instantly in your browser.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "QR Code Generator",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any (runs in browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free browser-based QR code generator. Create QR codes for URLs, text, Wi-Fi and contact details with instant PNG download."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Is this QR code generator really free?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes. There is no sign-up, no watermark, and no limit on how many QR codes you can create."}},
+    {"@type": "Question", "name": "Do my QR codes expire?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. The QR code encodes your data directly, so it works forever and does not depend on this website staying online."}},
+    {"@type": "Question", "name": "Is my data uploaded anywhere?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. The QR code is generated entirely inside your browser using JavaScript. Nothing you type is sent to a server."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container inner">
+    <a href="/" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links">
+      <a href="/#tools">All tools</a>
+      <a href="/#categories">Categories</a>
+      <a href="/about">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container breadcrumb">
+  <a href="/">Home</a> / <a href="/#tools">Tools</a> / QR Code Generator
+</div>
+
+<div class="container tool-page-header">
+  <h1>Free QR Code Generator</h1>
+  <p>Turn any link, text or Wi-Fi password into a scannable QR code — instantly, free, with no watermark.</p>
+</div>
+
+<div class="container">
+  <div class="tool-panel">
+
+    <div class="field-row">
+      <label class="field-label" for="qr-type">Content type</label>
+      <select id="qr-type" class="field-select">
+        <option value="url">Website URL</option>
+        <option value="text">Plain text</option>
+        <option value="wifi">Wi-Fi network</option>
+      </select>
+    </div>
+
+    <div id="input-url" class="qr-input-group">
+      <div class="field-row">
+        <label class="field-label" for="qr-url">URL</label>
+        <input id="qr-url" class="field-input" type="text" placeholder="https://example.com" value="https://example.com">
+      </div>
+    </div>
+
+    <div id="input-text" class="qr-input-group" style="display:none;">
+      <div class="field-row">
+        <label class="field-label" for="qr-text">Text</label>
+        <input id="qr-text" class="field-input" type="text" placeholder="Type anything…">
+      </div>
+    </div>
+
+    <div id="input-wifi" class="qr-input-group" style="display:none;">
+      <div class="field-row">
+        <label class="field-label" for="wifi-ssid">Network name (SSID)</label>
+        <input id="wifi-ssid" class="field-input" type="text" placeholder="My Wi-Fi network">
+      </div>
+      <div class="field-row">
+        <label class="field-label" for="wifi-pass">Password</label>
+        <input id="wifi-pass" class="field-input" type="text" placeholder="Network password">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" for="qr-size">Size</label>
+      <div class="range-row">
+        <input type="range" id="qr-size" min="150" max="500" value="260" step="10">
+        <span class="range-value" id="qr-size-val">260</span>
+      </div>
+    </div>
+
+    <div class="qr-output">
+      <div id="qr-canvas-wrap"><div id="qr-canvas"></div></div>
+      <button class="btn btn-primary" id="download-qr">Download PNG</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="ad-slot container">Ad slot — below tool</div>
+
+<article class="article container">
+  <h2>How to use the free QR code generator</h2>
+  <p>Generating a QR code with OMIToolKit takes three steps and produces a code you can use forever — there's no expiry, no account, and no hidden watermark added to the image.</p>
+  <ul>
+    <li>Choose what you want to encode: a website link, plain text, or a Wi-Fi network.</li>
+    <li>Fill in the field — the QR code updates automatically as you type.</li>
+    <li>Adjust the size if needed, then click <strong>Download PNG</strong> to save it.</li>
+  </ul>
+
+  <h2>Why use a browser-based QR code generator?</h2>
+  <p>Most "free" QR generators online quietly add a logo watermark, require an account once you exceed a handful of scans, or route your data through their servers before showing you a result. This tool works differently: the QR code is built entirely with JavaScript running on your own device. Nothing you type — your URL, your Wi-Fi password, your text — is ever transmitted anywhere. The moment you close the tab, no record of it exists on any server, because it was never sent to one in the first place.</p>
+
+  <h2>Common uses for QR codes</h2>
+  <p>QR codes have become a everyday bridge between print and digital. A restaurant prints one on a table tent to link to its menu. A small business owner puts one on a flyer to link straight to their Instagram. A freelancer adds one to a printed invoice linking to their portfolio. Event organizers use the Wi-Fi type to let guests join a network without typing a password. Because the code itself contains the full data, it keeps working indefinitely, regardless of which tool generated it.</p>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>Is this QR code generator really free?</h3>
+    <p>Yes. There is no sign-up, no watermark, and no limit on how many QR codes you can create.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Do my QR codes expire?</h3>
+    <p>No. The QR code encodes your data directly, so it works forever and does not depend on this website staying online.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is my data uploaded anywhere?</h3>
+    <p>No. The QR code is generated entirely inside your browser using JavaScript. Nothing you type is sent to a server.</p>
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const typeSelect = document.getElementById('qr-type');
+const groups = {
+  url: document.getElementById('input-url'),
+  text: document.getElementById('input-text'),
+  wifi: document.getElementById('input-wifi'),
+};
+const sizeSlider = document.getElementById('qr-size');
+const sizeVal = document.getElementById('qr-size-val');
+const canvasWrap = document.getElementById('qr-canvas');
+
+let qr = null;
+
+function getPayload() {
+  const type = typeSelect.value;
+  if (type === 'url') return document.getElementById('qr-url').value || 'https://example.com';
+  if (type === 'text') return document.getElementById('qr-text').value || ' ';
+  if (type === 'wifi') {
+    const ssid = document.getElementById('wifi-ssid').value || '';
+    const pass = document.getElementById('wifi-pass').value || '';
+    return `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+  }
+  return '';
+}
+
+function renderQR() {
+  canvasWrap.innerHTML = '';
+  const size = parseInt(sizeSlider.value, 10);
+  qr = new QRCode(canvasWrap, {
+    text: getPayload(),
+    width: size,
+    height: size,
+    colorDark: '#1E1B2E',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+typeSelect.addEventListener('change', () => {
+  Object.values(groups).forEach(g => g.style.display = 'none');
+  groups[typeSelect.value].style.display = '';
+  renderQR();
+});
+
+document.querySelectorAll('#input-url input, #input-text input, #input-wifi input').forEach(el => {
+  el.addEventListener('input', renderQR);
+});
+
+sizeSlider.addEventListener('input', () => {
+  sizeVal.textContent = sizeSlider.value;
+  renderQR();
+});
+
+document.getElementById('download-qr').addEventListener('click', () => {
+  const img = canvasWrap.querySelector('img') || canvasWrap.querySelector('canvas');
+  const link = document.createElement('a');
+  link.download = 'qr-code.png';
+  link.href = img.tagName === 'CANVAS' ? img.toDataURL('image/png') : img.src;
+  link.click();
+});
+
+renderQR();
+</script>
+</body>
+</html>
