@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free JSON Formatter & Validator Online | OMIToolKit</title>
+<meta name="description" content="Format, beautify and validate JSON online for free. Instantly spot errors with line numbers. Minify JSON too. Runs in your browser.">
+<link rel="canonical" href="../../tools/json-formatter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON Formatter & Validator","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.editor-layout{grid-template-columns:1fr}}
+.editor-box{display:flex;flex-direction:column;gap:8px}
+.editor-label{font-size:13px;font-weight:500;color:var(--color-text-muted);display:flex;align-items:center;justify-content:space-between}
+textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:320px;background:#1E1B2E;color:#E8E6F0;border:1px solid #3D3A5C;border-radius:var(--radius-sm);padding:14px;width:100%;box-sizing:border-box}
+textarea.code-area:focus{outline:2px solid var(--color-primary);outline-offset:1px}
+textarea.code-area.error{border-color:#E24B4A}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;margin-top:10px}
+.status-pill.valid{background:#DCFCE7;color:#16A34A}
+.status-pill.invalid{background:#FEE2E2;color:#E24B4A}
+.status-pill.empty{background:#F4F3FE;color:var(--color-primary)}
+.stats-row{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--color-text-muted);margin-top:8px}
+.indent-select{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13px;font-family:var(--font-body)}
+.key-c{color:#7DD3FC}
+.str-c{color:#86EFAC}
+.num-c{color:#FCA5A5}
+.bool-c{color:#C4B5FD}
+.null-c{color:#94A3B8}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / JSON Formatter</div>
+<div class="container tool-page-header">
+  <h1>JSON Formatter &amp; Validator</h1>
+  <p>Paste JSON to format, validate or minify it instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:960px">
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-format">Format / Beautify</button>
+      <button class="btn btn-outline" id="btn-minify">Minify</button>
+      <button class="btn btn-outline" id="btn-copy">Copy output</button>
+      <button class="btn btn-outline" id="btn-clear">Clear</button>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;margin-left:4px">
+        Indent:
+        <select class="indent-select" id="indent-sel">
+          <option value="2">2 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="editor-layout">
+      <div class="editor-box">
+        <div class="editor-label">Input <span id="in-chars">0 chars</span></div>
+        <textarea class="code-area" id="input-area" placeholder='Paste your JSON here…&#10;&#10;{"name":"OMIToolKit","tools":69}'></textarea>
+      </div>
+      <div class="editor-box">
+        <div class="editor-label">Output <span id="out-chars">0 chars</span></div>
+        <textarea class="code-area" id="output-area" readonly placeholder="Formatted JSON will appear here…"></textarea>
+      </div>
+    </div>
+
+    <div>
+      <div id="status-pill" class="status-pill empty">Paste JSON above to validate</div>
+      <div class="stats-row" id="stats-row"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is JSON?</h2>
+  <p>JSON (JavaScript Object Notation) is the most widely used format for exchanging data between web applications and APIs. It's human-readable, lightweight, and supported natively by every modern programming language. However, working with raw JSON — especially large or minified files — is difficult without formatting.</p>
+  <h2>Format vs Minify</h2>
+  <p><strong>Formatting</strong> (beautifying) adds proper indentation and line breaks, making JSON easy for humans to read and debug. <strong>Minifying</strong> removes all unnecessary whitespace, reducing file size — useful before sending data over a network or storing it in a database where readability doesn't matter but size does.</p>
+  <h2>Common JSON errors</h2>
+  <p>The validator instantly catches the most frequent JSON mistakes: trailing commas after the last item in an array or object (not allowed in JSON, unlike JavaScript), missing quotes around property names, unescaped special characters in strings, and mismatched brackets or braces.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const inp = document.getElementById('input-area');
+const out = document.getElementById('output-area');
+const pill = document.getElementById('status-pill');
+const statsRow = document.getElementById('stats-row');
+const indentSel = document.getElementById('indent-sel');
+
+function getIndent() {
+  const v = indentSel.value;
+  return v === 'tab' ? '\t' : parseInt(v);
+}
+
+function validate(text) {
+  if (!text.trim()) { pill.className='status-pill empty'; pill.textContent='Paste JSON above to validate'; statsRow.innerHTML=''; return null; }
+  try {
+    const parsed = JSON.parse(text);
+    pill.className='status-pill valid'; pill.textContent='✓ Valid JSON';
+    inp.classList.remove('error');
+    const keys = countKeys(parsed);
+    statsRow.innerHTML=`<span>${text.length.toLocaleString()} chars</span><span>${countItems(parsed)} items</span><span>${keys} keys</span>`;
+    return parsed;
+  } catch(e) {
+    pill.className='status-pill invalid'; pill.textContent='✗ Invalid: '+e.message;
+    inp.classList.add('error'); statsRow.innerHTML='';
+    return null;
+  }
+}
+
+function countKeys(obj, n=0) { if(typeof obj==='object'&&obj!==null){for(const k in obj){n++;n=countKeys(obj[k],n);}} return n; }
+function countItems(obj) { if(Array.isArray(obj))return obj.length; if(typeof obj==='object'&&obj!==null)return Object.keys(obj).length; return 1; }
+
+inp.addEventListener('input', () => {
+  document.getElementById('in-chars').textContent = inp.value.length + ' chars';
+  validate(inp.value);
+});
+
+document.getElementById('btn-format').addEventListener('click', () => {
+  const parsed = validate(inp.value);
+  if (parsed !== null) {
+    const formatted = JSON.stringify(parsed, null, getIndent());
+    out.value = formatted;
+    document.getElementById('out-chars').textContent = formatted.length + ' chars';
+  }
+});
+
+document.getElementById('btn-minify').addEventListener('click', () => {
+  const parsed = validate(inp.value);
+  if (parsed !== null) {
+    const minified = JSON.stringify(parsed);
+    out.value = minified;
+    document.getElementById('out-chars').textContent = minified.length + ' chars';
+  }
+});
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(out.value).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy output', 1200);
+  });
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  inp.value=''; out.value='';
+  document.getElementById('in-chars').textContent='0 chars';
+  document.getElementById('out-chars').textContent='0 chars';
+  pill.className='status-pill empty'; pill.textContent='Paste JSON above to validate';
+  statsRow.innerHTML=''; inp.classList.remove('error');
+});
+</script>
+</body>
+</html>

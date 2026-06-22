@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Lorem Ipsum Generator — Placeholder Text Online | OMIToolKit</title>
+<meta name="description" content="Generate Lorem Ipsum placeholder text online. Control paragraphs, words or sentences. Classic Latin, random words or HTML format. Free, instant, no sign-up.">
+<link rel="canonical" href="../../tools/lorem-ipsum/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Lorem Ipsum Generator","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Lorem Ipsum placeholder text generator with paragraph, word and sentence count controls."}</script>
+<style>
+.controls-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:580px){.controls-grid{grid-template-columns:1fr 1fr}}
+.ctrl-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px}
+.ctrl-box label{display:block;font-size:12px;font-weight:500;color:var(--color-text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.ctrl-box input[type="number"]{width:100%;border:none;background:transparent;font-size:22px;font-weight:600;font-family:var(--font-display);color:var(--color-primary);outline:none}
+.format-tabs{display:flex;gap:8px;margin-bottom:18px}
+.fmt-tab{padding:7px 16px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.fmt-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.output-area{min-height:280px;resize:vertical;font-size:15px;line-height:1.8;background:#FCFCFB;font-family:inherit}
+.output-area.html-mode{font-family:var(--font-mono);font-size:13.5px;background:#1E1B2E;color:#E8E6F0;border-color:#3D3A5C}
+.stats-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:12.5px;color:var(--color-text-muted);background:#F4F3FE;padding:4px 12px;border-radius:999px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Lorem Ipsum Generator</div>
+<div class="container tool-page-header">
+  <h1>Lorem Ipsum Generator</h1>
+  <p>Generate placeholder text in seconds — classic Latin, random words or HTML paragraphs.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:720px">
+
+    <div class="controls-grid">
+      <div class="ctrl-box">
+        <label>Paragraphs</label>
+        <input type="number" id="ctrl-para" value="3" min="1" max="50">
+      </div>
+      <div class="ctrl-box">
+        <label>Sentences / para</label>
+        <input type="number" id="ctrl-sent" value="5" min="1" max="20">
+      </div>
+      <div class="ctrl-box">
+        <label>Words / sentence</label>
+        <input type="number" id="ctrl-words" value="12" min="3" max="30">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Options</label>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <label class="checkbox-item"><input type="checkbox" id="opt-startlorem" checked> Start with "Lorem ipsum…"</label>
+        <label class="checkbox-item"><input type="checkbox" id="opt-html"> Wrap in &lt;p&gt; tags</label>
+      </div>
+    </div>
+
+    <div style="margin:16px 0 6px">
+      <label class="field-label">Word bank</label>
+      <div class="format-tabs">
+        <button class="fmt-tab active" data-bank="classic">Classic Latin</button>
+        <button class="fmt-tab" data-bank="random">Random words</button>
+        <button class="fmt-tab" data-bank="hipster">Hipster</button>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <textarea class="field-input output-area" id="output" readonly></textarea>
+    </div>
+
+    <div class="stats-chips" id="stats-chips"></div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn btn-primary" id="btn-generate">Generate new</button>
+      <button class="btn btn-outline" id="btn-copy">Copy text</button>
+      <button class="btn btn-outline" id="btn-download">Download .txt</button>
+    </div>
+  </div>
+</div>
+
+<div class="ad-slot container">Ad slot — below tool</div>
+
+<article class="article container">
+  <h2>What is Lorem Ipsum?</h2>
+  <p>Lorem Ipsum is dummy placeholder text used by designers, developers and printers since the 1500s. It's derived from "de Finibus Bonorum et Malorum" by Cicero, written in 45 BC — but the text has been scrambled and altered so that readers don't focus on the words themselves, only on the visual layout around them.</p>
+  <h2>Why use placeholder text?</h2>
+  <p>When presenting a design, using real content too early can distract reviewers into critiquing the writing rather than the layout, typography, and spacing. Lorem Ipsum keeps attention on the visual structure. Developers use it to test how a UI component handles different text lengths before real content is available.</p>
+  <h2>How many paragraphs do I need?</h2>
+  <p>For a standard blog post layout, 3–5 paragraphs give a realistic sense of how the page will look. For email templates, 1–2 paragraphs are usually enough. For a full landing page or long-form article mock-up, use 8–12 paragraphs to test how the page scrolls and how headers break up the content.</p>
+  <div class="faq-item">
+    <h3>Can I use Lorem Ipsum in a real published page?</h3>
+    <p>No — it should always be replaced with real content before publishing. Search engines may flag pages with Lorem Ipsum text as thin or low-quality content.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is Lorem Ipsum Latin?</h3>
+    <p>It's based on Latin but is not grammatically correct. Several words have been altered or invented specifically to make the passage semantically meaningless — so readers see letter patterns without reading real words.</p>
+  </div>
+</article>
+
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const BANKS = {
+  classic: "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum proin viverra metus arcu adipiscing cursus in hac habitasse platea dictumst quisque sagittis purus sit amet volutpat consequat mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem viverra aliquet eget sit amet tellus cras adipiscing enim eu turpis egestas pretium aenean pharetra magna ac placerat vestibulum lectus mauris ultrices eros in cursus turpis massa tincidunt dui ut ornare lectus sit amet est placerat in egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam ut porttitor leo".split(' '),
+  random: "the quick brown fox jumps over lazy dog pack my box with five dozen liquor jugs how vexingly quick daft zebras jump sphinx of black quartz judge my vow waltz nymph for quick jigs vex bud flip squat drums crux balk zen jibs frog thyme vows quiz jack".split(' '),
+  hipster: "artisan locavore fanny pack keffiyeh typewriter portland sustainable organic quinoa bicycle rights vinyl craft beer bespoke williamsburg fixie letterpress seitan readymade ethical twee chambray mustache flannel wayfarers selvage messenger bag squid plaid hoodie gastropub banjo gluten-free mixtape dreamcatcher mcsweeney pitchfork ennui thundercats".split(' ')
+};
+
+let currentBank = 'classic';
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function pickRandom(arr, n) {
+  const out = [];
+  for (let i = 0; i < n; i++) out.push(arr[Math.floor(Math.random() * arr.length)]);
+  return out;
+}
+
+function generateSentence(bank, wordCount) {
+  const words = pickRandom(BANKS[bank], wordCount);
+  return capitalize(words.join(' ')) + '.';
+}
+
+function generate() {
+  const nPara = Math.max(1, Math.min(50, parseInt(document.getElementById('ctrl-para').value) || 3));
+  const nSent = Math.max(1, Math.min(20, parseInt(document.getElementById('ctrl-sent').value) || 5));
+  const nWords = Math.max(3, Math.min(30, parseInt(document.getElementById('ctrl-words').value) || 12));
+  const startLorem = document.getElementById('opt-startlorem').checked;
+  const useHtml = document.getElementById('opt-html').checked;
+
+  const paragraphs = [];
+  for (let p = 0; p < nPara; p++) {
+    const sentences = [];
+    for (let s = 0; s < nSent; s++) {
+      // First sentence of first paragraph: start with "Lorem ipsum dolor sit amet, "
+      if (p === 0 && s === 0 && startLorem && currentBank === 'classic') {
+        const rest = pickRandom(BANKS.classic, Math.max(1, nWords - 5));
+        sentences.push('Lorem ipsum dolor sit amet, ' + rest.join(' ') + '.');
+      } else {
+        sentences.push(generateSentence(currentBank, nWords));
+      }
+    }
+    const paraText = sentences.join(' ');
+    paragraphs.push(useHtml ? `<p>${paraText}</p>` : paraText);
+  }
+
+  const output = document.getElementById('output');
+  const text = paragraphs.join(useHtml ? '\n\n' : '\n\n');
+  output.value = text;
+  output.className = 'field-input output-area' + (useHtml ? ' html-mode' : '');
+
+  // Stats
+  const totalWords = text.replace(/<[^>]+>/g,'').trim().split(/\s+/).length;
+  const totalChars = text.replace(/<[^>]+>/g,'').length;
+  const readTime = Math.ceil(totalWords / 200);
+  document.getElementById('stats-chips').innerHTML = `
+    <span class="chip">${nPara} paragraphs</span>
+    <span class="chip">${totalWords.toLocaleString()} words</span>
+    <span class="chip">${totalChars.toLocaleString()} characters</span>
+    <span class="chip">~${readTime} min read</span>`;
+}
+
+// Bank tabs
+document.querySelectorAll('.fmt-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fmt-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentBank = btn.dataset.bank;
+    generate();
+  });
+});
+
+// Controls
+['ctrl-para','ctrl-sent','ctrl-words','opt-startlorem','opt-html'].forEach(id => {
+  document.getElementById(id).addEventListener('input', generate);
+  document.getElementById(id).addEventListener('change', generate);
+});
+
+document.getElementById('btn-generate').addEventListener('click', generate);
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('output').value).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy text', 1200);
+  });
+});
+
+document.getElementById('btn-download').addEventListener('click', () => {
+  const blob = new Blob([document.getElementById('output').value], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'lorem-ipsum.txt'; a.click();
+});
+
+generate();
+</script>
+</body>
+</html>

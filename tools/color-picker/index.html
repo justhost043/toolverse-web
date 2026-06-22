@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Color Picker & Converter — HEX, RGB, HSL, CMYK | OMIToolKit</title>
+<meta name="description" content="Pick colors and instantly convert between HEX, RGB, HSL and CMYK. Generate color palettes. Free online color tool, no sign-up needed.">
+<link rel="canonical" href="../../tools/color-picker/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Color Picker & Converter","applicationCategory":"DesignApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.color-preview{width:100%;height:140px;border-radius:var(--radius-md);border:1px solid var(--color-border);transition:background .1s;position:relative;overflow:hidden}
+.color-preview .overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;font-family:var(--font-mono);font-size:14px;font-weight:500;background:rgba(0,0,0,.25);color:#fff;backdrop-filter:blur(4px)}
+.picker-row{display:flex;align-items:center;gap:12px;margin:14px 0}
+input[type="color"]{width:56px;height:56px;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:2px;cursor:pointer;background:none}
+.color-input-wrap{flex:1}
+.format-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.format-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+.format-label{font-size:11.5px;font-weight:500;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.format-value{font-family:var(--font-mono);font-size:14px;font-weight:500}
+.copy-small{padding:5px 10px;font-size:12px;border-radius:6px;border:1px solid var(--color-border);background:#fff;cursor:pointer;flex-shrink:0;transition:all .15s}
+.copy-small:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.palette-swatch{height:56px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid rgba(0,0,0,.08);position:relative;transition:transform .15s}
+.palette-swatch:hover{transform:scale(1.06)}
+.palette-swatch .swatch-hex{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:500;color:rgba(0,0,0,.6);background:rgba(255,255,255,.7);border-radius:0 0 var(--radius-sm) var(--radius-sm)}
+.section-sep{margin:22px 0 14px;font-size:13.5px;font-weight:500;color:var(--color-text-muted);border-bottom:1px solid var(--color-border);padding-bottom:10px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Color Picker</div>
+<div class="container tool-page-header">
+  <h1>Color Picker &amp; Converter</h1>
+  <p>Pick a color, convert between HEX, RGB, HSL and CMYK, and generate complementary palettes.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:620px">
+    <div class="color-preview" id="preview">
+      <div class="overlay" id="preview-hex">#4F46E5</div>
+    </div>
+
+    <div class="picker-row">
+      <input type="color" id="color-picker" value="#4F46E5">
+      <div class="color-input-wrap">
+        <label class="field-label">HEX value</label>
+        <input type="text" class="field-input" id="hex-input" value="#4F46E5" placeholder="#000000" maxlength="7" style="font-family:var(--font-mono)">
+      </div>
+    </div>
+
+    <div class="format-grid" id="format-grid">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="section-sep">Shades &amp; Tints</div>
+    <div class="palette-grid" id="shades-grid"></div>
+
+    <div class="section-sep">Complementary Colors</div>
+    <div class="palette-grid" id="comp-grid"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>HEX, RGB, HSL and CMYK explained</h2>
+  <p><strong>HEX</strong> is the standard for web development — a six-character code like #4F46E5 that compactly represents red, green and blue values in hexadecimal. <strong>RGB</strong> expresses the same information as three 0–255 numbers (Red, Green, Blue) and is common in CSS and image editing software. <strong>HSL</strong> (Hue, Saturation, Lightness) is easier for designers to work with intuitively — you can adjust how bright or saturated a color is without changing its base hue. <strong>CMYK</strong> (Cyan, Magenta, Yellow, Key/Black) is the color model used in print — it describes how much ink of each color is mixed to produce the final color on paper.</p>
+  <h2>What are shades and tints?</h2>
+  <p>A shade is produced by mixing a color with black, making it darker. A tint is produced by mixing with white, making it lighter. The row of swatches shows five shades and five tints of your selected color — useful for building a cohesive design palette where all tones stay harmonious.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const picker = document.getElementById('color-picker');
+const hexInp = document.getElementById('hex-input');
+const preview = document.getElementById('preview');
+const previewHex = document.getElementById('preview-hex');
+const formatGrid = document.getElementById('format-grid');
+const shadesGrid = document.getElementById('shades-grid');
+const compGrid = document.getElementById('comp-grid');
+
+// Color math helpers
+function hexToRgb(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return{r,g,b};}
+function rgbToHex(r,g,b){'#'+(1<<24|r<<16|g<<8|b).toString(16).slice(1);return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};}
+function hslToRgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12;const a=s*Math.min(l,1-l);const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return{r:Math.round(f(0)*255),g:Math.round(f(8)*255),b:Math.round(f(4)*255)};}
+function rgbToCmyk(r,g,b){r/=255;g/=255;b/=255;const k=1-Math.max(r,g,b);if(k===1)return{c:0,m:0,y:0,k:100};return{c:Math.round((1-r-k)/(1-k)*100),m:Math.round((1-g-k)/(1-k)*100),y:Math.round((1-b-k)/(1-k)*100),k:Math.round(k*100)};}
+function luminance(r,g,b){return 0.299*r+0.587*g+0.114*b;}
+
+function copyText(text,btn){navigator.clipboard.writeText(text).then(()=>{const t=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=t,1000);});}
+
+function update(hex){
+  if(!/^#[0-9A-Fa-f]{6}$/.test(hex))return;
+  const{r,g,b}=hexToRgb(hex);
+  const{h,s,l}=rgbToHsl(r,g,b);
+  const{c,m,y,k}=rgbToCmyk(r,g,b);
+
+  preview.style.background=hex;
+  previewHex.textContent=hex.toUpperCase();
+  const lum=luminance(r,g,b);
+  previewHex.style.color=lum>160?'rgba(0,0,0,.7)':'rgba(255,255,255,.9)';
+
+  const formats=[
+    {label:'HEX',value:hex.toUpperCase()},
+    {label:'RGB',value:`rgb(${r}, ${g}, ${b})`},
+    {label:'HSL',value:`hsl(${h}, ${s}%, ${l}%)`},
+    {label:'CMYK',value:`cmyk(${c}%, ${m}%, ${y}%, ${k}%)`},
+  ];
+  formatGrid.innerHTML=formats.map(f=>`
+    <div class="format-box">
+      <div><div class="format-label">${f.label}</div><div class="format-value">${f.value}</div></div>
+      <button class="copy-small" onclick="copyText('${f.value}',this)">Copy</button>
+    </div>`).join('');
+
+  // Shades & tints
+  const steps=[-40,-25,-12,0,12,25,40,55,70,80];
+  const swatches=steps.map(d=>{
+    const nl=Math.max(0,Math.min(100,l+d));
+    const{r:nr,g:ng,b:nb}=hslToRgb(h,s,nl);
+    return rgbToHex(nr,ng,nb);
+  });
+  shadesGrid.innerHTML=swatches.map(c=>`<div class="palette-swatch" style="background:${c}" onclick="applyColor('${c}')" title="${c}"><div class="swatch-hex">${c}</div></div>`).join('');
+
+  // Complementary
+  const complementH=(h+180)%360;
+  const triH1=(h+120)%360;
+  const triH2=(h+240)%360;
+  const analogH1=(h+30)%360;
+  const analogH2=(h-30+360)%360;
+  const compColors=[
+    rgbToHex(...Object.values(hslToRgb(complementH,s,l))),
+    rgbToHex(...Object.values(hslToRgb(triH1,s,l))),
+    rgbToHex(...Object.values(hslToRgb(triH2,s,l))),
+    rgbToHex(...Object.values(hslToRgb(analogH1,s,l))),
+    rgbToHex(...Object.values(hslToRgb(analogH2,s,l))),
+  ];
+  compGrid.innerHTML=compColors.map(c=>`<div class="palette-swatch" style="background:${c}" onclick="applyColor('${c}')" title="${c}"><div class="swatch-hex">${c}</div></div>`).join('');
+}
+
+function applyColor(hex){picker.value=hex;hexInp.value=hex;update(hex);}
+
+picker.addEventListener('input',()=>{hexInp.value=picker.value;update(picker.value);});
+hexInp.addEventListener('input',()=>{
+  let v=hexInp.value;
+  if(!v.startsWith('#'))v='#'+v;
+  if(/^#[0-9A-Fa-f]{6}$/.test(v)){picker.value=v;update(v);}
+});
+
+update('#4F46E5');
+</script>
+</body>
+</html>

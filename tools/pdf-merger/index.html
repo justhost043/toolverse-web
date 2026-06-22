@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free PDF Merger — Combine PDF Files Online | OMIToolKit</title>
+<meta name="description" content="Merge multiple PDF files into one online for free. Drag and drop to reorder pages. No sign-up, no upload to server — runs entirely in your browser.">
+<link rel="canonical" href="../../tools/pdf-merger/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Merger","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free browser-based PDF merger. Combine multiple PDFs into one file with drag-and-drop reordering."}</script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.file-list{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.file-item{display:flex;align-items:center;gap:12px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;cursor:grab}
+.file-item.dragging{opacity:.4}
+.file-item.drag-over{border-color:var(--color-primary);background:#F4F3FE}
+.file-icon{font-size:22px;flex-shrink:0}
+.file-name{flex:1;font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-size{font-size:12px;color:var(--color-text-muted);flex-shrink:0}
+.remove-btn{width:28px;height:28px;border-radius:50%;border:none;background:#FEE2E2;color:#E24B4A;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0}
+.remove-btn:hover{background:#E24B4A;color:#fff}
+.drag-handle{color:var(--color-text-muted);font-size:16px;cursor:grab;flex-shrink:0}
+.status-bar{margin-top:16px;font-size:13.5px;color:var(--color-text-muted);text-align:center;min-height:20px}
+.status-bar.error{color:#E24B4A}
+.progress-wrap{height:6px;background:var(--color-border);border-radius:4px;margin-top:10px;display:none}
+.progress-fill{height:100%;background:var(--color-primary);border-radius:4px;width:0%;transition:width .3s}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / PDF Merger</div>
+<div class="container tool-page-header">
+  <h1>PDF Merger</h1>
+  <p>Combine multiple PDF files into one. Drag to reorder — nothing leaves your browser.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:36px;margin-bottom:10px">📄</div>
+      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop PDF files here or click to select</div>
+      <div style="font-size:13px;margin-top:6px">You can add multiple files at once</div>
+      <input type="file" id="file-input" accept="application/pdf" multiple style="display:none">
+    </div>
+
+    <div class="file-list" id="file-list"></div>
+
+    <div class="progress-wrap" id="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="status-bar" id="status-bar"></div>
+
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" id="merge-btn" style="flex:1;justify-content:center" disabled>Merge PDFs</button>
+      <button class="btn btn-outline" id="clear-btn">Clear all</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to merge PDF files</h2>
+  <p>Click the upload area or drag your PDF files directly onto it — you can select multiple files at once. The files appear in a list below; drag them up or down to set the order they'll appear in the final merged document. When you're happy with the order, click <strong>Merge PDFs</strong> and download the combined file.</p>
+  <h2>Is this PDF merger safe to use?</h2>
+  <p>Yes. This tool uses pdf-lib, an open-source JavaScript library that runs entirely inside your browser. Your PDF files are never sent to a server — all merging happens locally on your device, making it safe for confidential documents, contracts, medical records, or any sensitive file.</p>
+  <h2>File size and page limits</h2>
+  <p>Because everything runs in your browser, the practical limit depends on your device's RAM rather than any server restriction. Most modern computers can comfortably merge PDFs totalling 50–100MB. For very large files (hundreds of MB), a desktop PDF application may be faster.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const fileList = document.getElementById('file-list');
+const mergeBtn = document.getElementById('merge-btn');
+const clearBtn = document.getElementById('clear-btn');
+const statusBar = document.getElementById('status-bar');
+const progressWrap = document.getElementById('progress-wrap');
+const progressFill = document.getElementById('progress-fill');
+
+let files = []; // {file, name, size}
+let dragSrcIndex = null;
+
+function fmt(b) { return b > 1048576 ? (b/1048576).toFixed(1)+' MB' : (b/1024).toFixed(0)+' KB'; }
+
+function addFiles(newFiles) {
+  Array.from(newFiles).forEach(f => {
+    if (f.type === 'application/pdf') files.push(f);
+  });
+  render();
+}
+
+function render() {
+  mergeBtn.disabled = files.length < 2;
+  fileList.innerHTML = '';
+  files.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.draggable = true;
+    item.dataset.index = i;
+    item.innerHTML = `
+      <span class="drag-handle">⠿</span>
+      <span class="file-icon">📄</span>
+      <span class="file-name">${f.name}</span>
+      <span class="file-size">${fmt(f.size)}</span>
+      <button class="remove-btn" data-i="${i}" title="Remove">×</button>`;
+
+    item.addEventListener('dragstart', e => { dragSrcIndex = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault(); item.classList.remove('drag-over');
+      if (dragSrcIndex === null || dragSrcIndex === i) return;
+      const moved = files.splice(dragSrcIndex, 1)[0];
+      files.splice(i, 0, moved);
+      dragSrcIndex = null;
+      render();
+    });
+    item.querySelector('.remove-btn').addEventListener('click', () => { files.splice(i, 1); render(); });
+    fileList.appendChild(item);
+  });
+  if (files.length === 1) statusBar.textContent = 'Add at least one more PDF to merge.';
+  else if (files.length === 0) statusBar.textContent = '';
+  else statusBar.textContent = `${files.length} files ready — drag to reorder.`;
+  statusBar.className = 'status-bar';
+}
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); addFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+clearBtn.addEventListener('click', () => { files = []; render(); });
+
+mergeBtn.addEventListener('click', async () => {
+  if (files.length < 2) return;
+  mergeBtn.disabled = true;
+  progressWrap.style.display = 'block';
+  statusBar.textContent = 'Merging…';
+  statusBar.className = 'status-bar';
+
+  try {
+    const merged = await PDFLib.PDFDocument.create();
+    for (let i = 0; i < files.length; i++) {
+      progressFill.style.width = ((i / files.length) * 80) + '%';
+      statusBar.textContent = `Processing file ${i+1} of ${files.length}…`;
+      const bytes = await files[i].arrayBuffer();
+      const src = await PDFLib.PDFDocument.load(bytes);
+      const pages = await merged.copyPages(src, src.getPageIndices());
+      pages.forEach(p => merged.addPage(p));
+    }
+    progressFill.style.width = '95%';
+    const outBytes = await merged.save();
+    progressFill.style.width = '100%';
+    const blob = new Blob([outBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'merged.pdf'; a.click();
+    statusBar.textContent = `✓ Done! ${files.length} PDFs merged successfully.`;
+  } catch(e) {
+    statusBar.textContent = 'Error: ' + e.message;
+    statusBar.className = 'status-bar error';
+  }
+  progressWrap.style.display = 'none';
+  progressFill.style.width = '0%';
+  mergeBtn.disabled = false;
+});
+</script>
+</body>
+</html>
