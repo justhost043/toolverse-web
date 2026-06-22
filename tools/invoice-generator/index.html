@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Invoice Generator — Create & Download PDF Invoice | OMIToolKit</title>
+<meta name="description" content="Create professional invoices online for free. Add line items, tax, discount. Download as PDF instantly. No sign-up, no watermark, runs in your browser.">
+<link rel="canonical" href="../../tools/invoice-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.inv-section{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px;margin-bottom:16px}
+.inv-section h3{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.two-col{grid-template-columns:1fr}}
+.items-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.items-table th{text-align:left;padding:8px 10px;background:#F4F3FE;font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.items-table td{padding:6px 6px;border-bottom:1px solid var(--color-border);vertical-align:middle}
+.items-table input{border:none;background:transparent;width:100%;font-family:var(--font-body);font-size:13.5px;padding:4px 6px;border-radius:4px}
+.items-table input:focus{background:#EDE9FE;outline:none}
+.items-table td.amount{font-family:var(--font-mono);text-align:right;padding-right:10px;white-space:nowrap}
+.remove-row{background:none;border:none;color:#E24B4A;cursor:pointer;font-size:18px;padding:0 4px;line-height:1}
+.totals-box{background:#1E1B2E;border-radius:var(--radius-md);padding:18px 20px;color:#E8E6F0}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px}
+.total-row.grand{border-top:1px solid #3D3A5C;margin-top:8px;padding-top:12px;font-size:18px;font-weight:600}
+.total-row.grand span:last-child{color:#A78BFA}
+.total-row span:first-child{color:#94A3B8}
+.currency-sel{padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13.5px;font-family:var(--font-body)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Invoice Generator</div>
+<div class="container tool-page-header">
+  <h1>Invoice Generator</h1>
+  <p>Create professional invoices and download as PDF — free, no sign-up, no watermark.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:800px">
+
+    <!-- Header row -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <label class="field-label" style="margin:0">Currency:</label>
+        <select id="currency" class="currency-sel">
+          <option value="$">USD ($)</option>
+          <option value="€">EUR (€)</option>
+          <option value="£">GBP (£)</option>
+          <option value="₹">INR (₹)</option>
+          <option value="PKR">PKR</option>
+          <option value="AED">AED</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" id="preview-btn">Preview</button>
+        <button class="btn btn-primary" id="pdf-btn">Download PDF</button>
+      </div>
+    </div>
+
+    <!-- From / To -->
+    <div class="two-col">
+      <div class="inv-section">
+        <h3>From (Your details)</h3>
+        <div class="field-row"><input class="field-input" id="from-name" placeholder="Your Name / Company"></div>
+        <div class="field-row"><input class="field-input" id="from-email" placeholder="Email address"></div>
+        <div class="field-row"><input class="field-input" id="from-address" placeholder="Address / City"></div>
+        <div class="field-row"><input class="field-input" id="from-phone" placeholder="Phone (optional)"></div>
+      </div>
+      <div class="inv-section">
+        <h3>Bill To (Client)</h3>
+        <div class="field-row"><input class="field-input" id="to-name" placeholder="Client Name / Company"></div>
+        <div class="field-row"><input class="field-input" id="to-email" placeholder="Client email"></div>
+        <div class="field-row"><input class="field-input" id="to-address" placeholder="Client address"></div>
+        <div class="field-row"><input class="field-input" id="to-phone" placeholder="Phone (optional)"></div>
+      </div>
+    </div>
+
+    <!-- Invoice meta -->
+    <div class="inv-section">
+      <h3>Invoice Details</h3>
+      <div class="two-col">
+        <div class="field-row"><label class="field-label">Invoice #</label><input class="field-input" id="inv-num" value="INV-001"></div>
+        <div class="field-row"><label class="field-label">Issue date</label><input type="date" class="field-input" id="inv-date"></div>
+        <div class="field-row"><label class="field-label">Due date</label><input type="date" class="field-input" id="due-date"></div>
+        <div class="field-row"><label class="field-label">PO Number (optional)</label><input class="field-input" id="po-num" placeholder="PO-"></div>
+      </div>
+    </div>
+
+    <!-- Line items -->
+    <div class="inv-section">
+      <h3>Line Items</h3>
+      <table class="items-table">
+        <thead><tr><th style="width:40%">Description</th><th style="width:12%">Qty</th><th style="width:18%">Unit price</th><th style="width:18%">Amount</th><th style="width:12%"></th></tr></thead>
+        <tbody id="items-body"></tbody>
+      </table>
+      <button class="btn btn-outline" id="add-row" style="margin-top:12px;font-size:13px">+ Add line item</button>
+    </div>
+
+    <!-- Totals -->
+    <div class="inv-section">
+      <div class="two-col">
+        <div>
+          <div class="field-row"><label class="field-label">Tax (%)</label><input type="number" class="field-input" id="tax-pct" value="0" min="0" max="100" step="0.1"></div>
+          <div class="field-row"><label class="field-label">Discount (%)</label><input type="number" class="field-input" id="disc-pct" value="0" min="0" max="100" step="0.1"></div>
+        </div>
+        <div class="totals-box">
+          <div class="total-row"><span>Subtotal</span><span id="t-sub">$0.00</span></div>
+          <div class="total-row"><span>Discount</span><span id="t-disc">−$0.00</span></div>
+          <div class="total-row"><span>Tax</span><span id="t-tax">$0.00</span></div>
+          <div class="total-row grand"><span>Total</span><span id="t-total">$0.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="inv-section">
+      <h3>Notes / Payment terms</h3>
+      <textarea class="field-input" id="notes" rows="3" placeholder="e.g. Payment due within 30 days. Bank transfer preferred."></textarea>
+    </div>
+
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>About this invoice generator</h2>
+  <p>This tool generates professional invoices entirely in your browser using jsPDF. Your client data and invoice details are never sent to any server. The PDF is built locally and downloaded directly to your device. There is no watermark, no usage limit and no account required.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const today = new Date();
+document.getElementById('inv-date').valueAsDate = today;
+const due = new Date(); due.setDate(due.getDate()+30);
+document.getElementById('due-date').valueAsDate = due;
+
+let rows = [{desc:'',qty:1,price:0}];
+function getCurrency(){return document.getElementById('currency').value;}
+function fmt(n){const c=getCurrency();return(c==='$'||c==='€'||c==='£'||c==='₹'?c:'')+(+n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')+(['PKR','AED'].includes(c)?' '+c:'');}
+
+function renderRows(){
+  const tbody=document.getElementById('items-body');
+  tbody.innerHTML='';
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input value="${r.desc}" placeholder="Item description" data-i="${i}" data-f="desc"></td>
+      <td><input type="number" value="${r.qty}" min="0" step="any" data-i="${i}" data-f="qty" style="width:60px"></td>
+      <td><input type="number" value="${r.price}" min="0" step="any" placeholder="0.00" data-i="${i}" data-f="price"></td>
+      <td class="amount">${fmt(r.qty*r.price)}</td>
+      <td><button class="remove-row" data-i="${i}">×</button></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('input[data-f]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const i=+inp.dataset.i,f=inp.dataset.f;
+      rows[i][f]=f==='desc'?inp.value:parseFloat(inp.value)||0;
+      calcTotals();
+    });
+  });
+  tbody.querySelectorAll('.remove-row').forEach(btn=>{
+    btn.addEventListener('click',()=>{rows.splice(+btn.dataset.i,1);renderRows();calcTotals();});
+  });
+  calcTotals();
+}
+
+function calcTotals(){
+  const sub=rows.reduce((s,r)=>s+r.qty*r.price,0);
+  const disc=sub*(parseFloat(document.getElementById('disc-pct').value)||0)/100;
+  const tax=(sub-disc)*(parseFloat(document.getElementById('tax-pct').value)||0)/100;
+  const total=sub-disc+tax;
+  document.getElementById('t-sub').textContent=fmt(sub);
+  document.getElementById('t-disc').textContent='−'+fmt(disc);
+  document.getElementById('t-tax').textContent=fmt(tax);
+  document.getElementById('t-total').textContent=fmt(total);
+  return{sub,disc,tax,total};
+}
+
+document.getElementById('add-row').addEventListener('click',()=>{rows.push({desc:'',qty:1,price:0});renderRows();});
+document.getElementById('tax-pct').addEventListener('input',calcTotals);
+document.getElementById('disc-pct').addEventListener('input',calcTotals);
+document.getElementById('currency').addEventListener('change',()=>{renderRows();});
+
+// PDF generation
+document.getElementById('pdf-btn').addEventListener('click',generatePDF);
+document.getElementById('preview-btn').addEventListener('click',()=>{window.open('','_blank').document.write(generateHTML());});
+
+function generatePDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const c=getCurrency();
+  const fromName=document.getElementById('from-name').value||'Your Company';
+  const toName=document.getElementById('to-name').value||'Client';
+  const invNum=document.getElementById('inv-num').value||'INV-001';
+  const invDate=document.getElementById('inv-date').value;
+  const dueDate=document.getElementById('due-date').value;
+  const {sub,disc,tax,total}=calcTotals();
+
+  // Header
+  doc.setFillColor(79,70,229);doc.rect(0,0,210,40,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(22);doc.setFont('helvetica','bold');
+  doc.text('INVOICE',14,20);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text(invNum,14,30);
+
+  // From/To
+  doc.setTextColor(30,27,46);doc.setFontSize(9);
+  let y=52;
+  doc.setFont('helvetica','bold');doc.text('FROM',14,y);doc.text('BILL TO',110,y);
+  doc.setFont('helvetica','normal');y+=6;
+  const fromLines=[fromName,document.getElementById('from-email').value,document.getElementById('from-address').value,document.getElementById('from-phone').value].filter(Boolean);
+  const toLines=[toName,document.getElementById('to-email').value,document.getElementById('to-address').value,document.getElementById('to-phone').value].filter(Boolean);
+  const maxL=Math.max(fromLines.length,toLines.length);
+  for(let i=0;i<maxL;i++){
+    if(fromLines[i]) doc.text(fromLines[i],14,y);
+    if(toLines[i]) doc.text(toLines[i],110,y);
+    y+=5;
+  }
+
+  // Dates
+  y+=4;
+  doc.setFillColor(244,243,254);doc.rect(14,y,182,20,'F');
+  doc.setFont('helvetica','bold');doc.text('Invoice Date:',16,y+7);doc.setFont('helvetica','normal');doc.text(invDate,50,y+7);
+  doc.setFont('helvetica','bold');doc.text('Due Date:',100,y+7);doc.setFont('helvetica','normal');doc.text(dueDate,125,y+7);
+  if(document.getElementById('po-num').value){doc.setFont('helvetica','bold');doc.text('PO#:',155,y+7);doc.setFont('helvetica','normal');doc.text(document.getElementById('po-num').value,165,y+7);}
+  y+=26;
+
+  // Items header
+  doc.setFillColor(30,27,46);doc.rect(14,y,182,8,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(8);
+  doc.text('DESCRIPTION',16,y+5.5);doc.text('QTY',125,y+5.5);doc.text('PRICE',148,y+5.5);doc.text('AMOUNT',170,y+5.5);
+  y+=12;doc.setTextColor(30,27,46);doc.setFont('helvetica','normal');
+
+  rows.forEach((r,idx)=>{
+    if(idx%2===0){doc.setFillColor(249,249,249);doc.rect(14,y-4,182,8,'F');}
+    doc.text(r.desc||'',16,y);
+    doc.text(String(r.qty),130,y);
+    doc.text(fmt(r.price),148,y);
+    doc.text(fmt(r.qty*r.price),196,y,{align:'right'});
+    y+=8;
+  });
+
+  // Totals
+  y+=4;
+  const tRows=[['Subtotal',fmt(sub)],['Discount','-'+fmt(disc)],['Tax',fmt(tax)]];
+  tRows.forEach(([l,v])=>{
+    doc.setFont('helvetica','normal');doc.text(l,150,y);doc.text(v,196,y,{align:'right'});y+=7;
+  });
+  doc.setFillColor(79,70,229);doc.rect(14,y,182,10,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(10);
+  doc.text('TOTAL',150,y+7);doc.text(fmt(total),196,y+7,{align:'right'});
+  y+=18;
+
+  // Notes
+  const notes=document.getElementById('notes').value;
+  if(notes){doc.setTextColor(100,100,120);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('Notes: '+notes,14,y,{maxWidth:182});}
+
+  doc.save(`invoice-${invNum}.pdf`);
+}
+
+function generateHTML(){
+  const invNum=document.getElementById('inv-num').value||'INV-001';
+  const {sub,disc,tax,total}=calcTotals();
+  return`<html><body style="font-family:sans-serif;max-width:700px;margin:40px auto;color:#1E1B2E">
+  <h1 style="color:#4F46E5">INVOICE ${invNum}</h1>
+  <p><strong>From:</strong> ${document.getElementById('from-name').value}</p>
+  <p><strong>To:</strong> ${document.getElementById('to-name').value}</p>
+  <table style="width:100%;border-collapse:collapse;margin-top:20px">
+  <tr style="background:#4F46E5;color:#fff"><th style="padding:10px;text-align:left">Description</th><th>Qty</th><th>Price</th><th>Amount</th></tr>
+  ${rows.map((r,i)=>`<tr style="background:${i%2?'#fff':'#F4F3FE'}"><td style="padding:10px">${r.desc}</td><td style="text-align:center">${r.qty}</td><td style="text-align:right">${getCurrency()}${(+r.price).toFixed(2)}</td><td style="text-align:right">${getCurrency()}${(r.qty*r.price).toFixed(2)}</td></tr>`).join('')}
+  </table>
+  <div style="text-align:right;margin-top:16px"><strong>Total: ${fmt(total)}</strong></div>
+  </body></html>`;
+}
+
+renderRows();
+</script>
+</body>
+</html>

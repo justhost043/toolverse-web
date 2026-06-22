@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Interest Calculator — Simple & Compound Interest | OMIToolKit</title>
+<meta name="description" content="Calculate simple and compound interest online. See year-by-year growth, total interest earned and final amount. Free online interest calculator.">
+<link rel="canonical" href="../../tools/interest-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.mode-toggle{display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin-bottom:22px}
+.mode-btn{padding:9px 24px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--color-primary);color:#fff}
+.result-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+@media(max-width:480px){.result-trio{grid-template-columns:1fr}}
+.trio-card{background:#F4F3FE;border:1px solid #C9C5F7;border-radius:var(--radius-md);padding:16px;text-align:center}
+.trio-card.highlight{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));border:none;color:#fff}
+.trio-num{font-size:22px;font-weight:600;font-family:var(--font-display)}
+.trio-label{font-size:12px;margin-top:5px;opacity:.75}
+.trio-card .trio-num,.trio-card .trio-label{color:var(--color-primary)}
+.trio-card.highlight .trio-num,.trio-card.highlight .trio-label{color:#fff}
+canvas#growth-chart{width:100%;border-radius:var(--radius-sm);margin-top:16px;background:#1E1B2E}
+.amort-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px;max-height:280px;display:block;overflow-y:auto}
+.amort-table th{position:sticky;top:0;background:#F4F3FE;padding:9px 10px;text-align:right;font-weight:500}
+.amort-table th:first-child,.amort-table td:first-child{text-align:left}
+.amort-table td{padding:8px 10px;border-bottom:1px solid var(--color-border);text-align:right}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Interest Calculator</div>
+<div class="container tool-page-header">
+  <h1>Interest Calculator</h1>
+  <p>Calculate simple or compound interest with a year-by-year growth breakdown.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:600px">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-compound">Compound</button>
+      <button class="mode-btn" id="btn-simple">Simple</button>
+    </div>
+    <div class="field-row"><label class="field-label">Principal amount ($)</label><input type="number" id="principal" class="field-input" placeholder="10000" value="10000" min="0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-row"><label class="field-label">Annual rate (%)</label><input type="number" id="rate" class="field-input" placeholder="8" value="8" step="0.01" min="0"></div>
+      <div class="field-row"><label class="field-label">Period (years)</label><input type="number" id="years" class="field-input" placeholder="10" value="10" min="1" max="100"></div>
+    </div>
+    <div class="field-row" id="compound-freq-row">
+      <label class="field-label">Compounding frequency</label>
+      <select id="freq" class="field-select">
+        <option value="1">Annually</option>
+        <option value="2">Semi-annually</option>
+        <option value="4">Quarterly</option>
+        <option value="12" selected>Monthly</option>
+        <option value="365">Daily</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" id="calc-btn" style="width:100%;justify-content:center;padding:13px">Calculate</button>
+    <div id="results" style="display:none">
+      <div class="result-trio">
+        <div class="trio-card"><div class="trio-num" id="r-principal">$0</div><div class="trio-label">Principal</div></div>
+        <div class="trio-card"><div class="trio-num" id="r-interest">$0</div><div class="trio-label">Interest earned</div></div>
+        <div class="trio-card highlight"><div class="trio-num" id="r-total">$0</div><div class="trio-label">Final amount</div></div>
+      </div>
+      <canvas id="growth-chart" height="200"></canvas>
+      <table class="amort-table" id="amort-table"><thead><tr><th>Year</th><th>Balance</th><th>Interest</th><th>Total Interest</th></tr></thead><tbody id="amort-body"></tbody></table>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Simple vs Compound Interest</h2>
+  <p><strong>Simple interest</strong> is calculated only on the original principal. If you invest $10,000 at 8% simple interest for 10 years, you earn $800 per year — $8,000 total. <strong>Compound interest</strong> calculates interest on both the principal and the accumulated interest from previous periods. The same $10,000 at 8% compounded monthly grows to $22,196 — $12,196 in interest rather than $8,000. That difference is why Einstein reportedly called compound interest "the eighth wonder of the world."</p>
+  <h2>Why compounding frequency matters</h2>
+  <p>The more frequently interest compounds, the more you earn. Daily compounding yields slightly more than monthly, which yields more than annual. For most savings accounts and investments, monthly compounding is the standard. The difference between monthly and daily compounding is small, but over decades it can add meaningful amounts to a large portfolio.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let isCompound = true;
+document.getElementById('btn-compound').addEventListener('click',()=>{isCompound=true;document.getElementById('btn-compound').classList.add('active');document.getElementById('btn-simple').classList.remove('active');document.getElementById('compound-freq-row').style.display='';});
+document.getElementById('btn-simple').addEventListener('click',()=>{isCompound=false;document.getElementById('btn-simple').classList.add('active');document.getElementById('btn-compound').classList.remove('active');document.getElementById('compound-freq-row').style.display='none';});
+
+function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+
+document.getElementById('calc-btn').addEventListener('click',()=>{
+  const P=parseFloat(document.getElementById('principal').value)||0;
+  const r=parseFloat(document.getElementById('rate').value)/100||0;
+  const t=parseInt(document.getElementById('years').value)||1;
+  const n=parseInt(document.getElementById('freq').value)||12;
+
+  document.getElementById('r-principal').textContent=fmt(P);
+
+  const rows=[];
+  let totalInterest=0;
+
+  for(let y=1;y<=t;y++){
+    let balance,yearInterest;
+    if(isCompound){
+      balance=P*Math.pow(1+r/n,n*y);
+    } else {
+      balance=P*(1+r*y);
+    }
+    yearInterest=y===1?balance-P:balance-rows[y-2].balance;
+    totalInterest=balance-P;
+    rows.push({year:y,balance,yearInterest,totalInterest});
+  }
+
+  const final=rows[t-1].balance;
+  document.getElementById('r-interest').textContent=fmt(final-P);
+  document.getElementById('r-total').textContent=fmt(final);
+
+  // Table
+  document.getElementById('amort-body').innerHTML=rows.map(r=>`<tr><td>${r.year}</td><td>${fmt(r.balance)}</td><td>${fmt(r.yearInterest)}</td><td>${fmt(r.totalInterest)}</td></tr>`).join('');
+
+  // Chart
+  const canvas=document.getElementById('growth-chart');
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth*2; canvas.height=400;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const W=canvas.width,H=canvas.height,pad=60;
+  const maxVal=final;
+  const xScale=(W-pad*2)/Math.max(t-1,1);
+  const yScale=(H-pad*2)/maxVal;
+  // Principal area
+  ctx.beginPath();ctx.strokeStyle='#4B5563';ctx.lineWidth=1;ctx.setLineDash([6,4]);
+  ctx.moveTo(pad,H-pad-P*yScale);ctx.lineTo(W-pad,H-pad-P*yScale);ctx.stroke();ctx.setLineDash([]);
+  // Balance line
+  ctx.beginPath();ctx.strokeStyle='#A78BFA';ctx.lineWidth=3;
+  rows.forEach((row,i)=>{const x=pad+i*xScale,y=H-pad-row.balance*yScale;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+  // Labels
+  ctx.fillStyle='#6B6B8A';ctx.font=`${24}px sans-serif`;ctx.textAlign='center';
+  [0,Math.floor(t/2),t-1].forEach(i=>{ctx.fillText(rows[i]?rows[i].year:'',pad+i*xScale,H-10);});
+  ctx.fillStyle='#A78BFA';ctx.textAlign='right';ctx.font=`bold ${24}px sans-serif`;
+  ctx.fillText(fmt(final),W-10,H-pad-final*yScale-10);
+
+  document.getElementById('results').style.display='';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Tip Calculator — Split Bill Online | OMIToolKit</title>
+<meta name="description" content="Calculate tips and split bills instantly. Choose tip percentage, split among any number of people. Free online tip calculator.">
+<link rel="canonical" href="../../tools/tip-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.tip-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tip-preset{padding:9px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+.tip-preset.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.breakdown-card{border-radius:var(--radius-md);padding:18px;text-align:center}
+.breakdown-card.primary{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));color:#fff}
+.breakdown-card.secondary{background:#F4F3FE;border:1px solid #C9C5F7}
+.bd-num{font-size:30px;font-weight:600;font-family:var(--font-display);line-height:1}
+.bd-label{font-size:12.5px;margin-top:6px;opacity:.8}
+.breakdown-card.secondary .bd-num{color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Tip Calculator</div>
+<div class="container tool-page-header">
+  <h1>Tip Calculator</h1>
+  <p>Calculate tip amount and split the total among any number of people.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:520px">
+    <div class="field-row"><label class="field-label">Bill amount ($)</label><input type="number" id="bill" class="field-input" placeholder="50.00" step="0.01" min="0"></div>
+    <div class="field-row">
+      <label class="field-label">Tip percentage</label>
+      <div class="tip-presets">
+        <button class="tip-preset" data-tip="10">10%</button>
+        <button class="tip-preset active" data-tip="15">15%</button>
+        <button class="tip-preset" data-tip="18">18%</button>
+        <button class="tip-preset" data-tip="20">20%</button>
+        <button class="tip-preset" data-tip="25">25%</button>
+        <button class="tip-preset" data-tip="custom">Custom</button>
+      </div>
+      <input type="number" id="custom-tip" class="field-input" placeholder="Custom %" style="display:none;margin-top:8px" min="0" max="100">
+    </div>
+    <div class="field-row">
+      <label class="field-label">Split between — <span id="split-val">1</span> people</label>
+      <div class="range-row">
+        <input type="range" id="split" min="1" max="20" value="1">
+      </div>
+    </div>
+    <div class="result-breakdown">
+      <div class="breakdown-card secondary"><div class="bd-num" id="r-tip">$0.00</div><div class="bd-label">Tip amount</div></div>
+      <div class="breakdown-card primary"><div class="bd-num" id="r-total">$0.00</div><div class="bd-label">Total bill</div></div>
+      <div class="breakdown-card secondary"><div class="bd-num" id="r-tip-pp">$0.00</div><div class="bd-label">Tip per person</div></div>
+      <div class="breakdown-card primary"><div class="bd-num" id="r-total-pp">$0.00</div><div class="bd-label">Total per person</div></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How much should you tip?</h2>
+  <p>Tipping norms vary by country and service type. In the United States, 15–20% is standard for restaurant service, with 20%+ for exceptional service. For delivery drivers, $3–5 per order is common. For hotel housekeeping, $2–5 per night. For hair stylists and barbers, 15–20% of the service cost. In many countries outside North America, tipping is optional or not expected at all — the price you see is the price you pay.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let tipPct = 15;
+document.querySelectorAll('.tip-preset').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tip-preset').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const ct=document.getElementById('custom-tip');
+    if(btn.dataset.tip==='custom'){ct.style.display='';tipPct=parseFloat(ct.value)||0;}
+    else{ct.style.display='none';tipPct=parseFloat(btn.dataset.tip);}
+    calc();
+  });
+});
+document.getElementById('custom-tip').addEventListener('input',()=>{tipPct=parseFloat(document.getElementById('custom-tip').value)||0;calc();});
+document.getElementById('split').addEventListener('input',()=>{document.getElementById('split-val').textContent=document.getElementById('split').value;calc();});
+document.getElementById('bill').addEventListener('input',calc);
+function fmt(n){return'$'+n.toFixed(2);}
+function calc(){
+  const bill=parseFloat(document.getElementById('bill').value)||0;
+  const split=parseInt(document.getElementById('split').value)||1;
+  const tip=bill*(tipPct/100);
+  const total=bill+tip;
+  document.getElementById('r-tip').textContent=fmt(tip);
+  document.getElementById('r-total').textContent=fmt(total);
+  document.getElementById('r-tip-pp').textContent=fmt(tip/split);
+  document.getElementById('r-total-pp').textContent=fmt(total/split);
+}
+calc();
+</script>
+</body>
+</html>

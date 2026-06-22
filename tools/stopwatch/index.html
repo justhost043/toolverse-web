@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Online Stopwatch with Lap Timer | OMIToolKit</title>
+<meta name="description" content="Free online stopwatch with lap timer. Millisecond precision, unlimited laps, keyboard shortcuts. No download needed — runs in your browser.">
+<link rel="canonical" href="../../tools/stopwatch/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.sw-display{background:#1E1B2E;border-radius:var(--radius-lg);padding:40px 24px;text-align:center;margin:0 auto 24px;max-width:420px}
+.sw-time{font-family:'JetBrains Mono',monospace;font-size:clamp(42px,12vw,72px);font-weight:500;color:#A78BFA;letter-spacing:.04em;line-height:1}
+.sw-ms{font-size:.45em;color:#6B6B8A;vertical-align:top;margin-top:.3em;display:inline-block}
+.sw-btn-row{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.sw-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px}
+.sw-btn svg{width:22px;height:22px}
+.btn-start{background:var(--color-primary);color:#fff}
+.btn-start:hover{background:var(--color-primary-dark)}
+.btn-stop{background:#EF4444;color:#fff}
+.btn-stop:hover{background:#DC2626}
+.btn-lap{background:#F4F3FE;color:var(--color-primary);border:1px solid #C9C5F7}
+.btn-lap:hover{background:#EDE9FE}
+.btn-reset{background:#F9F9F9;color:var(--color-text-muted);border:1px solid var(--color-border)}
+.btn-reset:hover{background:#F4F3FE}
+.lap-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.lap-table th{text-align:left;padding:9px 12px;background:#F4F3FE;font-weight:500;position:sticky;top:0}
+.lap-table td{padding:9px 12px;border-bottom:1px solid var(--color-border);font-family:'JetBrains Mono',monospace}
+.lap-table td:first-child{font-family:var(--font-body);font-weight:500;color:var(--color-text-muted)}
+.lap-wrap{max-height:280px;overflow-y:auto;border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-top:16px}
+.lap-best{color:#16A34A;font-weight:500}
+.lap-worst{color:#E24B4A}
+.shortcut-hint{text-align:center;font-size:12.5px;color:var(--color-text-muted);margin-top:12px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Stopwatch</div>
+<div class="container tool-page-header">
+  <h1>Online Stopwatch</h1>
+  <p>Millisecond-precise stopwatch with lap timer and keyboard shortcuts.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:560px">
+    <div class="sw-display">
+      <div class="sw-time" id="sw-time">00:00<span class="sw-ms" id="sw-ms">.000</span></div>
+    </div>
+    <div class="sw-btn-row">
+      <button class="sw-btn btn-reset" id="btn-reset" title="Reset (R)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Reset
+      </button>
+      <button class="sw-btn btn-start" id="btn-startstop" title="Start/Stop (Space)">
+        <svg id="btn-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span id="btn-label">Start</span>
+      </button>
+      <button class="sw-btn btn-lap" id="btn-lap" title="Lap (L)" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Lap
+      </button>
+    </div>
+    <div class="shortcut-hint">Keyboard: <kbd>Space</kbd> = Start/Stop &nbsp; <kbd>L</kbd> = Lap &nbsp; <kbd>R</kbd> = Reset</div>
+    <div class="lap-wrap" id="lap-wrap" style="display:none">
+      <table class="lap-table">
+        <thead><tr><th>#</th><th>Lap time</th><th>Total time</th></tr></thead>
+        <tbody id="lap-body"></tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px;display:none" id="export-row">
+      <button class="btn btn-outline" id="copy-laps">Copy laps</button>
+      <button class="btn btn-outline" id="clear-laps">Clear laps</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>About this stopwatch</h2>
+  <p>This stopwatch runs at millisecond precision using the browser's <code>performance.now()</code> API, which is more accurate than <code>Date.now()</code> for timing purposes. Lap times are recorded instantly and highlighted in green (fastest) and red (slowest) so you can compare splits at a glance. All data stays in the browser — nothing is sent anywhere.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let running = false, startTime = 0, elapsed = 0, rafId = null;
+const laps = [];
+let lapStart = 0;
+
+function pad(n,l=2){return String(Math.floor(n)).padStart(l,'0');}
+function fmt(ms){
+  const m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000), cs=Math.floor((ms%1000));
+  return `${pad(m)}:${pad(s)}<span class="sw-ms">.${pad(cs,3)}</span>`;
+}
+function fmtPlain(ms){const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),cs=Math.floor(ms%1000);return`${pad(m)}:${pad(s)}.${pad(cs,3)}`;}
+
+function tick(){
+  const now = performance.now();
+  elapsed = (now - startTime);
+  const total = elapsed;
+  document.getElementById('sw-time').innerHTML = fmt(total);
+  rafId = requestAnimationFrame(tick);
+}
+
+function updateBtn(){
+  const icon = document.getElementById('btn-icon');
+  const label = document.getElementById('btn-label');
+  if(running){
+    icon.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    label.textContent='Stop';
+    document.getElementById('btn-startstop').className='sw-btn btn-stop';
+  } else {
+    icon.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+    label.textContent='Start';
+    document.getElementById('btn-startstop').className='sw-btn btn-start';
+  }
+  document.getElementById('btn-lap').disabled=!running;
+}
+
+document.getElementById('btn-startstop').addEventListener('click',()=>{
+  if(!running){
+    startTime = performance.now() - elapsed;
+    if(laps.length===0) lapStart = 0;
+    running = true;
+    rafId = requestAnimationFrame(tick);
+  } else {
+    cancelAnimationFrame(rafId);
+    running = false;
+  }
+  updateBtn();
+});
+
+document.getElementById('btn-reset').addEventListener('click',()=>{
+  cancelAnimationFrame(rafId); running=false; elapsed=0; laps.length=0; lapStart=0;
+  document.getElementById('sw-time').innerHTML='00:00<span class="sw-ms">.000</span>';
+  document.getElementById('lap-body').innerHTML='';
+  document.getElementById('lap-wrap').style.display='none';
+  document.getElementById('export-row').style.display='none';
+  updateBtn();
+});
+
+document.getElementById('btn-lap').addEventListener('click',()=>{
+  if(!running) return;
+  const total = elapsed;
+  const lapTime = total - lapStart;
+  lapStart = total;
+  laps.unshift({num:laps.length+1, lap:lapTime, total});
+  renderLaps();
+});
+
+function renderLaps(){
+  if(laps.length===0) return;
+  document.getElementById('lap-wrap').style.display='';
+  document.getElementById('export-row').style.display='flex';
+  const times = laps.map(l=>l.lap);
+  const best = Math.min(...times), worst = Math.max(...times);
+  document.getElementById('lap-body').innerHTML = laps.map(l=>{
+    let cls='';
+    if(laps.length>1){if(l.lap===best)cls='lap-best';else if(l.lap===worst)cls='lap-worst';}
+    return`<tr><td>Lap ${l.num}</td><td class="${cls}">${fmtPlain(l.lap)}</td><td>${fmtPlain(l.total)}</td></tr>`;
+  }).join('');
+}
+
+document.getElementById('copy-laps').addEventListener('click',()=>{
+  const text=[...laps].reverse().map(l=>`Lap ${l.num}\t${fmtPlain(l.lap)}\t${fmtPlain(l.total)}`).join('\n');
+  navigator.clipboard.writeText(text);
+});
+document.getElementById('clear-laps').addEventListener('click',()=>{
+  laps.length=0; lapStart=elapsed;
+  document.getElementById('lap-body').innerHTML='';
+  document.getElementById('lap-wrap').style.display='none';
+  document.getElementById('export-row').style.display='none';
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if(e.code==='Space'){e.preventDefault();document.getElementById('btn-startstop').click();}
+  if(e.key.toLowerCase()==='l') document.getElementById('btn-lap').click();
+  if(e.key.toLowerCase()==='r') document.getElementById('btn-reset').click();
+});
+</script>
+</body>
+</html>
