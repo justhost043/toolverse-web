@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Age Calculator — Calculate Exact Age Online | OMIToolKit</title>
+<meta name="description" content="Calculate your exact age in years, months, days and hours from your date of birth. Find days until next birthday. Free online age calculator.">
+<link rel="canonical" href="../../tools/age-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Age Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+@media(max-width:480px){.result-grid{grid-template-columns:1fr}}
+.result-card{background:linear-gradient(135deg,#F4F3FE,#EDE9FE);border:1px solid #C9C5F7;border-radius:var(--radius-md);padding:20px;text-align:center}
+.result-card .num{font-size:36px;font-weight:600;color:var(--color-primary);line-height:1;font-family:var(--font-display)}
+.result-card .unit{font-size:13px;color:var(--color-text-muted);margin-top:5px}
+.big-stat{background:#1E1B2E;border-radius:var(--radius-md);padding:22px;text-align:center;margin-top:12px;color:#E8E6F0}
+.big-stat .n{font-size:28px;font-weight:600;color:#A78BFA;font-family:var(--font-display)}
+.big-stat .l{font-size:13px;color:#94A3B8;margin-top:4px}
+.zodiac-row{display:flex;align-items:center;gap:14px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px;margin-top:12px}
+.zodiac-sign{font-size:36px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Age Calculator</div>
+<div class="container tool-page-header">
+  <h1>Age Calculator</h1>
+  <p>Enter your date of birth to get your exact age, plus your next birthday countdown and zodiac sign.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="field-row">
+      <label class="field-label" for="dob">Date of birth</label>
+      <input type="date" id="dob" class="field-input">
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="as-of">Calculate age as of</label>
+      <input type="date" id="as-of" class="field-input">
+    </div>
+    <button class="btn btn-primary" id="calc-btn" style="width:100%;justify-content:center;padding:13px">Calculate Age</button>
+
+    <div id="results" style="display:none">
+      <div class="result-grid">
+        <div class="result-card"><div class="num" id="r-years">0</div><div class="unit">Years</div></div>
+        <div class="result-card"><div class="num" id="r-months">0</div><div class="unit">Months</div></div>
+        <div class="result-card"><div class="num" id="r-days">0</div><div class="unit">Days</div></div>
+        <div class="result-card"><div class="num" id="r-weeks">0</div><div class="unit">Weeks</div></div>
+      </div>
+      <div class="big-stat">
+        <div class="n" id="r-total-days">0</div><div class="l">Total days lived</div>
+      </div>
+      <div class="big-stat" style="margin-top:10px">
+        <div class="n" id="r-hours">0</div><div class="l">Total hours lived (approx.)</div>
+      </div>
+      <div class="big-stat" style="margin-top:10px;background:#F4F3FE;color:var(--color-text)">
+        <div class="n" style="color:var(--color-primary)" id="r-bday">—</div>
+        <div class="l" style="color:var(--color-text-muted)" id="r-bday-label">Days until next birthday</div>
+      </div>
+      <div class="zodiac-row">
+        <div class="zodiac-sign" id="z-icon">♈</div>
+        <div>
+          <div style="font-weight:500" id="z-name">Aries</div>
+          <div style="font-size:13px;color:var(--color-text-muted)" id="z-dates"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to calculate your exact age</h2>
+  <p>Enter your date of birth and the date you want to calculate your age as of (it defaults to today). The calculator gives your age broken down into years, months, days and weeks, plus total days and approximate hours lived. It also shows how many days remain until your next birthday.</p>
+  <h2>Why might my age in months seem high?</h2>
+  <p>The months count shows your total age expressed in complete months — not just the months beyond your last birthday. For example, someone who is 25 years and 3 months old would show 303 months. This is useful for medical or legal contexts where exact age in months is required.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const today = new Date(); today.setHours(0,0,0,0);
+document.getElementById('as-of').valueAsDate = today;
+
+const ZODIAC = [
+  {name:'Capricorn',icon:'♑',start:[12,22],end:[1,19]},
+  {name:'Aquarius',icon:'♒',start:[1,20],end:[2,18]},
+  {name:'Pisces',icon:'♓',start:[2,19],end:[3,20]},
+  {name:'Aries',icon:'♈',start:[3,21],end:[4,19]},
+  {name:'Taurus',icon:'♉',start:[4,20],end:[5,20]},
+  {name:'Gemini',icon:'♊',start:[5,21],end:[6,20]},
+  {name:'Cancer',icon:'♋',start:[6,21],end:[7,22]},
+  {name:'Leo',icon:'♌',start:[7,23],end:[8,22]},
+  {name:'Virgo',icon:'♍',start:[8,23],end:[9,22]},
+  {name:'Libra',icon:'♎',start:[9,23],end:[10,22]},
+  {name:'Scorpio',icon:'♏',start:[10,23],end:[11,21]},
+  {name:'Sagittarius',icon:'♐',start:[11,22],end:[12,21]},
+];
+
+function getZodiac(month, day) {
+  for (const z of ZODIAC) {
+    const [sm,sd] = z.start, [em,ed] = z.end;
+    if ((month===sm && day>=sd) || (month===em && day<=ed)) return z;
+    if (sm===12 && em===1) { if (month===12 && day>=sd) return z; if (month===1 && day<=ed) return z; }
+  }
+  return ZODIAC[0];
+}
+
+document.getElementById('calc-btn').addEventListener('click', () => {
+  const dobVal = document.getElementById('dob').value;
+  const asofVal = document.getElementById('as-of').value;
+  if (!dobVal || !asofVal) return;
+
+  const dob = new Date(dobVal); dob.setHours(0,0,0,0);
+  const asof = new Date(asofVal); asof.setHours(0,0,0,0);
+  if (dob >= asof) return;
+
+  // Years
+  let years = asof.getFullYear() - dob.getFullYear();
+  let months = asof.getMonth() - dob.getMonth();
+  let days = asof.getDate() - dob.getDate();
+  if (days < 0) { months--; const prev = new Date(asof.getFullYear(), asof.getMonth(), 0); days += prev.getDate(); }
+  if (months < 0) { years--; months += 12; }
+
+  const totalDays = Math.floor((asof - dob) / 86400000);
+  const totalWeeks = Math.floor(totalDays / 7);
+  const totalMonths = years * 12 + months;
+
+  document.getElementById('r-years').textContent = years.toLocaleString();
+  document.getElementById('r-months').textContent = totalMonths.toLocaleString();
+  document.getElementById('r-days').textContent = days;
+  document.getElementById('r-weeks').textContent = totalWeeks.toLocaleString();
+  document.getElementById('r-total-days').textContent = totalDays.toLocaleString();
+  document.getElementById('r-hours').textContent = (totalDays * 24).toLocaleString();
+
+  // Next birthday
+  let nextBday = new Date(asof.getFullYear(), dob.getMonth(), dob.getDate());
+  if (nextBday <= asof) nextBday.setFullYear(asof.getFullYear() + 1);
+  const daysUntil = Math.ceil((nextBday - asof) / 86400000);
+  document.getElementById('r-bday').textContent = daysUntil === 0 ? '🎉 Today!' : daysUntil.toLocaleString();
+  document.getElementById('r-bday-label').textContent = daysUntil === 0 ? 'Happy Birthday!' : 'Days until next birthday';
+
+  // Zodiac
+  const z = getZodiac(dob.getMonth() + 1, dob.getDate());
+  document.getElementById('z-icon').textContent = z.icon;
+  document.getElementById('z-name').textContent = z.name;
+  document.getElementById('z-dates').textContent = `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.start[0]]} ${z.start[1]} – ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.end[0]]} ${z.end[1]}`;
+
+  document.getElementById('results').style.display = '';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Countdown Timer — Count Down to Any Date | OMIToolKit</title>
+<meta name="description" content="Create a countdown timer to any future date and time. Live countdown in days, hours, minutes and seconds. Free online countdown timer.">
+<link rel="canonical" href="../../tools/countdown-timer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.countdown-display{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.cd-unit{background:#1E1B2E;border-radius:var(--radius-md);padding:20px 8px;text-align:center}
+.cd-num{font-family:var(--font-mono);font-size:clamp(28px,7vw,48px);font-weight:500;color:#A78BFA;line-height:1}
+.cd-label{font-size:12px;color:#6B6B8A;margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.progress-bar{height:8px;background:var(--color-border);border-radius:999px;overflow:hidden;margin-bottom:16px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--color-primary),var(--color-accent));border-radius:999px;transition:width 1s linear}
+.saved-list{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.saved-item{display:flex;align-items:center;justify-content:space-between;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;transition:all .15s}
+.saved-item:hover{border-color:var(--color-primary)}
+.saved-item .s-name{font-weight:500;font-size:14px}
+.saved-item .s-cd{font-family:var(--font-mono);font-size:13px;color:var(--color-primary)}
+.saved-item .s-del{color:#E24B4A;background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+.finished-badge{background:#DCFCE7;color:#16A34A;font-weight:600;font-size:18px;padding:16px;border-radius:var(--radius-md);text-align:center;margin:20px 0}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Countdown Timer</div>
+<div class="container tool-page-header">
+  <h1>Countdown Timer</h1>
+  <p>Count down to any future date or event — live, in days, hours, minutes and seconds.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="field-row"><label class="field-label">Event name</label><input type="text" id="event-name" class="field-input" placeholder="e.g. New Year 2026, Project deadline…" value="New Year 2026"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-row"><label class="field-label">Date</label><input type="date" id="target-date" class="field-input"></div>
+      <div class="field-row"><label class="field-label">Time</label><input type="time" id="target-time" class="field-input" value="00:00"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" id="start-btn" style="flex:1;justify-content:center;padding:13px">Start Countdown</button>
+      <button class="btn btn-outline" id="save-btn">Save</button>
+    </div>
+
+    <div id="finished-badge" class="finished-badge" style="display:none">🎉 Time's up! The event has arrived.</div>
+
+    <div class="countdown-display">
+      <div class="cd-unit"><div class="cd-num" id="cd-days">--</div><div class="cd-label">Days</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-hours">--</div><div class="cd-label">Hours</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-mins">--</div><div class="cd-label">Minutes</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-secs">--</div><div class="cd-label">Seconds</div></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div style="text-align:center;font-size:13px;color:var(--color-text-muted)" id="target-label"></div>
+
+    <div class="saved-list" id="saved-list"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Uses for a countdown timer</h2>
+  <p>Countdown timers are useful for tracking time remaining to product launches, exams, vacations, project deadlines, holidays, birthdays, weddings, or any significant date. By saving multiple countdowns, you can keep an eye on several upcoming events at once without losing track of any.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Set default target to next Jan 1
+const now = new Date();
+const nextYear = new Date(now.getFullYear()+1,0,1);
+document.getElementById('target-date').value = nextYear.toISOString().split('T')[0];
+
+let targetTime = nextYear.getTime();
+let startTime = Date.now();
+let timerInterval = null;
+let savedTimers = JSON.parse(localStorage.getItem('omi-countdowns')||'[]');
+
+function pad(n){return String(n).padStart(2,'0');}
+
+function tick(){
+  const diff = targetTime - Date.now();
+  const finished = diff <= 0;
+  document.getElementById('finished-badge').style.display = finished ? '' : 'none';
+  if(finished){
+    ['days','hours','mins','secs'].forEach(u=>document.getElementById('cd-'+u).textContent='00');
+    document.getElementById('progress-fill').style.width='100%';
+    return;
+  }
+  const days=Math.floor(diff/86400000);
+  const hours=Math.floor((diff%86400000)/3600000);
+  const mins=Math.floor((diff%3600000)/60000);
+  const secs=Math.floor((diff%60000)/1000);
+  document.getElementById('cd-days').textContent=days;
+  document.getElementById('cd-hours').textContent=pad(hours);
+  document.getElementById('cd-mins').textContent=pad(mins);
+  document.getElementById('cd-secs').textContent=pad(secs);
+  const total=targetTime-startTime;
+  const elapsed=Date.now()-startTime;
+  document.getElementById('progress-fill').style.width=Math.min(100,(elapsed/total*100))+'%';
+}
+
+function startCountdown(ts, label){
+  targetTime = ts;
+  startTime = Date.now();
+  if(timerInterval) clearInterval(timerInterval);
+  tick();
+  timerInterval = setInterval(tick,1000);
+  document.getElementById('target-label').textContent = 'Counting down to: '+label;
+}
+
+document.getElementById('start-btn').addEventListener('click',()=>{
+  const d=document.getElementById('target-date').value;
+  const t=document.getElementById('target-time').value||'00:00';
+  const name=document.getElementById('event-name').value||'Event';
+  if(!d) return;
+  const ts=new Date(d+'T'+t).getTime();
+  startCountdown(ts, name+' — '+d+' '+t);
+});
+
+document.getElementById('save-btn').addEventListener('click',()=>{
+  const d=document.getElementById('target-date').value;
+  const t=document.getElementById('target-time').value||'00:00';
+  const name=document.getElementById('event-name').value||'Event';
+  if(!d) return;
+  const ts=new Date(d+'T'+t).getTime();
+  savedTimers.unshift({name,ts});
+  if(savedTimers.length>5) savedTimers.pop();
+  localStorage.setItem('omi-countdowns',JSON.stringify(savedTimers));
+  renderSaved();
+});
+
+function renderSaved(){
+  const list=document.getElementById('saved-list');
+  list.innerHTML='';
+  savedTimers.forEach((s,i)=>{
+    const diff=s.ts-Date.now();
+    const days=diff>0?Math.floor(diff/86400000):0;
+    const item=document.createElement('div');
+    item.className='saved-item';
+    item.innerHTML=`<div><div class="s-name">${s.name}</div><div style="font-size:12px;color:var(--color-text-muted)">${new Date(s.ts).toLocaleString()}</div></div><div class="s-cd">${diff>0?days+'d remaining':'Finished'}</div><button class="s-del" data-i="${i}" title="Remove">×</button>`;
+    item.addEventListener('click',e=>{if(e.target.classList.contains('s-del'))return;startCountdown(s.ts,s.name);});
+    item.querySelector('.s-del').addEventListener('click',()=>{savedTimers.splice(i,1);localStorage.setItem('omi-countdowns',JSON.stringify(savedTimers));renderSaved();});
+    list.appendChild(item);
+  });
+}
+
+renderSaved();
+startCountdown(nextYear.getTime(),'New Year 2026');
+</script>
+</body>
+</html>

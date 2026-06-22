@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Percentage Calculator Online | OMIToolKit</title>
+<meta name="description" content="Calculate percentages instantly — find % of a number, percentage change, or what percentage X is of Y. Free online percentage calculator.">
+<link rel="canonical" href="../../tools/percentage-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+@media(max-width:540px){.mode-cards{grid-template-columns:1fr}}
+.mode-card{border:2px solid var(--color-border);border-radius:var(--radius-md);padding:16px;cursor:pointer;transition:all .15s;text-align:center}
+.mode-card.active{border-color:var(--color-primary);background:#F4F3FE}
+.mode-card .icon{font-size:26px;margin-bottom:8px}
+.mode-card .title{font-size:13px;font-weight:500}
+.calc-panel{display:none}
+.calc-panel.active{display:block}
+.answer-box{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));border-radius:var(--radius-md);padding:24px;text-align:center;margin-top:16px;color:#fff}
+.answer-num{font-size:42px;font-weight:600;font-family:var(--font-display);line-height:1}
+.answer-label{font-size:14px;opacity:.85;margin-top:6px}
+.formula-hint{font-size:12.5px;color:var(--color-text-muted);margin-top:10px;text-align:center;font-style:italic}
+.inline-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.inline-row span{font-size:18px;font-weight:500;color:var(--color-text-muted);flex-shrink:0}
+.inline-row input{flex:1;min-width:80px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Percentage Calculator</div>
+<div class="container tool-page-header">
+  <h1>Percentage Calculator</h1>
+  <p>Three types of percentage calculations — pick the one you need.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="mode-cards">
+      <div class="mode-card active" data-mode="0"><div class="icon">%</div><div class="title">% of a number</div></div>
+      <div class="mode-card" data-mode="1"><div class="icon">↕</div><div class="title">% change</div></div>
+      <div class="mode-card" data-mode="2"><div class="icon">÷</div><div class="title">X is what % of Y</div></div>
+    </div>
+
+    <!-- Mode 0: What is X% of Y? -->
+    <div class="calc-panel active" id="panel-0">
+      <div class="field-row">
+        <label class="field-label">What is</label>
+        <div class="inline-row">
+          <input type="number" id="p0-pct" class="field-input" placeholder="20" step="any">
+          <span>% of</span>
+          <input type="number" id="p0-num" class="field-input" placeholder="500" step="any">
+        </div>
+      </div>
+      <div class="formula-hint">Result = (Percentage ÷ 100) × Number</div>
+      <div class="answer-box" id="ans-0" style="display:none"><div class="answer-num" id="ans-0-num"></div><div class="answer-label" id="ans-0-label"></div></div>
+      <button class="btn btn-primary" onclick="calc(0)" style="width:100%;justify-content:center;margin-top:14px;padding:13px">Calculate</button>
+    </div>
+
+    <!-- Mode 1: % change from X to Y -->
+    <div class="calc-panel" id="panel-1">
+      <div class="field-row"><label class="field-label">From (original value)</label><input type="number" id="p1-from" class="field-input" placeholder="200" step="any"></div>
+      <div class="field-row"><label class="field-label">To (new value)</label><input type="number" id="p1-to" class="field-input" placeholder="250" step="any"></div>
+      <div class="formula-hint">% Change = ((New − Old) ÷ Old) × 100</div>
+      <div class="answer-box" id="ans-1" style="display:none"><div class="answer-num" id="ans-1-num"></div><div class="answer-label" id="ans-1-label"></div></div>
+      <button class="btn btn-primary" onclick="calc(1)" style="width:100%;justify-content:center;margin-top:14px;padding:13px">Calculate</button>
+    </div>
+
+    <!-- Mode 2: X is what % of Y? -->
+    <div class="calc-panel" id="panel-2">
+      <div class="field-row">
+        <label class="field-label">Value</label>
+        <div class="inline-row">
+          <input type="number" id="p2-x" class="field-input" placeholder="75" step="any">
+          <span>is what % of</span>
+          <input type="number" id="p2-y" class="field-input" placeholder="300" step="any">
+        </div>
+      </div>
+      <div class="formula-hint">Result = (X ÷ Y) × 100</div>
+      <div class="answer-box" id="ans-2" style="display:none"><div class="answer-num" id="ans-2-num"></div><div class="answer-label" id="ans-2-label"></div></div>
+      <button class="btn btn-primary" onclick="calc(2)" style="width:100%;justify-content:center;margin-top:14px;padding:13px">Calculate</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Which percentage calculator do I need?</h2>
+  <p>Use <strong>"% of a number"</strong> when you have a percentage and a total and want to find the actual amount — for example, 20% off a $500 item. Use <strong>"% change"</strong> when you want to know how much something increased or decreased in percentage terms — stock prices, sales figures, or weight loss. Use <strong>"X is what % of Y"</strong> when you have two numbers and want to express one as a percentage of the other — for example, a test score of 75 out of 90.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let activeMode = 0;
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+    card.classList.add('active');
+    activeMode = +card.dataset.mode;
+    document.getElementById('panel-'+activeMode).classList.add('active');
+  });
+});
+
+function fmt(n) { return parseFloat(n.toFixed(6)).toLocaleString(undefined,{maximumFractionDigits:6}); }
+
+function calc(mode) {
+  if (mode === 0) {
+    const pct = parseFloat(document.getElementById('p0-pct').value);
+    const num = parseFloat(document.getElementById('p0-num').value);
+    if (isNaN(pct)||isNaN(num)) return;
+    const res = (pct/100)*num;
+    document.getElementById('ans-0-num').textContent = fmt(res);
+    document.getElementById('ans-0-label').textContent = `${fmt(pct)}% of ${fmt(num)} = ${fmt(res)}`;
+    document.getElementById('ans-0').style.display = '';
+  } else if (mode === 1) {
+    const from = parseFloat(document.getElementById('p1-from').value);
+    const to = parseFloat(document.getElementById('p1-to').value);
+    if (isNaN(from)||isNaN(to)||from===0) return;
+    const change = ((to-from)/Math.abs(from))*100;
+    document.getElementById('ans-1-num').textContent = (change>=0?'+':'')+fmt(change)+'%';
+    document.getElementById('ans-1-label').textContent = change>=0 ? `Increased by ${fmt(Math.abs(change))}%` : `Decreased by ${fmt(Math.abs(change))}%`;
+    document.getElementById('ans-1').style.display = '';
+  } else {
+    const x = parseFloat(document.getElementById('p2-x').value);
+    const y = parseFloat(document.getElementById('p2-y').value);
+    if (isNaN(x)||isNaN(y)||y===0) return;
+    const res = (x/y)*100;
+    document.getElementById('ans-2-num').textContent = fmt(res)+'%';
+    document.getElementById('ans-2-label').textContent = `${fmt(x)} is ${fmt(res)}% of ${fmt(y)}`;
+    document.getElementById('ans-2').style.display = '';
+  }
+}
+</script>
+</body>
+</html>

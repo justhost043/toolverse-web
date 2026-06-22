@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Random Number Generator Online | OMIToolKit</title>
+<meta name="description" content="Generate random numbers in any range. Pick multiple numbers, ensure uniqueness, or roll virtual dice. Free online random number generator.">
+<link rel="canonical" href="../../tools/random-number-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.big-result{background:linear-gradient(135deg,#1E1B2E,#2D2A4A);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;margin:20px 0;cursor:pointer;transition:transform .1s;position:relative;overflow:hidden}
+.big-result:hover{transform:scale(1.01)}
+.big-result:active{transform:scale(.98)}
+.big-num{font-family:var(--font-mono);font-size:clamp(42px,10vw,72px);font-weight:500;color:#A78BFA;letter-spacing:-.02em}
+.big-hint{font-size:13px;color:#6B6B8A;margin-top:10px}
+.multi-output{background:#1E1B2E;border-radius:var(--radius-md);padding:20px;font-family:var(--font-mono);font-size:15px;color:#A78BFA;min-height:80px;line-height:2;word-break:break-all;margin-top:16px}
+.dice-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0}
+.die{background:#F4F3FE;border:2px solid var(--color-border);border-radius:var(--radius-sm);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .15s;user-select:none}
+.die:hover{border-color:var(--color-primary);background:#EDE9FE;transform:scale(1.05)}
+.die.rolled{border-color:var(--color-primary);background:var(--color-primary);color:#fff}
+.history-list{max-height:120px;overflow-y:auto;font-family:var(--font-mono);font-size:13px;color:var(--color-text-muted);margin-top:10px;line-height:1.8}
+.mode-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.mode-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Random Number Generator</div>
+<div class="container tool-page-header">
+  <h1>Random Number Generator</h1>
+  <p>Generate truly random numbers in any range — single, multiple, or roll virtual dice.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-m="single">Single number</button>
+      <button class="mode-tab" data-m="multi">Multiple numbers</button>
+      <button class="mode-tab" data-m="dice">Dice roller</button>
+    </div>
+
+    <!-- Single -->
+    <div id="m-single">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field-row"><label class="field-label">Min</label><input type="number" id="s-min" class="field-input" value="1"></div>
+        <div class="field-row"><label class="field-label">Max</label><input type="number" id="s-max" class="field-input" value="100"></div>
+      </div>
+      <div class="big-result" id="big-result" title="Click to generate">
+        <div class="big-num" id="big-num">?</div>
+        <div class="big-hint">Click anywhere here to generate</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" id="gen-single" style="flex:1;justify-content:center">Generate</button>
+        <button class="btn btn-outline" id="copy-single">Copy</button>
+      </div>
+      <div class="history-list" id="history"></div>
+    </div>
+
+    <!-- Multi -->
+    <div id="m-multi" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="field-row"><label class="field-label">Min</label><input type="number" id="m-min" class="field-input" value="1"></div>
+        <div class="field-row"><label class="field-label">Max</label><input type="number" id="m-max" class="field-input" value="100"></div>
+        <div class="field-row"><label class="field-label">Count</label><input type="number" id="m-count" class="field-input" value="10" min="1" max="1000"></div>
+      </div>
+      <label class="checkbox-item" style="margin:10px 0"><input type="checkbox" id="m-unique" checked> No duplicates (unique)</label>
+      <div class="multi-output" id="multi-out">Press Generate to see numbers…</div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-primary" id="gen-multi" style="flex:1;justify-content:center">Generate</button>
+        <button class="btn btn-outline" id="copy-multi">Copy</button>
+        <button class="btn btn-outline" id="sort-multi">Sort</button>
+      </div>
+    </div>
+
+    <!-- Dice -->
+    <div id="m-dice" style="display:none">
+      <div class="field-row">
+        <label class="field-label">Number of dice</label>
+        <div class="range-row">
+          <input type="range" id="dice-count" min="1" max="6" value="1">
+          <span class="range-value" id="dice-count-val">1</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Dice type</label>
+        <select id="dice-type" class="field-select">
+          <option value="6">D6 (standard)</option>
+          <option value="4">D4</option>
+          <option value="8">D8</option>
+          <option value="10">D10</option>
+          <option value="12">D12</option>
+          <option value="20">D20</option>
+          <option value="100">D100</option>
+        </select>
+      </div>
+      <div class="dice-grid" id="dice-display"></div>
+      <div style="text-align:center;font-size:14px;color:var(--color-text-muted);margin-bottom:12px">Total: <strong id="dice-total" style="color:var(--color-primary);font-size:18px">—</strong></div>
+      <button class="btn btn-primary" id="roll-dice" style="width:100%;justify-content:center;padding:13px">🎲 Roll</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Is this truly random?</h2>
+  <p>This generator uses your browser's <code>crypto.getRandomValues()</code> — the same cryptographically secure source used in the password generator. It's far more random than <code>Math.random()</code>, which uses a predictable algorithm. For lotteries, games, or any purpose where fairness matters, cryptographic randomness is the right choice.</p>
+  <h2>Common uses for a random number generator</h2>
+  <p>Picking a lottery number, deciding who goes first in a game, selecting a random item from a list, running a classroom raffle, making a decision when you're stuck between options, rolling dice for board games or RPGs online, or generating sample data for testing software.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const history = [];
+
+function secureRandInt(min,max){const range=max-min+1;const arr=new Uint32Array(1);crypto.getRandomValues(arr);return min+(arr[0]%range);}
+
+// Mode tabs
+document.querySelectorAll('.mode-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    ['single','multi','dice'].forEach(m=>document.getElementById('m-'+m).style.display='none');
+    document.getElementById('m-'+tab.dataset.m).style.display='';
+  });
+});
+
+// Single
+function genSingle(){
+  const min=parseInt(document.getElementById('s-min').value)||1;
+  const max=parseInt(document.getElementById('s-max').value)||100;
+  if(min>max) return;
+  const n=secureRandInt(Math.min(min,max),Math.max(min,max));
+  document.getElementById('big-num').textContent=n.toLocaleString();
+  history.unshift(n);
+  if(history.length>20) history.pop();
+  document.getElementById('history').textContent='History: '+history.join(', ');
+  return n;
+}
+document.getElementById('gen-single').addEventListener('click',genSingle);
+document.getElementById('big-result').addEventListener('click',genSingle);
+document.getElementById('copy-single').addEventListener('click',()=>{const v=document.getElementById('big-num').textContent;if(v!=='?')navigator.clipboard.writeText(v);});
+
+// Multi
+let lastMulti=[];
+function genMulti(){
+  const min=parseInt(document.getElementById('m-min').value)||1;
+  const max=parseInt(document.getElementById('m-max').value)||100;
+  const count=Math.min(1000,Math.max(1,parseInt(document.getElementById('m-count').value)||10));
+  const unique=document.getElementById('m-unique').checked;
+  const out=[];
+  if(unique){
+    const pool=[];for(let i=min;i<=max;i++)pool.push(i);
+    for(let i=pool.length-1;i>0;i--){const j=secureRandInt(0,i);[pool[i],pool[j]]=[pool[j],pool[i]];}
+    lastMulti=pool.slice(0,Math.min(count,pool.length));
+  } else {
+    for(let i=0;i<count;i++) out.push(secureRandInt(Math.min(min,max),Math.max(min,max)));
+    lastMulti=out;
+  }
+  document.getElementById('multi-out').textContent=lastMulti.join(', ');
+}
+document.getElementById('gen-multi').addEventListener('click',genMulti);
+document.getElementById('copy-multi').addEventListener('click',()=>navigator.clipboard.writeText(lastMulti.join(', ')));
+document.getElementById('sort-multi').addEventListener('click',()=>{lastMulti.sort((a,b)=>a-b);document.getElementById('multi-out').textContent=lastMulti.join(', ');});
+
+// Dice
+const diceCountSlider=document.getElementById('dice-count');
+diceCountSlider.addEventListener('input',()=>document.getElementById('dice-count-val').textContent=diceCountSlider.value);
+const DIE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+document.getElementById('roll-dice').addEventListener('click',()=>{
+  const count=parseInt(diceCountSlider.value);
+  const sides=parseInt(document.getElementById('dice-type').value);
+  const grid=document.getElementById('dice-display');
+  grid.innerHTML='';
+  let total=0;
+  for(let i=0;i<count;i++){
+    const val=secureRandInt(1,sides);
+    total+=val;
+    const die=document.createElement('div');
+    die.className='die rolled';
+    die.textContent=sides===6&&val<=6?DIE_FACES[val-1]:val;
+    grid.appendChild(die);
+  }
+  document.getElementById('dice-total').textContent=total;
+});
+</script>
+</body>
+</html>
