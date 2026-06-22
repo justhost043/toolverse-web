@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://justhost043.github.io/toolverse-web/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://justhost043.github.io/toolverse-web/tools/qr-code-generator/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://justhost043.github.io/toolverse-web/tools/password-generator/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <url><loc>https://justhost043.github.io/toolverse-web/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/qr-code-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/password-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/image-compressor/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/word-counter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/unit-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/text-case-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/base64-encoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/about/</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
 </urlset>

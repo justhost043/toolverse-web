@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Word & Character Counter Online | OMIToolKit</title>
+<meta name="description" content="Count words, characters, sentences, paragraphs and reading time instantly. Free online word counter — no sign-up, runs in your browser.">
+<link rel="canonical" href="../../tools/word-counter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Word & Character Counter","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free browser-based word, character, sentence and paragraph counter with reading time estimate."}</script>
+<style>
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.stat-box{background:#F4F3FE;border-radius:var(--radius-sm);padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:600;color:var(--color-primary);line-height:1}
+.stat-lbl{font-size:12px;color:var(--color-text-muted);margin-top:4px}
+textarea.field-input{resize:vertical;min-height:220px;font-family:var(--font-mono);font-size:14px;line-height:1.6}
+.keyword-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.keyword-table th{text-align:left;padding:8px 10px;background:#F4F3FE;font-weight:500}
+.keyword-table td{padding:8px 10px;border-bottom:1px solid var(--color-border)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Word Counter</div>
+<div class="container tool-page-header">
+  <h1>Word &amp; Character Counter</h1>
+  <p>Paste or type your text below — stats update in real time.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:760px">
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num" id="s-words">0</div><div class="stat-lbl">Words</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-chars-no">0</div><div class="stat-lbl">Chars (no spaces)</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-sent">0</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-para">0</div><div class="stat-lbl">Paragraphs</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-read">0m</div><div class="stat-lbl">Read time</div></div>
+    </div>
+    <div class="field-row">
+      <textarea id="txt" class="field-input" placeholder="Start typing or paste your text here…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn btn-outline" id="btn-clear">Clear</button>
+      <button class="btn btn-outline" id="btn-copy">Copy text</button>
+    </div>
+    <div style="margin-top:22px;border-top:1px solid var(--color-border);padding-top:18px">
+      <div class="field-label" style="margin-bottom:10px">Top keywords</div>
+      <table class="keyword-table"><thead><tr><th>Word</th><th>Count</th><th>Density</th></tr></thead>
+      <tbody id="kw-body"></tbody></table>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why use a word counter?</h2>
+  <p>Whether you're writing a blog post, a college essay, a product description, or a tweet, knowing your word and character count matters. SEO articles typically target specific lengths, academic submissions enforce word limits, and social platforms cap character counts. This tool gives you all those numbers at once — plus a reading time estimate so you can match your content length to your audience's attention span.</p>
+  <h2>How reading time is calculated</h2>
+  <p>The reading time shown assumes an average adult reading speed of 200 words per minute, which is the widely-used standard for general web content. For technical or complex writing, the real reading time is typically higher; for simple, scannable content, it may be lower.</p>
+  <h2>What is keyword density?</h2>
+  <p>Keyword density shows how often a particular word appears as a percentage of total words. SEO writers track this to avoid "keyword stuffing" — overusing the same word to the point where search engines flag the content as low quality. Most guidelines recommend keeping any single keyword below 2–3% of total content.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div></footer>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const txt=document.getElementById('txt');
+const stopwords=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','it','as','be','was','are','were','this','that','i','you','he','she','we','they','not','have','has','had','do','did','will','can','would','could','should','may','might','their','there','then','than','so','if','my','your','his','her','our','its']);
+
+function update(){
+  const v=txt.value;
+  const words=v.trim()===''?[]:v.trim().split(/\s+/);
+  const wc=words.length;
+  document.getElementById('s-words').textContent=wc.toLocaleString();
+  document.getElementById('s-chars').textContent=v.length.toLocaleString();
+  document.getElementById('s-chars-no').textContent=v.replace(/\s/g,'').length.toLocaleString();
+  const sent=(v.match(/[.!?]+/g)||[]).length;
+  document.getElementById('s-sent').textContent=sent;
+  const para=v.trim()===''?0:v.trim().split(/\n\s*\n/).filter(p=>p.trim()).length||1;
+  document.getElementById('s-para').textContent=para;
+  const mins=Math.ceil(wc/200);
+  document.getElementById('s-read').textContent=mins<1?'<1m':mins+'m';
+  // keyword density
+  const freq={};
+  words.forEach(w=>{const k=w.toLowerCase().replace(/[^a-z]/g,'');if(k.length>2&&!stopwords.has(k))freq[k]=(freq[k]||0)+1;});
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const tbody=document.getElementById('kw-body');
+  tbody.innerHTML=sorted.map(([w,c])=>`<tr><td>${w}</td><td>${c}</td><td>${wc?((c/wc)*100).toFixed(1)+'%':'—'}</td></tr>`).join('');
+}
+txt.addEventListener('input',update);
+document.getElementById('btn-clear').addEventListener('click',()=>{txt.value='';update();});
+document.getElementById('btn-copy').addEventListener('click',()=>navigator.clipboard.writeText(txt.value));
+update();
+</script>
+</body>
+</html>

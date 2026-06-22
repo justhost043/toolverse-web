@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Base64 Encoder & Decoder Online | OMIToolKit</title>
+<meta name="description" content="Encode and decode Base64 strings instantly. Also encode images and files to Base64. Free, browser-based, nothing is uploaded.">
+<link rel="canonical" href="../../tools/base64-encoder/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.mode-row{display:flex;gap:10px;margin-bottom:20px}
+.mode-btn{flex:1;padding:11px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+textarea.field-input{resize:vertical;min-height:150px;font-family:var(--font-mono);font-size:13.5px}
+.file-drop{border:2px dashed var(--color-border);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;color:var(--color-text-muted);font-size:14px;transition:border-color .15s}
+.file-drop:hover,.file-drop.drag{border-color:var(--color-primary);color:var(--color-primary)}
+.error-msg{color:#E24B4A;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Base64 Encoder</div>
+<div class="container tool-page-header">
+  <h1>Base64 Encoder &amp; Decoder</h1>
+  <p>Encode text or files to Base64, or decode Base64 strings back to plain text.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:700px">
+    <div class="mode-row">
+      <button class="mode-btn active" id="btn-encode">Encode → Base64</button>
+      <button class="mode-btn" id="btn-decode">Decode ← Base64</button>
+      <button class="mode-btn" id="btn-file">File → Base64</button>
+    </div>
+
+    <div id="panel-encode">
+      <div class="field-row">
+        <label class="field-label">Plain text input</label>
+        <textarea id="enc-input" class="field-input" placeholder="Enter text to encode…"></textarea>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Base64 output</label>
+        <textarea id="enc-output" class="field-input" readonly style="background:#F9F9F9"></textarea>
+      </div>
+      <button class="btn btn-primary" id="copy-enc">Copy Base64</button>
+    </div>
+
+    <div id="panel-decode" style="display:none">
+      <div class="field-row">
+        <label class="field-label">Base64 input</label>
+        <textarea id="dec-input" class="field-input" placeholder="Paste Base64 string to decode…"></textarea>
+      </div>
+      <div id="dec-error" class="error-msg"></div>
+      <div class="field-row" style="margin-top:10px">
+        <label class="field-label">Decoded output</label>
+        <textarea id="dec-output" class="field-input" readonly style="background:#F9F9F9"></textarea>
+      </div>
+      <button class="btn btn-primary" id="copy-dec">Copy decoded</button>
+    </div>
+
+    <div id="panel-file" style="display:none">
+      <div class="file-drop" id="file-drop">
+        <div style="font-size:28px;margin-bottom:8px">📁</div>
+        Drop any file here, or click to select
+        <input type="file" id="file-input" style="display:none">
+      </div>
+      <div class="field-row" style="margin-top:16px">
+        <label class="field-label">Base64 output (data URI)</label>
+        <textarea id="file-output" class="field-input" readonly style="background:#F9F9F9;min-height:100px"></textarea>
+      </div>
+      <button class="btn btn-primary" id="copy-file">Copy Base64</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is Base64 encoding?</h2>
+  <p>Base64 is a way of converting binary data (images, files, bytes) into a plain text string made up of 64 safe characters. It's used widely in web development to embed images directly into HTML or CSS without a separate file request, and in APIs to transmit binary data as JSON strings.</p>
+  <h2>Common use cases</h2>
+  <p>Developers use Base64 to embed small images or icons directly in HTML emails (preventing broken image links), to pass binary data through systems that only handle text (like JSON APIs), and to encode authentication credentials in HTTP headers.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const panels={encode:document.getElementById('panel-encode'),decode:document.getElementById('panel-decode'),file:document.getElementById('panel-file')};
+const modeBtns={encode:document.getElementById('btn-encode'),decode:document.getElementById('btn-decode'),file:document.getElementById('btn-file')};
+function switchMode(m){Object.values(panels).forEach(p=>p.style.display='none');Object.values(modeBtns).forEach(b=>b.classList.remove('active'));panels[m].style.display='';modeBtns[m].classList.add('active');}
+Object.keys(modeBtns).forEach(m=>modeBtns[m].addEventListener('click',()=>switchMode(m)));
+
+// Encode
+const encIn=document.getElementById('enc-input'),encOut=document.getElementById('enc-output');
+encIn.addEventListener('input',()=>{try{encOut.value=btoa(unescape(encodeURIComponent(encIn.value)));}catch(e){encOut.value='Error encoding';}});
+document.getElementById('copy-enc').addEventListener('click',()=>navigator.clipboard.writeText(encOut.value));
+
+// Decode
+const decIn=document.getElementById('dec-input'),decOut=document.getElementById('dec-output'),decErr=document.getElementById('dec-error');
+decIn.addEventListener('input',()=>{try{decOut.value=decodeURIComponent(escape(atob(decIn.value.trim())));decErr.textContent='';}catch(e){decOut.value='';decErr.textContent='Invalid Base64 string';}});
+document.getElementById('copy-dec').addEventListener('click',()=>navigator.clipboard.writeText(decOut.value));
+
+// File
+const fileDrop=document.getElementById('file-drop'),fileInput=document.getElementById('file-input'),fileOut=document.getElementById('file-output');
+fileDrop.addEventListener('click',()=>fileInput.click());
+fileDrop.addEventListener('dragover',e=>{e.preventDefault();fileDrop.classList.add('drag');});
+fileDrop.addEventListener('dragleave',()=>fileDrop.classList.remove('drag'));
+fileDrop.addEventListener('drop',e=>{e.preventDefault();fileDrop.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)readFile(f);});
+fileInput.addEventListener('change',()=>{if(fileInput.files[0])readFile(fileInput.files[0]);});
+function readFile(f){const r=new FileReader();r.onload=()=>{fileOut.value=r.result;};r.readAsDataURL(f);}
+document.getElementById('copy-file').addEventListener('click',()=>navigator.clipboard.writeText(fileOut.value));
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Online Image Compressor — Reduce Image Size | OMIToolKit</title>
+<meta name="description" content="Compress JPEG and PNG images online for free. Reduce file size without losing quality. Runs in your browser — no upload to any server.">
+<link rel="canonical" href="../../tools/image-compressor/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.file-drop{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;cursor:pointer;color:var(--color-text-muted);transition:all .15s}
+.file-drop:hover,.file-drop.drag{border-color:var(--color-primary);background:#F4F3FE}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.preview-box{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:#F9F9F9}
+.preview-box img{width:100%;height:200px;object-fit:contain;display:block;background:#f0f0f0}
+.preview-info{padding:12px 14px;font-size:13px}
+.preview-info strong{display:block;font-weight:500;margin-bottom:2px}
+.preview-info span{color:var(--color-text-muted)}
+.saving-badge{display:inline-block;background:#DCFCE7;color:#16A34A;font-weight:500;font-size:12px;padding:3px 10px;border-radius:999px;margin-left:8px}
+.saving-badge.red{background:#FEE2E2;color:#E24B4A}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Image Compressor</div>
+<div class="container tool-page-header">
+  <h1>Image Compressor</h1>
+  <p>Reduce JPEG and PNG file sizes in your browser — no uploads, no servers, no limits.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:760px">
+
+    <div class="file-drop" id="drop-zone">
+      <div style="font-size:36px;margin-bottom:10px">🖼️</div>
+      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop image here or click to select</div>
+      <div style="font-size:13px;margin-top:6px">Supports JPEG, PNG, WebP</div>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
+    </div>
+
+    <div id="controls" style="display:none;margin-top:22px">
+      <div class="field-row">
+        <label class="field-label">Quality — <span id="quality-val">80</span>%</label>
+        <div class="range-row">
+          <input type="range" id="quality" min="10" max="100" value="80">
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Max width (px) — 0 = no resize</label>
+        <input type="number" id="max-width" class="field-input" value="0" min="0" step="100">
+      </div>
+      <button class="btn btn-primary" id="compress-btn" style="width:100%;justify-content:center;padding:13px">Compress image</button>
+    </div>
+
+    <div id="preview-grid" class="preview-grid" style="display:none">
+      <div class="preview-box">
+        <img id="orig-img" alt="Original">
+        <div class="preview-info">
+          <strong>Original</strong>
+          <span id="orig-info"></span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <img id="comp-img" alt="Compressed">
+        <div class="preview-info">
+          <strong>Compressed <span id="saving-badge" class="saving-badge"></span></strong>
+          <span id="comp-info"></span>
+        </div>
+      </div>
+    </div>
+    <button id="download-btn" class="btn btn-primary" style="display:none;margin-top:14px;width:100%;justify-content:center">Download compressed image</button>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why compress images?</h2>
+  <p>Large image files are one of the most common reasons web pages load slowly. A high-quality photo straight from a camera can be 5–10MB; the same image compressed for web use can be under 200KB with almost no visible quality loss. Faster pages rank better in search results, reduce bounce rates, and give visitors a better experience across all devices.</p>
+  <h2>How this compressor works</h2>
+  <p>Your image is drawn onto an HTML Canvas element at the quality level you choose, then exported using the browser's built-in JPEG or WebP encoding. The entire process happens on your device — the image bytes never leave your browser, making this compressor safe for confidential documents, personal photos, or any image you'd rather not send to a third-party server.</p>
+  <h2>JPEG vs PNG — what format should you use?</h2>
+  <p>JPEG is best for photos and images with gradients — it produces much smaller files but uses lossy compression (some data is permanently removed). PNG is best for logos, screenshots, and images with text or sharp edges — it uses lossless compression but produces larger files. If the original is PNG and file size matters more than transparency, this tool will convert it to JPEG during compression.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const dropZone=document.getElementById('drop-zone'),fileInput=document.getElementById('file-input');
+const controls=document.getElementById('controls'),previewGrid=document.getElementById('preview-grid');
+const origImg=document.getElementById('orig-img'),compImg=document.getElementById('comp-img');
+const origInfo=document.getElementById('orig-info'),compInfo=document.getElementById('comp-info');
+const qualitySlider=document.getElementById('quality'),qualityVal=document.getElementById('quality-val');
+const savingBadge=document.getElementById('saving-badge'),downloadBtn=document.getElementById('download-btn');
+let originalFile=null,compressedBlob=null;
+
+function fmt(bytes){if(bytes>1048576)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1024).toFixed(0)+' KB';}
+
+dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)loadFile(f);});
+fileInput.addEventListener('change',()=>{if(fileInput.files[0])loadFile(fileInput.files[0]);});
+qualitySlider.addEventListener('input',()=>qualityVal.textContent=qualitySlider.value);
+
+function loadFile(f){
+  originalFile=f;
+  const url=URL.createObjectURL(f);
+  origImg.src=url;
+  origInfo.textContent=`${f.name} — ${fmt(f.size)}`;
+  controls.style.display='';
+  previewGrid.style.display='none';
+  downloadBtn.style.display='none';
+}
+
+document.getElementById('compress-btn').addEventListener('click',()=>{
+  if(!originalFile)return;
+  const q=parseInt(qualitySlider.value)/100;
+  const maxW=parseInt(document.getElementById('max-width').value)||0;
+  const img=new Image();
+  img.onload=()=>{
+    let w=img.width,h=img.height;
+    if(maxW>0&&w>maxW){h=Math.round(h*(maxW/w));w=maxW;}
+    const canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    canvas.toBlob(blob=>{
+      compressedBlob=blob;
+      const url=URL.createObjectURL(blob);
+      compImg.src=url;
+      const saving=((1-blob.size/originalFile.size)*100).toFixed(1);
+      compInfo.textContent=`${w}×${h}px — ${fmt(blob.size)}`;
+      savingBadge.textContent=(saving>0?'−':'+')+(Math.abs(saving))+'%';
+      savingBadge.className='saving-badge'+(saving<0?' red':'');
+      previewGrid.style.display='grid';
+      downloadBtn.style.display='block';
+    },'image/jpeg',q);
+  };
+  img.src=URL.createObjectURL(originalFile);
+});
+
+downloadBtn.addEventListener('click',()=>{
+  if(!compressedBlob)return;
+  const a=document.createElement('a');
+  a.download='compressed-'+( originalFile.name.replace(/\.[^.]+$/,'')+'.jpg');
+  a.href=URL.createObjectURL(compressedBlob);
+  a.click();
+});
+</script>
+</body>
+</html>
