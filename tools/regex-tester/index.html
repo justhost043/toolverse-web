@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Regex Tester & Debugger Online | OMIToolKit</title>
+<meta name="description" content="Test regular expressions online with live match highlighting. See capture groups, match count, and test replacements. Free browser-based regex tester.">
+<link rel="canonical" href="../../tools/regex-tester/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.regex-input-row{display:flex;align-items:center;gap:0;background:#1E1B2E;border-radius:var(--radius-sm);border:1px solid #3D3A5C;overflow:hidden;margin-bottom:4px}
+.regex-slash{padding:0 10px;color:#6B6B8A;font-family:var(--font-mono);font-size:18px;user-select:none}
+.regex-input{flex:1;border:none;background:transparent;font-family:var(--font-mono);font-size:15px;color:#A78BFA;padding:12px 0;outline:none}
+.regex-flags{width:80px;border:none;border-left:1px solid #3D3A5C;background:transparent;font-family:var(--font-mono);font-size:14px;color:#86EFAC;padding:12px 10px;outline:none}
+.test-area{min-height:140px;resize:vertical;font-family:var(--font-mono);font-size:14px;line-height:1.7}
+.highlighted-area{min-height:140px;background:#1E1B2E;border-radius:var(--radius-sm);padding:14px;font-family:var(--font-mono);font-size:14px;line-height:1.7;color:#E8E6F0;white-space:pre-wrap;word-break:break-all;border:1px solid #3D3A5C}
+mark{background:#7C3AED;color:#fff;border-radius:2px;padding:0 1px}
+mark.g1{background:#B45309}mark.g2{background:#0E7490}mark.g3{background:#065F46}
+.match-list{margin-top:12px;max-height:200px;overflow-y:auto}
+.match-item{padding:7px 10px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:6px;margin-bottom:6px;font-family:var(--font-mono);font-size:13px}
+.match-num{font-weight:500;color:var(--color-primary);margin-right:8px}
+.status-bar{font-size:13px;padding:8px 0;min-height:24px;font-weight:500}
+.status-bar.ok{color:#16A34A}.status-bar.err{color:#E24B4A}.status-bar.none{color:var(--color-text-muted)}
+.tab-row{display:flex;gap:8px;margin-bottom:14px}
+.tab-btn{padding:7px 16px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.tab-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Regex Tester</div>
+<div class="container tool-page-header">
+  <h1>Regex Tester</h1>
+  <p>Test regular expressions live — see matches highlighted, groups listed, and try replacements.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:800px">
+    <div class="field-row">
+      <label class="field-label">Regular expression</label>
+      <div class="regex-input-row">
+        <span class="regex-slash">/</span>
+        <input class="regex-input" id="regex-inp" placeholder="Enter your regex…" spellcheck="false">
+        <span class="regex-slash">/</span>
+        <input class="regex-flags" id="regex-flags" value="g" placeholder="flags" maxlength="6" spellcheck="false" title="Flags: g=global i=ignore case m=multiline s=dotAll">
+      </div>
+      <div class="status-bar" id="status-bar">Enter a regex above</div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" data-tab="match">Match</button>
+      <button class="tab-btn" data-tab="replace">Replace</button>
+    </div>
+
+    <div id="tab-match">
+      <div class="field-row"><label class="field-label">Test string</label><textarea id="test-str" class="field-input test-area" placeholder="Enter text to test against…"></textarea></div>
+      <div class="field-row"><label class="field-label">Matches highlighted</label><div class="highlighted-area" id="highlighted"></div></div>
+      <div class="match-list" id="match-list"></div>
+    </div>
+
+    <div id="tab-replace" style="display:none">
+      <div class="field-row"><label class="field-label">Test string</label><textarea id="rep-str" class="field-input test-area" placeholder="Enter text to apply replacement to…"></textarea></div>
+      <div class="field-row"><label class="field-label">Replacement (use $1 $2 for groups)</label><input type="text" id="rep-with" class="field-input" placeholder="Replacement string…" style="font-family:var(--font-mono)"></div>
+      <div class="field-row"><label class="field-label">Result</label><div class="highlighted-area" id="rep-result"></div></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What are regular expressions?</h2>
+  <p>Regular expressions (regex) are patterns used to match character combinations in text. They're used in every programming language for searching, validating, and transforming text — from checking if an email address is valid, to finding all URLs in a document, to reformatting dates from one format to another.</p>
+  <h2>Common regex flags</h2>
+  <p><strong>g</strong> (global) — find all matches, not just the first. <strong>i</strong> (case-insensitive) — match regardless of uppercase or lowercase. <strong>m</strong> (multiline) — ^ and $ match start/end of each line, not just the whole string. <strong>s</strong> (dotAll) — make . match newlines too.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-match').style.display=btn.dataset.tab==='match'?'':'none';
+    document.getElementById('tab-replace').style.display=btn.dataset.tab==='replace'?'':'none';
+  });
+});
+
+function escape(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function run(){
+  const pat=document.getElementById('regex-inp').value;
+  const flags=document.getElementById('regex-flags').value.replace(/[^gimsuy]/g,'');
+  const str=document.getElementById('test-str').value;
+  const status=document.getElementById('status-bar');
+
+  if(!pat){status.textContent='Enter a regex above';status.className='status-bar none';document.getElementById('highlighted').textContent=str;document.getElementById('match-list').innerHTML='';return;}
+
+  let re;
+  try{re=new RegExp(pat,flags.includes('g')?flags:flags+'g');}
+  catch(e){status.textContent='Error: '+e.message;status.className='status-bar err';document.getElementById('highlighted').textContent=str;return;}
+
+  const matches=[...str.matchAll(re)];
+  if(matches.length===0){status.textContent='No matches found';status.className='status-bar none';document.getElementById('highlighted').innerHTML=escape(str);document.getElementById('match-list').innerHTML='';return;}
+
+  status.textContent=`${matches.length} match${matches.length!==1?'es':''} found`;status.className='status-bar ok';
+
+  // Highlight
+  let highlighted='',last=0;
+  matches.forEach(m=>{
+    highlighted+=escape(str.slice(last,m.index));
+    highlighted+=`<mark>${escape(m[0])}</mark>`;
+    last=m.index+m[0].length;
+  });
+  highlighted+=escape(str.slice(last));
+  document.getElementById('highlighted').innerHTML=highlighted||'(empty)';
+
+  // Match list
+  document.getElementById('match-list').innerHTML=matches.slice(0,50).map((m,i)=>{
+    const groups=m.slice(1).map((g,gi)=>`<span style="color:#94A3B8;font-size:11px"> group${gi+1}=${g??'undefined'}</span>`).join('');
+    return`<div class="match-item"><span class="match-num">#${i+1}</span>${escape(m[0])}${groups}<span style="color:#6B6B8A;font-size:11px"> @${m.index}</span></div>`;
+  }).join('')+(matches.length>50?`<div style="font-size:12px;color:var(--color-text-muted);padding:6px">…and ${matches.length-50} more</div>`:'');
+
+  // Replace tab
+  const repStr=document.getElementById('rep-str').value||str;
+  const repWith=document.getElementById('rep-with').value;
+  try{document.getElementById('rep-result').textContent=repStr.replace(re,repWith);}catch(e){}
+}
+
+['regex-inp','regex-flags','test-str','rep-str','rep-with'].forEach(id=>document.getElementById(id).addEventListener('input',run));
+run();
+</script>
+</body>
+</html>

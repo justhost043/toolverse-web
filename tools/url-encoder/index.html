@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free URL Encoder & Decoder Online | OMIToolKit</title>
+<meta name="description" content="Encode and decode URLs online instantly. Supports full URL and component encoding. Free browser-based URL encoder — nothing is uploaded.">
+<link rel="canonical" href="../../tools/url-encoder/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:140px}</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / URL Encoder</div>
+<div class="container tool-page-header">
+  <h1>URL Encoder &amp; Decoder</h1>
+  <p>Encode special characters in URLs or decode encoded URLs back to plain text.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:700px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+      <select id="mode-sel" class="field-select" style="width:auto">
+        <option value="encode-component">Encode (component)</option>
+        <option value="decode-component">Decode (component)</option>
+        <option value="encode-full">Encode (full URI)</option>
+        <option value="decode-full">Decode (full URI)</option>
+      </select>
+      <button class="btn btn-primary" id="convert-btn">Convert</button>
+      <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
+    </div>
+    <div class="field-row"><label class="field-label">Input</label><textarea id="inp" class="field-input code-area" placeholder="Paste text or URL here…"></textarea></div>
+    <div class="field-row"><label class="field-label">Output</label><textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is URL encoding?</h2>
+  <p>URLs can only contain certain safe ASCII characters. Special characters — spaces, ampersands, equals signs, non-English letters — must be converted to a percent-encoded format (like %20 for a space) before being used in a URL. URL encoding ensures the URL is valid and correctly interpreted by web servers and browsers.</p>
+  <h2>Component vs full URI encoding</h2>
+  <p>Use <strong>component encoding</strong> when encoding a single query parameter value — it encodes everything including characters like &amp;, =, and /. Use <strong>full URI encoding</strong> when encoding an entire URL — it preserves structural characters like ://, /, ?, and &amp; while still encoding unsafe characters.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+function convert(){
+  const mode=document.getElementById('mode-sel').value;
+  const v=document.getElementById('inp').value;
+  try{
+    let res;
+    if(mode==='encode-component') res=encodeURIComponent(v);
+    else if(mode==='decode-component') res=decodeURIComponent(v);
+    else if(mode==='encode-full') res=encodeURI(v);
+    else res=decodeURI(v);
+    document.getElementById('out').value=res;
+  } catch(e){document.getElementById('out').value='Error: '+e.message;}
+}
+document.getElementById('convert-btn').addEventListener('click',convert);
+document.getElementById('inp').addEventListener('input',convert);
+document.getElementById('swap-btn').addEventListener('click',()=>{const t=document.getElementById('inp').value;document.getElementById('inp').value=document.getElementById('out').value;document.getElementById('out').value=t;});
+document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
+document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';});
+</script>
+</body>
+</html>
