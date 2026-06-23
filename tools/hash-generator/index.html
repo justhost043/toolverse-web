@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Hash Generator — SHA-256, SHA-1, MD5 Online | OMIToolKit</title>
+<meta name="description" content="Generate SHA-256, SHA-1, and MD5 hash values for any text online. Compare hashes to verify data integrity. Free, runs in your browser, nothing uploaded.">
+<link rel="canonical" href="../../tools/hash-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hash Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free browser-based hash generator supporting SHA-256, SHA-1, and MD5 algorithms."}</script>
+<style>
+.hash-card{background:#1E1B2E;border-radius:var(--radius-md);padding:16px 18px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.hash-card .alg{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6B6B8A}
+.hash-card .val{font-family:var(--font-mono);font-size:13px;color:#A78BFA;word-break:break-all;line-height:1.6}
+.hash-card .row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.copy-small{padding:5px 12px;font-size:12px;border-radius:6px;border:1px solid #3D3A5C;background:transparent;cursor:pointer;color:#6B6B8A;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.copy-small:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.compare-section{margin-top:22px;padding-top:22px;border-top:1px solid var(--color-border)}
+.compare-result{padding:14px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;margin-top:12px;text-align:center}
+.compare-result.match{background:#DCFCE7;color:#166534}
+.compare-result.nomatch{background:#FEE2E2;color:#991B1B}
+.file-drop{border:2px dashed var(--color-border);border-radius:var(--radius-md);padding:28px;text-align:center;cursor:pointer;color:var(--color-text-muted);font-size:14px;transition:all .15s;margin-top:16px}
+.file-drop:hover,.file-drop.drag{border-color:var(--color-primary);background:#F4F3FE}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Hash Generator</div>
+<div class="container tool-page-header">
+  <h1>Hash Generator</h1>
+  <p>Generate SHA-256, SHA-1, and MD5 hash values for any text or file — instantly in your browser.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+    <div class="field-row">
+      <label class="field-label">Input text</label>
+      <textarea id="inp" class="field-input" rows="5" placeholder="Type or paste text to hash…" style="font-size:14px;line-height:1.65"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button class="btn btn-primary" id="hash-btn" style="flex:1;justify-content:center">Generate Hashes</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+
+    <div id="hash-results" style="display:none">
+      <div class="hash-card">
+        <div class="alg">SHA-256 (Recommended)</div>
+        <div class="row"><div class="val" id="h-256">—</div><button class="copy-small" data-target="h-256">Copy</button></div>
+      </div>
+      <div class="hash-card">
+        <div class="alg">SHA-1</div>
+        <div class="row"><div class="val" id="h-1">—</div><button class="copy-small" data-target="h-1">Copy</button></div>
+      </div>
+      <div class="hash-card">
+        <div class="alg">SHA-512</div>
+        <div class="row"><div class="val" id="h-512">—</div><button class="copy-small" data-target="h-512">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- File hashing -->
+    <div class="file-drop" id="file-drop">
+      <div style="font-size:28px;margin-bottom:8px">📁</div>
+      Or drop a file here to hash it
+      <input type="file" id="file-input" style="display:none">
+    </div>
+    <div id="file-results" style="display:none;margin-top:12px">
+      <div style="font-size:13px;color:var(--color-text-muted);margin-bottom:10px" id="file-name-label"></div>
+      <div class="hash-card">
+        <div class="alg">File SHA-256</div>
+        <div class="row"><div class="val" id="fh-256">—</div><button class="copy-small" data-target="fh-256">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- Compare -->
+    <div class="compare-section">
+      <div class="field-label">Compare two hashes</div>
+      <div class="field-row"><input type="text" id="cmp-a" class="field-input" placeholder="First hash…" style="font-family:var(--font-mono);font-size:13px"></div>
+      <div class="field-row"><input type="text" id="cmp-b" class="field-input" placeholder="Second hash…" style="font-family:var(--font-mono);font-size:13px"></div>
+      <button class="btn btn-outline" id="compare-btn" style="width:100%;justify-content:center">Compare Hashes</button>
+      <div id="compare-result"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is a hash?</h2>
+  <p>A hash function takes any input — a word, a file, a database — and produces a fixed-length string of characters called a hash or digest. The same input always produces the same hash, but even a tiny change to the input produces a completely different hash. This property makes hashes useful for verifying data integrity: if you download a file and its hash matches the one published by the source, you can be confident the file hasn't been altered.</p>
+  <h2>SHA-256 vs SHA-1 vs MD5</h2>
+  <p><strong>SHA-256</strong> is the current gold standard — it's part of the SHA-2 family and is used in SSL/TLS certificates, Bitcoin, and most modern security applications. <strong>SHA-1</strong> is older and has known vulnerabilities — it should not be used for security-critical purposes, but is still used for non-security tasks like Git commit hashes. <strong>MD5</strong> is broken for security use but still widely used for simple checksums, like verifying that a downloaded file isn't corrupted.</p>
+  <h2>Is it safe to hash passwords here?</h2>
+  <p>This tool should not be used to hash passwords for storage. For passwords, you should use a dedicated password hashing algorithm like bcrypt, Argon2, or scrypt — these are intentionally slow to make brute-force attacks computationally expensive. SHA-256 and MD5 are too fast for password storage: a modern GPU can test billions of SHA-256 hashes per second.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+async function hexDigest(algo, data) {
+  const buf = await crypto.subtle.digest(algo, typeof data === 'string'
+    ? new TextEncoder().encode(data)
+    : data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+document.getElementById('hash-btn').addEventListener('click', async () => {
+  const text = document.getElementById('inp').value;
+  if (!text) return;
+  const [h256, h1, h512] = await Promise.all([
+    hexDigest('SHA-256', text),
+    hexDigest('SHA-1', text),
+    hexDigest('SHA-512', text),
+  ]);
+  document.getElementById('h-256').textContent = h256;
+  document.getElementById('h-1').textContent = h1;
+  document.getElementById('h-512').textContent = h512;
+  document.getElementById('hash-results').style.display = '';
+});
+
+// Copy buttons
+document.querySelectorAll('.copy-small[data-target]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const text = document.getElementById(btn.dataset.target).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent; btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = orig, 1200);
+    });
+  });
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  document.getElementById('inp').value = '';
+  document.getElementById('hash-results').style.display = 'none';
+  document.getElementById('file-results').style.display = 'none';
+});
+
+// File hashing
+const fileDrop = document.getElementById('file-drop');
+const fileInput = document.getElementById('file-input');
+fileDrop.addEventListener('click', () => fileInput.click());
+fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('drag'); });
+fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag'));
+fileDrop.addEventListener('drop', e => { e.preventDefault(); fileDrop.classList.remove('drag'); hashFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) hashFile(fileInput.files[0]); });
+
+async function hashFile(file) {
+  const buf = await file.arrayBuffer();
+  const hash = await hexDigest('SHA-256', buf);
+  document.getElementById('file-name-label').textContent = `File: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  document.getElementById('fh-256').textContent = hash;
+  document.getElementById('file-results').style.display = '';
+}
+
+// Compare
+document.getElementById('compare-btn').addEventListener('click', () => {
+  const a = document.getElementById('cmp-a').value.trim().toLowerCase();
+  const b = document.getElementById('cmp-b').value.trim().toLowerCase();
+  if (!a || !b) return;
+  const res = document.getElementById('compare-result');
+  res.className = 'compare-result ' + (a === b ? 'match' : 'nomatch');
+  res.textContent = a === b ? '✓ Hashes match — data is identical' : '✗ Hashes do not match — data differs';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Binary, Hex, Decimal & Octal Converter | OMIToolKit</title>
+<meta name="description" content="Convert between binary, hexadecimal, decimal and octal number systems instantly. Free online number base converter — type in any field to convert all others.">
+<link rel="canonical" href="../../tools/binary-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.base-card{background:#1E1B2E;border-radius:var(--radius-md);padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+.base-badge{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:#2D2A4A;color:#A78BFA;padding:4px 10px;border-radius:6px;flex-shrink:0;width:52px;text-align:center}
+.base-input{flex:1;background:transparent;border:none;font-family:var(--font-mono);font-size:16px;font-weight:500;color:#E8E6F0;outline:none;min-width:0}
+.base-input::placeholder{color:#3D3A5C}
+.base-input.error{color:#F87171}
+.copy-icon{background:none;border:1px solid #3D3A5C;color:#6B6B8A;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;flex-shrink:0;transition:all .15s}
+.copy-icon:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.bit-grid{display:flex;gap:4px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--color-border)}
+.bit{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:14px;font-weight:600;border:1px solid var(--color-border)}
+.bit.on{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.bit.off{background:#F4F3FE;color:var(--color-text-muted)}
+.bit-labels{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.bit-lbl{width:32px;text-align:center;font-size:9px;color:var(--color-text-muted)}
+.quick-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.quick-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font-mono);transition:all .15s}
+.quick-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Binary Converter</div>
+<div class="container tool-page-header">
+  <h1>Binary / Hex / Decimal / Octal Converter</h1>
+  <p>Type in any field — all other bases update instantly. Includes an 8-bit visualizer.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:640px">
+    <div class="quick-btns" id="quick-btns">
+      <span style="font-size:12.5px;color:var(--color-text-muted);align-self:center">Quick:</span>
+      <button class="quick-btn" data-val="255">255</button>
+      <button class="quick-btn" data-val="128">128</button>
+      <button class="quick-btn" data-val="16">16</button>
+      <button class="quick-btn" data-val="42">42</button>
+      <button class="quick-btn" data-val="0">0</button>
+    </div>
+
+    <div class="base-card">
+      <div class="base-badge">DEC</div>
+      <input class="base-input" id="dec" placeholder="Enter decimal…" inputmode="numeric">
+      <button class="copy-icon" data-src="dec">Copy</button>
+    </div>
+    <div class="base-card">
+      <div class="base-badge">BIN</div>
+      <input class="base-input" id="bin" placeholder="Enter binary…">
+      <button class="copy-icon" data-src="bin">Copy</button>
+    </div>
+    <div class="base-card">
+      <div class="base-badge">HEX</div>
+      <input class="base-input" id="hex" placeholder="Enter hexadecimal…">
+      <button class="copy-icon" data-src="hex">Copy</button>
+    </div>
+    <div class="base-card">
+      <div class="base-badge">OCT</div>
+      <input class="base-input" id="oct" placeholder="Enter octal…">
+      <button class="copy-icon" data-src="oct">Copy</button>
+    </div>
+
+    <div id="bit-section" style="display:none">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-muted);margin:4px 0 10px">8-bit representation</div>
+      <div class="bit-grid" id="bit-grid"></div>
+      <div class="bit-labels" id="bit-labels"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Number systems explained</h2>
+  <p><strong>Decimal (base 10)</strong> is the everyday number system — digits 0–9. <strong>Binary (base 2)</strong> is the language of computers — everything is represented as 0s and 1s. <strong>Hexadecimal (base 16)</strong> uses digits 0–9 and letters A–F; it's commonly used in programming, color codes (#FF5733), and memory addresses because one hex digit represents exactly 4 binary bits. <strong>Octal (base 8)</strong> uses digits 0–7 and was historically used in computing; it's still used in Unix file permissions (chmod 755).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const inputs = {
+  dec: {el: document.getElementById('dec'), base: 10, pattern: /^[0-9]+$/},
+  bin: {el: document.getElementById('bin'), base: 2,  pattern: /^[01]+$/},
+  hex: {el: document.getElementById('hex'), base: 16, pattern: /^[0-9a-fA-F]+$/},
+  oct: {el: document.getElementById('oct'), base: 8,  pattern: /^[0-7]+$/},
+};
+
+function updateBits(num) {
+  if (isNaN(num) || num < 0 || num > 255) { document.getElementById('bit-section').style.display='none'; return; }
+  document.getElementById('bit-section').style.display = '';
+  const bits = num.toString(2).padStart(8,'0').split('');
+  const grid = document.getElementById('bit-grid');
+  const labels = document.getElementById('bit-labels');
+  grid.innerHTML = bits.map((b,i) => `<div class="bit ${b==='1'?'on':'off'}">${b}</div>`).join('');
+  labels.innerHTML = bits.map((_,i) => `<div class="bit-lbl">${7-i}</div>`).join('');
+}
+
+function convert(source) {
+  const val = inputs[source].el.value.trim();
+  if (!val) { Object.values(inputs).forEach(x => { if(x.el !== inputs[source].el) x.el.value=''; }); document.getElementById('bit-section').style.display='none'; return; }
+  if (!inputs[source].pattern.test(val)) { inputs[source].el.classList.add('error'); return; }
+  inputs[source].el.classList.remove('error');
+  const num = parseInt(val, inputs[source].base);
+  if (isNaN(num)) return;
+  Object.entries(inputs).forEach(([key, cfg]) => {
+    if (key !== source) {
+      cfg.el.classList.remove('error');
+      cfg.el.value = num.toString(cfg.base).toUpperCase();
+    }
+  });
+  updateBits(num);
+}
+
+Object.entries(inputs).forEach(([key, cfg]) => {
+  cfg.el.addEventListener('input', () => convert(key));
+});
+
+document.querySelectorAll('.copy-icon[data-src]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const val = inputs[btn.dataset.src].el.value;
+    if (!val) return;
+    navigator.clipboard.writeText(val).then(() => { const t=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=t,1000); });
+  });
+});
+
+document.querySelectorAll('.quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    inputs.dec.el.value = btn.dataset.val;
+    convert('dec');
+  });
+});
+
+// Start with 255 example
+inputs.dec.el.value = '255';
+convert('dec');
+</script>
+</body>
+</html>

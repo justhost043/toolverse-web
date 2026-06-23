@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Text Diff Checker — Compare Two Texts Online | OMIToolKit</title>
+<meta name="description" content="Compare two pieces of text and see differences highlighted line by line. Free online diff checker — additions in green, deletions in red. No sign-up needed.">
+<link rel="canonical" href="../../tools/text-diff/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.diff-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.diff-layout{grid-template-columns:1fr}}
+textarea.diff-input{font-family:var(--font-mono);font-size:13px;line-height:1.7;resize:vertical;min-height:200px}
+.diff-output{font-family:var(--font-mono);font-size:13px;line-height:1.7;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;min-height:200px;background:#FCFCFB;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.diff-add{background:#DCFCE7;color:#166534;display:block;padding:0 4px;border-left:3px solid #16A34A;margin:1px 0}
+.diff-del{background:#FEE2E2;color:#991B1B;display:block;padding:0 4px;border-left:3px solid #DC2626;margin:1px 0;text-decoration:line-through}
+.diff-same{display:block;padding:0 4px;color:var(--color-text-muted);margin:1px 0}
+.stats-pills{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat-pill{font-size:12.5px;font-weight:500;padding:5px 14px;border-radius:999px}
+.sp-add{background:#DCFCE7;color:#166534}
+.sp-del{background:#FEE2E2;color:#991B1B}
+.sp-same{background:#F4F3FE;color:var(--color-primary)}
+.mode-row{display:flex;gap:8px;margin-bottom:14px}
+.mode-btn{padding:7px 16px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Text Diff Checker</div>
+<div class="container tool-page-header">
+  <h1>Text Diff Checker</h1>
+  <p>Compare two texts and see exactly what changed — line by line, with additions in green and deletions in red.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:960px">
+    <div class="mode-row">
+      <button class="mode-btn active" data-m="line">Line-by-line</button>
+      <button class="mode-btn" data-m="word">Word diff</button>
+    </div>
+    <div class="diff-layout">
+      <div><label class="field-label">Original text</label><textarea id="text-a" class="field-input diff-input" placeholder="Paste original text here…"></textarea></div>
+      <div><label class="field-label">Modified text</label><textarea id="text-b" class="field-input diff-input" placeholder="Paste modified text here…"></textarea></div>
+    </div>
+    <div style="display:flex;gap:10px;margin:14px 0">
+      <button class="btn btn-primary" id="diff-btn" style="flex:1;justify-content:center">Compare</button>
+      <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+    <div class="stats-pills" id="stats-pills" style="display:none">
+      <span class="stat-pill sp-add" id="sp-add">+ 0 added</span>
+      <span class="stat-pill sp-del" id="sp-del">− 0 removed</span>
+      <span class="stat-pill sp-same" id="sp-same">= 0 unchanged</span>
+    </div>
+    <div id="diff-out-wrap" style="display:none">
+      <label class="field-label" style="margin-bottom:8px">Diff result</label>
+      <div class="diff-output" id="diff-output"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is a text diff?</h2>
+  <p>A diff (from "difference") shows exactly what changed between two versions of text. Added lines are highlighted in green, removed lines in red, and unchanged lines are shown in a neutral color. Developers use diffs to review code changes; writers use them to compare document drafts; editors use them to track revisions.</p>
+  <h2>Common uses for a diff tool</h2>
+  <p>Comparing two versions of a contract or legal document to spot what changed between drafts. Reviewing changes made to a configuration file or code snippet. Checking whether a translated text matches the original structure. Verifying that a copied article hasn't been altered. Tracking changes between two versions of a blog post or marketing copy.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let mode = 'line';
+document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); mode = b.dataset.m;
+}));
+
+// Simple LCS-based line diff
+function lcs(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+  const result = [];
+  let i = m, j = n;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && a[i-1] === b[j-1]) { result.unshift({type:'same',val:a[i-1]}); i--; j--; }
+    else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) { result.unshift({type:'add',val:b[j-1]}); j--; }
+    else { result.unshift({type:'del',val:a[i-1]}); i--; }
+  }
+  return result;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function runDiff() {
+  const a = document.getElementById('text-a').value;
+  const b = document.getElementById('text-b').value;
+  if (!a && !b) return;
+
+  let chunks;
+  if (mode === 'line') {
+    chunks = lcs(a.split('\n'), b.split('\n'));
+  } else {
+    chunks = lcs(a.split(/(\s+)/), b.split(/(\s+)/));
+  }
+
+  let added = 0, removed = 0, same = 0;
+  let html = '';
+  chunks.forEach(c => {
+    const v = esc(c.val);
+    if (c.type === 'add') { html += `<span class="diff-add">+ ${v}</span>`; added++; }
+    else if (c.type === 'del') { html += `<span class="diff-del">− ${v}</span>`; removed++; }
+    else { html += `<span class="diff-same">  ${v}</span>`; same++; }
+  });
+
+  document.getElementById('diff-output').innerHTML = html;
+  document.getElementById('sp-add').textContent = `+ ${added} added`;
+  document.getElementById('sp-del').textContent = `− ${removed} removed`;
+  document.getElementById('sp-same').textContent = `= ${same} unchanged`;
+  document.getElementById('stats-pills').style.display = 'flex';
+  document.getElementById('diff-out-wrap').style.display = '';
+}
+
+document.getElementById('diff-btn').addEventListener('click', runDiff);
+document.getElementById('swap-btn').addEventListener('click', () => {
+  const t = document.getElementById('text-a').value;
+  document.getElementById('text-a').value = document.getElementById('text-b').value;
+  document.getElementById('text-b').value = t;
+});
+document.getElementById('clear-btn').addEventListener('click', () => {
+  ['text-a','text-b'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('diff-out-wrap').style.display = 'none';
+  document.getElementById('stats-pills').style.display = 'none';
+});
+</script>
+</body>
+</html>
