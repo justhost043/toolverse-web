@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Time Zone Converter — Convert Time Between Cities | OMIToolKit</title>
+<meta name="description" content="Convert time between any two time zones instantly. See current time in 40+ cities worldwide. Free online time zone converter, no sign-up needed.">
+<link rel="canonical" href="../../tools/timezone-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.tz-main{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:14px;margin-bottom:20px}
+@media(max-width:540px){.tz-main{grid-template-columns:1fr;}}
+.swap-tz{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--color-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .15s;flex-shrink:0;align-self:center;margin-bottom:2px}
+.swap-tz:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.result-box{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));border-radius:var(--radius-lg);padding:24px;text-align:center;color:#fff;margin:18px 0}
+.result-time{font-size:clamp(32px,8vw,52px);font-weight:700;font-family:var(--font-display);letter-spacing:-.02em;line-height:1}
+.result-date{font-size:14px;opacity:.85;margin-top:6px}
+.result-zone{font-size:13px;opacity:.7;margin-top:4px}
+.world-clocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:20px}
+.world-clock{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .15s}
+.world-clock:hover{border-color:var(--color-primary);background:#F4F3FE}
+.wc-city{font-size:13px;font-weight:500;margin-bottom:4px}
+.wc-time{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--color-primary)}
+.wc-date{font-size:11px;color:var(--color-text-muted);margin-top:2px}
+.diff-badge{display:inline-block;font-size:12.5px;font-weight:600;padding:5px 14px;border-radius:999px;margin:10px auto;display:block;width:fit-content}
+.diff-badge.ahead{background:#DCFCE7;color:#166534}
+.diff-badge.behind{background:#FEE2E2;color:#991B1B}
+.diff-badge.same{background:#F4F3FE;color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Time Zone Converter</div>
+<div class="container tool-page-header">
+  <h1>Time Zone Converter</h1>
+  <p>Convert any time between two time zones — see current world clocks below.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+
+    <div class="tz-main">
+      <div>
+        <label class="field-label">From time zone</label>
+        <select id="tz-from" class="field-select"></select>
+      </div>
+      <button class="swap-tz" id="swap-tz" title="Swap zones">⇄</button>
+      <div>
+        <label class="field-label">To time zone</label>
+        <select id="tz-to" class="field-select"></select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-row">
+        <label class="field-label">Date</label>
+        <input type="date" id="inp-date" class="field-input">
+      </div>
+      <div class="field-row">
+        <label class="field-label">Time</label>
+        <input type="time" id="inp-time" class="field-input">
+      </div>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div class="result-time" id="res-time">—:——</div>
+      <div class="result-date" id="res-date"></div>
+      <div class="result-zone" id="res-zone"></div>
+    </div>
+    <div id="diff-badge" class="diff-badge same"></div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:12px">Current world clocks <span style="font-size:12px;color:var(--color-text-muted);font-weight:400">(click to use as From)</span></div>
+      <div class="world-clocks" id="world-clocks"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to use the time zone converter</h2>
+  <p>Select the time zone you're converting from, the time zone you're converting to, then enter a date and time. The converted result updates automatically. You can also click any city in the world clocks section to instantly use that city's time zone as the "From" field.</p>
+  <h2>Understanding UTC offsets</h2>
+  <p>UTC (Coordinated Universal Time) is the global standard for time. Every time zone is expressed as UTC plus or minus a number of hours. Pakistan (PKT) is UTC+5, London (GMT/BST) is UTC+0 in winter and UTC+1 in summer, New York is UTC-5 in winter and UTC-4 in summer. The converter handles daylight saving time automatically based on the selected date.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const ZONES = [
+  {label:'Karachi / Pakistan (PKT)',tz:'Asia/Karachi'},
+  {label:'Lahore (PKT)',tz:'Asia/Karachi'},
+  {label:'Dubai (GST)',tz:'Asia/Dubai'},
+  {label:'London (GMT/BST)',tz:'Europe/London'},
+  {label:'Paris / Berlin (CET)',tz:'Europe/Paris'},
+  {label:'Moscow (MSK)',tz:'Europe/Moscow'},
+  {label:'Mumbai / Delhi (IST)',tz:'Asia/Kolkata'},
+  {label:'Dhaka (BST)',tz:'Asia/Dhaka'},
+  {label:'Bangkok (ICT)',tz:'Asia/Bangkok'},
+  {label:'Singapore / KL (SGT)',tz:'Asia/Singapore'},
+  {label:'Shanghai / Beijing (CST)',tz:'Asia/Shanghai'},
+  {label:'Tokyo (JST)',tz:'Asia/Tokyo'},
+  {label:'Sydney (AEST)',tz:'Australia/Sydney'},
+  {label:'Auckland (NZST)',tz:'Pacific/Auckland'},
+  {label:'New York (EST/EDT)',tz:'America/New_York'},
+  {label:'Chicago (CST/CDT)',tz:'America/Chicago'},
+  {label:'Denver (MST/MDT)',tz:'America/Denver'},
+  {label:'Los Angeles (PST/PDT)',tz:'America/Los_Angeles'},
+  {label:'Toronto (EST/EDT)',tz:'America/Toronto'},
+  {label:'Sao Paulo (BRT)',tz:'America/Sao_Paulo'},
+  {label:'Mexico City (CST/CDT)',tz:'America/Mexico_City'},
+  {label:'Cairo (EET)',tz:'Africa/Cairo'},
+  {label:'Nairobi (EAT)',tz:'Africa/Nairobi'},
+  {label:'Johannesburg (SAST)',tz:'Africa/Johannesburg'},
+  {label:'Riyadh (AST)',tz:'Asia/Riyadh'},
+  {label:'Istanbul (TRT)',tz:'Europe/Istanbul'},
+  {label:'Amsterdam (CET)',tz:'Europe/Amsterdam'},
+  {label:'Kabul (AFT)',tz:'Asia/Kabul'},
+  {label:'Tehran (IRST)',tz:'Asia/Tehran'},
+  {label:'Tashkent (UZT)',tz:'Asia/Tashkent'},
+  {label:'UTC',tz:'UTC'},
+];
+
+const WORLD_CITIES = [
+  {city:'Karachi',tz:'Asia/Karachi'},{city:'Dubai',tz:'Asia/Dubai'},
+  {city:'London',tz:'Europe/London'},{city:'New York',tz:'America/New_York'},
+  {city:'Los Angeles',tz:'America/Los_Angeles'},{city:'Tokyo',tz:'Asia/Tokyo'},
+  {city:'Sydney',tz:'Australia/Sydney'},{city:'Mumbai',tz:'Asia/Kolkata'},
+  {city:'Singapore',tz:'Asia/Singapore'},{city:'Paris',tz:'Europe/Paris'},
+  {city:'Moscow',tz:'Europe/Moscow'},{city:'Cairo',tz:'Africa/Cairo'},
+];
+
+// Populate selects
+const fromSel = document.getElementById('tz-from');
+const toSel = document.getElementById('tz-to');
+ZONES.forEach((z,i) => {
+  fromSel.innerHTML += `<option value="${z.tz}" ${i===0?'selected':''}>${z.label}</option>`;
+  toSel.innerHTML += `<option value="${z.tz}" ${i===13?'selected':''}>${z.label}</option>`;
+});
+
+// Set defaults to now
+const now = new Date();
+document.getElementById('inp-date').valueAsDate = now;
+document.getElementById('inp-time').value = now.toTimeString().slice(0,5);
+
+function convert() {
+  const fromTz = fromSel.value;
+  const toTz = toSel.value;
+  const dateVal = document.getElementById('inp-date').value;
+  const timeVal = document.getElementById('inp-time').value;
+  if (!dateVal || !timeVal) return;
+
+  // Build date in fromTz
+  const dtStr = `${dateVal}T${timeVal}:00`;
+  // Use Intl to format in target timezone
+  const dt = new Date(dtStr);
+
+  // Get the converted time
+  const opts = { timeZone: toTz, hour:'2-digit', minute:'2-digit', hour12:false };
+  const dateOpts = { timeZone: toTz, weekday:'long', year:'numeric', month:'long', day:'numeric' };
+
+  // Calculate offset difference
+  const fromOffset = getOffset(fromTz, dt);
+  const toOffset = getOffset(toTz, dt);
+  const diffH = (toOffset - fromOffset) / 60;
+
+  const resTime = new Intl.DateTimeFormat('en-US', opts).format(dt);
+  const resDate = new Intl.DateTimeFormat('en-US', dateOpts).format(dt);
+
+  document.getElementById('res-time').textContent = resTime;
+  document.getElementById('res-date').textContent = resDate;
+  document.getElementById('res-zone').textContent = toTz.replace('_',' ');
+
+  const badge = document.getElementById('diff-badge');
+  if (diffH === 0) { badge.textContent='Same time zone'; badge.className='diff-badge same'; }
+  else if (diffH > 0) { badge.textContent=`Destination is ${diffH > 0 ? '+' : ''}${diffH}h ahead`; badge.className='diff-badge ahead'; }
+  else { badge.textContent=`Destination is ${Math.abs(diffH)}h behind`; badge.className='diff-badge behind'; }
+}
+
+function getOffset(tz, date) {
+  const utcDate = new Date(date.toLocaleString('en-US', {timeZone:'UTC'}));
+  const tzDate = new Date(date.toLocaleString('en-US', {timeZone:tz}));
+  return (tzDate - utcDate) / 60000;
+}
+
+// World clocks
+function renderWorldClocks() {
+  const container = document.getElementById('world-clocks');
+  container.innerHTML = '';
+  const n = new Date();
+  WORLD_CITIES.forEach(c => {
+    const time = new Intl.DateTimeFormat('en-US',{timeZone:c.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(n);
+    const date = new Intl.DateTimeFormat('en-US',{timeZone:c.tz,weekday:'short',month:'short',day:'numeric'}).format(n);
+    const div = document.createElement('div');
+    div.className='world-clock';
+    div.innerHTML=`<div class="wc-city">${c.city}</div><div class="wc-time">${time}</div><div class="wc-date">${date}</div>`;
+    div.addEventListener('click',()=>{
+      const match = ZONES.findIndex(z=>z.tz===c.tz);
+      if(match>=0) fromSel.selectedIndex=match;
+      convert();
+    });
+    container.appendChild(div);
+  });
+}
+
+[fromSel, toSel, document.getElementById('inp-date'), document.getElementById('inp-time')].forEach(el=>el.addEventListener('change',convert));
+document.getElementById('swap-tz').addEventListener('click',()=>{
+  const t=fromSel.value; fromSel.value=toSel.value; toSel.value=t; convert();
+});
+
+renderWorldClocks();
+setInterval(renderWorldClocks, 1000);
+convert();
+</script>
+</body>
+</html>

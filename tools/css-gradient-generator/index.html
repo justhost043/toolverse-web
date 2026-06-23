@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free CSS Gradient Generator — Linear, Radial & Conic | OMIToolKit</title>
+<meta name="description" content="Generate beautiful CSS gradients online. Linear, radial and conic with multiple color stops. Live preview with instant CSS code copy. Free, no sign-up needed.">
+<link rel="canonical" href="../../tools/css-gradient-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.gradient-preview{width:100%;height:220px;border-radius:var(--radius-md);border:1px solid var(--color-border);transition:background .15s;cursor:pointer;position:relative;overflow:hidden}
+.gradient-preview .click-hint{position:absolute;bottom:10px;right:14px;font-size:11.5px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.3);padding:3px 10px;border-radius:999px;backdrop-filter:blur(4px)}
+.type-tabs{display:flex;gap:8px;margin:16px 0}
+.type-tab{flex:1;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
+.type-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.stops-list{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.stop-row{display:flex;align-items:center;gap:10px}
+.stop-color{width:44px;height:44px;border-radius:var(--radius-sm);border:2px solid var(--color-border);cursor:pointer;padding:2px}
+.stop-pos{width:80px;font-size:13.5px}
+.stop-del{width:32px;height:32px;border-radius:50%;border:1px solid #FEE2E2;background:#fff;color:#E24B4A;cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.stop-del:hover{background:#E24B4A;color:#fff}
+.css-output{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:13px;color:#86EFAC;line-height:1.7;word-break:break-all;position:relative;margin-top:14px}
+.css-copy-btn{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:6px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;transition:all .15s}
+.css-copy-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.presets-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.preset-swatch{height:48px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;transition:all .15s}
+.preset-swatch:hover{transform:scale(1.05);border-color:var(--color-primary)}
+.angle-wrap{display:flex;align-items:center;gap:12px}
+.angle-wrap input[type=range]{flex:1;accent-color:var(--color-primary)}
+.angle-display{width:52px;text-align:center;font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / CSS Gradient Generator</div>
+<div class="container tool-page-header">
+  <h1>CSS Gradient Generator</h1>
+  <p>Build beautiful CSS gradients visually — linear, radial or conic — and copy the code instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:720px">
+
+    <!-- Preview -->
+    <div class="gradient-preview" id="preview">
+      <div class="click-hint">Click to randomize</div>
+    </div>
+
+    <!-- Type tabs -->
+    <div class="type-tabs">
+      <button class="type-tab active" data-type="linear">Linear</button>
+      <button class="type-tab" data-type="radial">Radial</button>
+      <button class="type-tab" data-type="conic">Conic</button>
+    </div>
+
+    <!-- Angle (linear/conic only) -->
+    <div id="angle-row" class="field-row">
+      <label class="field-label">Angle — <span id="angle-lbl">135</span>°</label>
+      <div class="angle-wrap">
+        <input type="range" id="angle" min="0" max="360" value="135">
+      </div>
+    </div>
+
+    <!-- Radial shape -->
+    <div id="radial-row" class="field-row" style="display:none">
+      <label class="field-label">Shape</label>
+      <select id="radial-shape" class="field-select">
+        <option value="circle">Circle</option>
+        <option value="ellipse">Ellipse</option>
+      </select>
+    </div>
+
+    <!-- Color stops -->
+    <div class="field-label" style="margin-bottom:8px">Color stops</div>
+    <div class="stops-list" id="stops-list"></div>
+    <button class="btn btn-outline" id="add-stop" style="font-size:13px;margin-bottom:18px">+ Add color stop</button>
+
+    <!-- CSS Output -->
+    <div class="css-output" id="css-output">
+      <button class="css-copy-btn" id="copy-css">Copy CSS</button>
+      <div id="css-code"></div>
+    </div>
+
+    <!-- Presets -->
+    <div class="field-label" style="margin:18px 0 10px">Preset gradients</div>
+    <div class="presets-grid" id="presets-grid"></div>
+
+  </div>
+</div>
+
+<div class="ad-slot container">Ad slot — below tool</div>
+
+<article class="article container">
+  <h2>CSS gradient types explained</h2>
+  <p><strong>Linear gradients</strong> transition colors along a straight line at any angle. They're the most commonly used gradient type in web design — for backgrounds, buttons, headers, and dividers. The angle determines the direction: 0° goes bottom to top, 90° goes left to right, 135° goes diagonally.</p>
+  <p><strong>Radial gradients</strong> radiate outward from a center point in a circular or elliptical shape. They create a spotlight or glow effect, useful for hero backgrounds, card hover states, and decorative elements.</p>
+  <p><strong>Conic gradients</strong> rotate colors around a center point — like a pie chart or color wheel. They're newer but well-supported in modern browsers and useful for creating pie charts, color wheels, and distinctive backgrounds purely in CSS with no images needed.</p>
+  <h2>How many color stops can I add?</h2>
+  <p>CSS gradients support unlimited color stops. Most practical designs use 2–4 stops. Adding more stops gives you finer control over exactly where each color begins and ends — useful for sunset-style multi-color gradients. Each stop has a percentage position (0% = start, 100% = end) that you can fine-tune here.</p>
+</article>
+
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let gradType = 'linear';
+let angle = 135;
+let stops = [
+  {color:'#6366F1', pos:0},
+  {color:'#A855F7', pos:100},
+];
+
+const PRESETS = [
+  [{color:'#6366F1',pos:0},{color:'#A855F7',pos:100}],
+  [{color:'#F97316',pos:0},{color:'#EF4444',pos:100}],
+  [{color:'#10B981',pos:0},{color:'#06B6D4',pos:100}],
+  [{color:'#F59E0B',pos:0},{color:'#EC4899',pos:100}],
+  [{color:'#1E1B2E',pos:0},{color:'#4F46E5',pos:50},{color:'#A855F7',pos:100}],
+  [{color:'#FF6B6B',pos:0},{color:'#FFE66D',pos:50},{color:'#4ECDC4',pos:100}],
+  [{color:'#667EEA',pos:0},{color:'#764BA2',pos:100}],
+  [{color:'#11998E',pos:0},{color:'#38EF7D',pos:100}],
+  [{color:'#FC466B',pos:0},{color:'#3F5EFB',pos:100}],
+  [{color:'#FDDB92',pos:0},{color:'#D1FDFF',pos:100}],
+];
+
+function buildCSS() {
+  const stopsStr = stops.map(s => `${s.color} ${s.pos}%`).join(', ');
+  if (gradType === 'linear') return `linear-gradient(${angle}deg, ${stopsStr})`;
+  if (gradType === 'radial') {
+    const shape = document.getElementById('radial-shape').value;
+    return `radial-gradient(${shape} at center, ${stopsStr})`;
+  }
+  return `conic-gradient(from ${angle}deg, ${stopsStr})`;
+}
+
+function render() {
+  const css = buildCSS();
+  document.getElementById('preview').style.background = css;
+  document.getElementById('css-code').textContent =
+    `background: ${css};\nbackground: -webkit-${css};`;
+}
+
+function renderStops() {
+  const list = document.getElementById('stops-list');
+  list.innerHTML = '';
+  stops.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'stop-row';
+    row.innerHTML = `
+      <input type="color" class="stop-color" value="${s.color}" data-i="${i}">
+      <input type="number" class="field-input stop-pos" value="${s.pos}" min="0" max="100" data-i="${i}" placeholder="%">
+      <span style="font-size:13px;color:var(--color-text-muted)">%</span>
+      ${stops.length > 2 ? `<button class="stop-del" data-i="${i}">×</button>` : ''}`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.stop-color').forEach(el => el.addEventListener('input', e => { stops[+e.target.dataset.i].color = e.target.value; render(); }));
+  list.querySelectorAll('.stop-pos').forEach(el => el.addEventListener('input', e => { stops[+e.target.dataset.i].pos = parseInt(e.target.value)||0; render(); }));
+  list.querySelectorAll('.stop-del').forEach(el => el.addEventListener('click', e => { stops.splice(+e.target.dataset.i,1); renderStops(); render(); }));
+  render();
+}
+
+// Type tabs
+document.querySelectorAll('.type-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    gradType = tab.dataset.type;
+    document.getElementById('angle-row').style.display = gradType === 'radial' ? 'none' : '';
+    document.getElementById('radial-row').style.display = gradType === 'radial' ? '' : 'none';
+    render();
+  });
+});
+
+// Angle
+document.getElementById('angle').addEventListener('input', e => {
+  angle = +e.target.value;
+  document.getElementById('angle-lbl').textContent = angle;
+  render();
+});
+
+// Add stop
+document.getElementById('add-stop').addEventListener('click', () => {
+  stops.push({color:'#' + Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'), pos:50});
+  stops.sort((a,b) => a.pos - b.pos);
+  renderStops();
+});
+
+// Copy
+document.getElementById('copy-css').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('css-code').textContent).then(() => {
+    const b = document.getElementById('copy-css'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy CSS',1200);
+  });
+});
+
+// Randomize on preview click
+document.getElementById('preview').addEventListener('click', () => {
+  const preset = PRESETS[Math.floor(Math.random()*PRESETS.length)];
+  stops = preset.map(s => ({...s}));
+  renderStops();
+});
+
+// Presets
+const pg = document.getElementById('presets-grid');
+PRESETS.forEach((preset, i) => {
+  const sw = document.createElement('div');
+  sw.className = 'preset-swatch';
+  const stopsStr = preset.map(s => `${s.color} ${s.pos}%`).join(', ');
+  sw.style.background = `linear-gradient(135deg, ${stopsStr})`;
+  sw.title = 'Apply preset';
+  sw.addEventListener('click', () => {
+    stops = preset.map(s => ({...s}));
+    gradType = 'linear';
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.type-tab')[0].classList.add('active');
+    renderStops();
+  });
+  pg.appendChild(sw);
+});
+
+document.getElementById('radial-shape').addEventListener('change', render);
+renderStops();
+</script>
+</body>
+</html>

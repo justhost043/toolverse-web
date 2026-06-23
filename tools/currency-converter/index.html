@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Currency Converter — Live Exchange Rates Online | OMIToolKit</title>
+<meta name="description" content="Convert between 30+ currencies with live exchange rates. Free online currency converter — USD, EUR, GBP, PKR, AED, INR and more. Rates updated daily.">
+<link rel="canonical" href="../../tools/currency-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.converter-card{background:linear-gradient(135deg,#1E1B2E,#2D2050);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px}
+.conv-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.conv-amount{flex:1;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:var(--radius-sm);padding:14px 16px;font-size:22px;font-weight:600;font-family:var(--font-display);color:#fff;outline:none;min-width:0}
+.conv-amount:focus{border-color:var(--color-primary);background:rgba(255,255,255,.12)}
+.conv-amount::placeholder{color:rgba(255,255,255,.3)}
+.conv-select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:var(--radius-sm);padding:12px 14px;color:#fff;font-size:14px;font-weight:500;cursor:pointer;min-width:130px;outline:none}
+.conv-select option{background:#1E1B2E;color:#fff}
+.conv-select:focus{border-color:var(--color-primary)}
+.swap-row{display:flex;justify-content:center;margin:2px 0}
+.swap-conv{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#A78BFA;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.swap-conv:hover{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.rate-pill{text-align:center;font-size:13px;color:#94A3B8;margin-top:8px}
+.rate-pill strong{color:#A78BFA}
+.loading-state{text-align:center;padding:20px;color:var(--color-text-muted);font-size:14px}
+.error-state{background:#FEE2E2;color:#991B1B;padding:12px 16px;border-radius:var(--radius-sm);font-size:13.5px;margin:10px 0}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:16px}
+.quick-pair{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px}
+.quick-pair .qp-pair{font-weight:600;color:var(--color-primary);margin-bottom:3px;font-family:var(--font-mono)}
+.quick-pair .qp-rate{font-size:12px;color:var(--color-text-muted)}
+.updated-badge{font-size:12px;color:var(--color-text-muted);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Currency Converter</div>
+<div class="container tool-page-header">
+  <h1>Currency Converter</h1>
+  <p>Convert between 30+ currencies with live exchange rates updated daily.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+
+    <div id="loading" class="loading-state">⏳ Fetching live exchange rates…</div>
+    <div id="error" class="error-state" style="display:none">⚠️ Could not fetch live rates. Showing cached approximate rates.</div>
+
+    <div id="converter" style="display:none">
+      <div class="converter-card">
+        <div class="conv-row">
+          <input type="number" id="amount-from" class="conv-amount" value="1" min="0" step="any" placeholder="0">
+          <select id="sel-from" class="conv-select"></select>
+        </div>
+        <div class="swap-row"><button class="swap-conv" id="swap-btn" title="Swap currencies">⇅</button></div>
+        <div class="conv-row" style="margin-top:14px">
+          <input type="number" id="amount-to" class="conv-amount" readonly placeholder="0">
+          <select id="sel-to" class="conv-select"></select>
+        </div>
+        <div class="rate-pill" id="rate-pill"></div>
+      </div>
+      <div class="updated-badge" id="updated-badge"></div>
+
+      <div class="field-label" style="margin:18px 0 10px">Popular rates (1 USD =)</div>
+      <div class="quick-grid" id="quick-grid"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How exchange rates work</h2>
+  <p>Exchange rates represent the value of one currency relative to another. They fluctuate constantly based on supply and demand, which is driven by international trade, investment flows, economic data releases, and central bank policies. The rates shown here are mid-market rates — the midpoint between the buying and selling rates used by banks. Banks and exchange services typically add a margin of 1–3% above the mid-market rate, which is their profit.</p>
+  <h2>Why do exchange rates change daily?</h2>
+  <p>Currency markets are open 24 hours a day, 5 days a week and trade over $7 trillion daily — making them the largest financial market in the world. Rates move based on inflation reports, interest rate decisions, political events, and market sentiment. Small changes in rate expectations can cause significant currency movements overnight.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const CURRENCIES = [
+  {code:'USD',name:'US Dollar'},
+  {code:'EUR',name:'Euro'},
+  {code:'GBP',name:'British Pound'},
+  {code:'PKR',name:'Pakistani Rupee'},
+  {code:'AED',name:'UAE Dirham'},
+  {code:'INR',name:'Indian Rupee'},
+  {code:'SAR',name:'Saudi Riyal'},
+  {code:'CAD',name:'Canadian Dollar'},
+  {code:'AUD',name:'Australian Dollar'},
+  {code:'JPY',name:'Japanese Yen'},
+  {code:'CNY',name:'Chinese Yuan'},
+  {code:'CHF',name:'Swiss Franc'},
+  {code:'SGD',name:'Singapore Dollar'},
+  {code:'MYR',name:'Malaysian Ringgit'},
+  {code:'BDT',name:'Bangladeshi Taka'},
+  {code:'TRY',name:'Turkish Lira'},
+  {code:'KWD',name:'Kuwaiti Dinar'},
+  {code:'QAR',name:'Qatari Riyal'},
+  {code:'BHD',name:'Bahraini Dinar'},
+  {code:'OMR',name:'Omani Rial'},
+  {code:'EGP',name:'Egyptian Pound'},
+  {code:'ZAR',name:'South African Rand'},
+  {code:'MXN',name:'Mexican Peso'},
+  {code:'BRL',name:'Brazilian Real'},
+  {code:'KRW',name:'South Korean Won'},
+  {code:'IDR',name:'Indonesian Rupiah'},
+  {code:'THB',name:'Thai Baht'},
+  {code:'NGN',name:'Nigerian Naira'},
+  {code:'SEK',name:'Swedish Krona'},
+  {code:'NOK',name:'Norwegian Krone'},
+];
+
+const QUICK_PAIRS = ['EUR','GBP','PKR','AED','INR','SAR','JPY','CAD','AUD','CNY'];
+
+// Fallback rates (approximate, USD base)
+const FALLBACK = {USD:1,EUR:0.92,GBP:0.79,PKR:278,AED:3.67,INR:83.5,SAR:3.75,CAD:1.36,AUD:1.53,JPY:149,CNY:7.24,CHF:0.90,SGD:1.34,MYR:4.72,BDT:110,TRY:32.5,KWD:0.31,QAR:3.64,BHD:0.38,OMR:0.38,EGP:48.5,ZAR:18.8,MXN:17.2,BRL:4.97,KRW:1325,IDR:15600,THB:35.2,NGN:1550,SEK:10.5,NOK:10.7};
+
+let rates = null;
+
+async function fetchRates() {
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    rates = data.rates;
+    document.getElementById('updated-badge').textContent = '📡 Live rates — updated: ' + new Date(data.time_last_update_utc).toLocaleString();
+    return true;
+  } catch(e) {
+    rates = FALLBACK;
+    document.getElementById('error').style.display = '';
+    document.getElementById('updated-badge').textContent = '⚠️ Using approximate rates — live fetch failed';
+    return false;
+  }
+}
+
+function populateSelects() {
+  const fromSel = document.getElementById('sel-from');
+  const toSel = document.getElementById('sel-to');
+  CURRENCIES.forEach(c => {
+    fromSel.innerHTML += `<option value="${c.code}">${c.code} — ${c.name}</option>`;
+    toSel.innerHTML += `<option value="${c.code}">${c.code} — ${c.name}</option>`;
+  });
+  fromSel.value = 'USD';
+  toSel.value = 'PKR';
+}
+
+function convert() {
+  if (!rates) return;
+  const amt = parseFloat(document.getElementById('amount-from').value) || 0;
+  const from = document.getElementById('sel-from').value;
+  const to = document.getElementById('sel-to').value;
+  const fromRate = rates[from] || 1;
+  const toRate = rates[to] || 1;
+  const result = (amt / fromRate) * toRate;
+  document.getElementById('amount-to').value = result.toFixed(4);
+  const unitRate = (1 / fromRate) * toRate;
+  document.getElementById('rate-pill').innerHTML = `<strong>1 ${from} = ${unitRate.toFixed(4)} ${to}</strong>`;
+}
+
+function renderQuickGrid() {
+  const grid = document.getElementById('quick-grid');
+  grid.innerHTML = '';
+  QUICK_PAIRS.forEach(c => {
+    const rate = rates[c] || '—';
+    const div = document.createElement('div');
+    div.className = 'quick-pair';
+    div.innerHTML = `<div class="qp-pair">USD/${c}</div><div class="qp-rate">${typeof rate==='number'?rate.toFixed(4):rate}</div>`;
+    div.style.cursor = 'pointer';
+    div.addEventListener('click', () => {
+      document.getElementById('sel-from').value = 'USD';
+      document.getElementById('sel-to').value = c;
+      convert();
+    });
+    grid.appendChild(div);
+  });
+}
+
+document.getElementById('swap-btn').addEventListener('click', () => {
+  const t = document.getElementById('sel-from').value;
+  document.getElementById('sel-from').value = document.getElementById('sel-to').value;
+  document.getElementById('sel-to').value = t;
+  convert();
+});
+
+['sel-from','sel-to','amount-from'].forEach(id => {
+  document.getElementById(id).addEventListener('input', convert);
+  document.getElementById(id).addEventListener('change', convert);
+});
+
+// Init
+(async () => {
+  populateSelects();
+  await fetchRates();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('converter').style.display = '';
+  renderQuickGrid();
+  convert();
+})();
+</script>
+</body>
+</html>
