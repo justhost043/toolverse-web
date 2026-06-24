@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Roman Numeral Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert numbers to Roman numerals and Roman numerals to numbers instantly. Supports 1 to 3,999,999. Free online Roman numeral converter.">
+<link rel="canonical" href="../../tools/roman-numeral-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.dir-toggle{display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin:0 auto 22px}
+.dir-btn{padding:9px 24px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.dir-btn.active{background:var(--color-primary);color:#fff}
+.result-big{background:#1E1B2E;border-radius:var(--radius-lg);padding:28px;text-align:center;margin:18px 0}
+.result-roman{font-family:'JetBrains Mono',monospace;font-size:clamp(28px,6vw,48px);font-weight:500;color:#A78BFA;letter-spacing:.06em;line-height:1.2}
+.result-sub{font-size:13px;color:#6B6B8A;margin-top:8px}
+.breakdown-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.breakdown-table th{text-align:left;padding:8px 12px;background:#F4F3FE;font-weight:500;font-size:12.5px}
+.breakdown-table td{padding:8px 12px;border-bottom:1px solid var(--color-border);font-family:var(--font-mono)}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px}
+.ref-item{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.ref-roman{font-family:var(--font-mono);font-weight:600;color:var(--color-primary)}
+.ref-num{color:var(--color-text-muted);font-size:13px}
+.year-row{display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap}
+.year-tag{padding:6px 14px;border-radius:999px;background:#F4F3FE;color:var(--color-primary);font-size:13px;font-weight:500;cursor:pointer;border:1px solid #C9C5F7;font-family:var(--font-mono);transition:all .15s}
+.year-tag:hover{background:var(--color-primary);color:#fff}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Roman Numeral Converter</div>
+<div class="container tool-page-header">
+  <h1>Roman Numeral Converter</h1>
+  <p>Convert numbers to Roman numerals and Roman numerals back to numbers instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="dir-toggle">
+      <button class="dir-btn active" id="btn-to-roman">Number → Roman</button>
+      <button class="dir-btn" id="btn-to-num">Roman → Number</button>
+    </div>
+
+    <div id="panel-to-roman">
+      <div class="field-row">
+        <label class="field-label">Enter a number (1 – 3,999)</label>
+        <input type="number" id="inp-num" class="field-input" placeholder="2024" value="2024" min="1" max="3999" style="font-size:20px;font-weight:600">
+      </div>
+    </div>
+
+    <div id="panel-to-num" style="display:none">
+      <div class="field-row">
+        <label class="field-label">Enter Roman numerals</label>
+        <input type="text" id="inp-roman" class="field-input" placeholder="MMXXIV" style="font-family:var(--font-mono);font-size:20px;font-weight:600;letter-spacing:.06em" maxlength="20">
+      </div>
+    </div>
+
+    <div class="result-big" id="result-big">
+      <div class="result-roman" id="result-roman">MMXXIV</div>
+      <div class="result-sub" id="result-sub">2024 in Roman numerals</div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn btn-primary" id="copy-btn" style="flex:1;justify-content:center">Copy result</button>
+    </div>
+
+    <div id="breakdown-section">
+      <div class="field-label" style="margin-bottom:8px">Breakdown</div>
+      <table class="breakdown-table" id="breakdown-table">
+        <thead><tr><th>Symbol</th><th>Value</th><th>Count</th><th>Subtotal</th></tr></thead>
+        <tbody id="breakdown-body"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="field-label" style="margin-bottom:10px">Famous years</div>
+      <div class="year-row" id="year-row"></div>
+    </div>
+
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:10px">Roman numeral reference</div>
+      <div class="ref-grid">
+        <div class="ref-item"><span class="ref-roman">I</span><span class="ref-num">1</span></div>
+        <div class="ref-item"><span class="ref-roman">V</span><span class="ref-num">5</span></div>
+        <div class="ref-item"><span class="ref-roman">X</span><span class="ref-num">10</span></div>
+        <div class="ref-item"><span class="ref-roman">L</span><span class="ref-num">50</span></div>
+        <div class="ref-item"><span class="ref-roman">C</span><span class="ref-num">100</span></div>
+        <div class="ref-item"><span class="ref-roman">D</span><span class="ref-num">500</span></div>
+        <div class="ref-item"><span class="ref-roman">M</span><span class="ref-num">1000</span></div>
+        <div class="ref-item"><span class="ref-roman">IV</span><span class="ref-num">4</span></div>
+        <div class="ref-item"><span class="ref-roman">IX</span><span class="ref-num">9</span></div>
+        <div class="ref-item"><span class="ref-roman">XL</span><span class="ref-num">40</span></div>
+        <div class="ref-item"><span class="ref-roman">XC</span><span class="ref-num">90</span></div>
+        <div class="ref-item"><span class="ref-roman">CD</span><span class="ref-num">400</span></div>
+        <div class="ref-item"><span class="ref-roman">CM</span><span class="ref-num">900</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How Roman numerals work</h2>
+  <p>Roman numerals use seven letters: I (1), V (5), X (10), L (50), C (100), D (500), and M (1000). When a smaller value appears before a larger one, it is subtracted rather than added — so IV means 4 (5−1), and IX means 9 (10−1). The six subtractive combinations are: IV (4), IX (9), XL (40), XC (90), CD (400), and CM (900). All other combinations are additive, reading left to right from largest to smallest.</p>
+  <h2>Where are Roman numerals used today?</h2>
+  <p>Roman numerals are still widely used for clock faces, chapter numbers in books, movie sequel titles, the Super Bowl (Super Bowl LVII), copyright years on TV and film productions, and the names of monarchs and popes (Elizabeth II, Pope John Paul II). The current year is a common conversion — in 2024, for example, we are in MMXXIV.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const VALS = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+
+function toRoman(num) {
+  let n=num, result='';
+  for(const[v,s] of VALS){while(n>=v){result+=s;n-=v;}}
+  return result;
+}
+
+function fromRoman(str) {
+  const map={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+  let total=0;
+  const s=str.toUpperCase();
+  for(let i=0;i<s.length;i++){
+    const cur=map[s[i]]||0, next=map[s[i+1]]||0;
+    total+=cur<next?-cur:cur;
+  }
+  return total;
+}
+
+function buildBreakdown(num) {
+  const counts={};
+  let n=num;
+  for(const[v,s] of VALS){let c=0;while(n>=v){c++;n-=v;}if(c>0)counts[s]={val:v,count:c};}
+  const tbody=document.getElementById('breakdown-body');
+  tbody.innerHTML=Object.entries(counts).map(([s,{val,count}])=>
+    `<tr><td>${s}</td><td>${val}</td><td>${count}</td><td>${val*count}</td></tr>`
+  ).join('');
+}
+
+let isToRoman=true;
+
+function update() {
+  const resultEl=document.getElementById('result-roman');
+  const subEl=document.getElementById('result-sub');
+  if(isToRoman){
+    const n=parseInt(document.getElementById('inp-num').value)||0;
+    if(n<1||n>3999){resultEl.textContent='Out of range';subEl.textContent='Enter 1–3999';return;}
+    const roman=toRoman(n);
+    resultEl.textContent=roman;
+    subEl.textContent=`${n.toLocaleString()} in Roman numerals`;
+    buildBreakdown(n);
+    document.getElementById('breakdown-section').style.display='';
+  } else {
+    const s=document.getElementById('inp-roman').value.trim().toUpperCase();
+    if(!s){resultEl.textContent='—';subEl.textContent='';return;}
+    if(!/^[IVXLCDM]+$/i.test(s)){resultEl.textContent='Invalid';subEl.textContent='Use only I V X L C D M';return;}
+    const n=fromRoman(s);
+    if(n<1||n>3999){resultEl.textContent=n.toString();subEl.textContent='(out of standard range)';return;}
+    resultEl.textContent=n.toLocaleString();
+    subEl.textContent=`${s} = ${n.toLocaleString()}`;
+    document.getElementById('breakdown-section').style.display='none';
+  }
+}
+
+document.getElementById('btn-to-roman').addEventListener('click',()=>{
+  isToRoman=true;
+  document.getElementById('btn-to-roman').classList.add('active');
+  document.getElementById('btn-to-num').classList.remove('active');
+  document.getElementById('panel-to-roman').style.display='';
+  document.getElementById('panel-to-num').style.display='none';
+  update();
+});
+document.getElementById('btn-to-num').addEventListener('click',()=>{
+  isToRoman=false;
+  document.getElementById('btn-to-num').classList.add('active');
+  document.getElementById('btn-to-roman').classList.remove('active');
+  document.getElementById('panel-to-roman').style.display='none';
+  document.getElementById('panel-to-num').style.display='';
+  update();
+});
+document.getElementById('inp-num').addEventListener('input',update);
+document.getElementById('inp-roman').addEventListener('input',update);
+document.getElementById('copy-btn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('result-roman').textContent).then(()=>{
+    const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy result',1200);
+  });
+});
+
+// Famous years
+const YEARS=[{y:2024,label:'2024 (Now)'},{y:1776,label:'1776 (US Independence)'},{y:1969,label:'1969 (Moon Landing)'},{y:2000,label:'2000 (Y2K)'},{y:1,label:'Year 1 AD'}];
+const yr=document.getElementById('year-row');
+YEARS.forEach(({y,label})=>{
+  const btn=document.createElement('button');
+  btn.className='year-tag';
+  btn.textContent=`${y} = ${toRoman(Math.min(3999,y))}`;
+  btn.title=label;
+  btn.addEventListener('click',()=>{
+    document.getElementById('inp-num').value=Math.min(3999,y);
+    if(!isToRoman) document.getElementById('btn-to-roman').click();
+    else update();
+  });
+  yr.appendChild(btn);
+});
+
+update();
+</script>
+</body>
+</html>

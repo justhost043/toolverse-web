@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Flip & Mirror Text Generator Online | OMIToolKit</title>
+<meta name="description" content="Flip text upside down, mirror it, reverse it, or convert to bold/italic Unicode styles. Free online text flipper — paste the result anywhere.">
+<link rel="canonical" href="../../tools/flip-text/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.transform-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:16px}
+.transform-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px;transition:all .15s}
+.transform-card:hover{border-color:var(--color-primary);box-shadow:0 4px 12px rgba(99,102,241,.08)}
+.tf-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin-bottom:8px}
+.tf-output{font-size:17px;color:var(--color-text);word-break:break-all;line-height:1.5;min-height:28px;margin-bottom:10px}
+.tf-copy{width:100%;padding:7px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.tf-copy:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Flip Text</div>
+<div class="container tool-page-header">
+  <h1>Flip &amp; Mirror Text Generator</h1>
+  <p>Transform your text into flipped, mirrored, reversed or stylized Unicode formats — copy and paste anywhere.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:800px">
+    <div class="field-row">
+      <label class="field-label">Enter your text</label>
+      <input type="text" id="inp" class="field-input" placeholder="Hello World" value="Hello World" style="font-size:18px">
+    </div>
+    <div class="transform-grid" id="transform-grid"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How does text flipping work?</h2>
+  <p>Most of these transformations use Unicode characters that visually resemble flipped or stylized versions of Latin letters. For example, the upside-down ɐ is a real Unicode character (U+0250) that looks like a flipped 'a'. By substituting each letter with its Unicode equivalent, we can create text that appears flipped or mirrored while still being copy-pasteable as plain text.</p>
+  <p>The Bold and Italic styles use Unicode Mathematical Alphanumeric Symbols — these are real Unicode characters designed for mathematical notation that happen to look like bold or italic Latin letters when used in regular text. This is why bold text in Instagram bios or Twitter posts works without any special formatting.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const FLIP_MAP = {
+  a:'ɐ',b:'q',c:'ɔ',d:'p',e:'ǝ',f:'ɟ',g:'ƃ',h:'ɥ',i:'ı',j:'ɾ',k:'ʞ',l:'l',m:'ɯ',
+  n:'u',o:'o',p:'d',q:'b',r:'ɹ',s:'s',t:'ʇ',u:'n',v:'ʌ',w:'ʍ',x:'x',y:'ʎ',z:'z',
+  A:'∀',B:'ᗺ',C:'Ɔ',D:'ᗡ',E:'Ǝ',F:'Ⅎ',G:'פ',H:'H',I:'I',J:'ſ',K:'ʞ',L:'˥',M:'W',
+  N:'N',O:'O',P:'Ԁ',Q:'Q',R:'ᴚ',S:'S',T:'┴',U:'∩',V:'Λ',W:'M',X:'X',Y:'⅄',Z:'Z',
+  '0':'0','1':'Ɩ','2':'ᄅ','3':'Ɛ','4':'ᔭ','5':'ϛ','6':'9','7':'ㄥ','8':'8','9':'6',
+  '.':'˙',',':'\'','?':'¿','!':'¡','\'':'‚','"':'„','(':')',')':'(','[':']',']':'[','{':'}','}':'{','<':'>','>':'<','&':'⅋','_':'‾'
+};
+
+const BOLD_MAP = {...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('').reduce((a,c,i)=>({...a,[c]:String.fromCodePoint(i<26?0x1D400+i:i<52?0x1D41A+i-26:0x1D7CE+i-52)}),{})};
+const ITALIC_MAP = {...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('').reduce((a,c,i)=>({...a,[c]:String.fromCodePoint(i<26?0x1D434+i:i===34?0x210E:0x1D44E+i-26)}),{})};
+const BOLD_ITALIC_MAP = {...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('').reduce((a,c,i)=>({...a,[c]:String.fromCodePoint(i<26?0x1D468+i:0x1D482+i-26)}),{})};
+const MONO_MAP = {...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('').reduce((a,c,i)=>({...a,[c]:String.fromCodePoint(i<26?0x1D670+i:i<52?0x1D68A+i-26:0x1D7F6+i-52)}),{})};
+const CIRCLE_MAP = {...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('').reduce((a,c,i)=>({...a,[c]:String.fromCodePoint(i<26?0x24B6+i:i<52?0x24D0+i-26:i===52?0x24EA:0x2460+i-53)}),{})};
+const SMALL_CAPS = {a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'Q',r:'ʀ',s:'ꜱ',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'};
+
+function mapText(text, map) { return [...text].map(c=>map[c]||c).join(''); }
+function flip(text) { return [...text].map(c=>FLIP_MAP[c]||c).reverse().join(''); }
+function mirror(text) { return [...text].reverse().join(''); }
+function reverse(text) { return [...text].reverse().join(''); }
+function strikethrough(text) { return [...text].map(c=>c+'\u0336').join(''); }
+function underline(text) { return [...text].map(c=>c+'\u0332').join(''); }
+function doubleStrike(text) { return [...text].map(c=>{'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';const map={'A':'𝔸','B':'𝔹','C':'ℂ','D':'𝔻','E':'𝔼','F':'𝔽','G':'𝔾','H':'ℍ','I':'𝕀','J':'𝕁','K':'𝕂','L':'𝕃','M':'𝕄','N':'ℕ','O':'𝕆','P':'ℙ','Q':'ℚ','R':'ℝ','S':'𝕊','T':'𝕋','U':'𝕌','V':'𝕍','W':'𝕎','X':'𝕏','Y':'𝕐','Z':'ℤ','a':'𝕒','b':'𝕓','c':'𝕔','d':'𝕕','e':'𝕖','f':'𝕗','g':'𝕘','h':'𝕙','i':'𝕚','j':'𝕛','k':'𝕜','l':'𝕝','m':'𝕞','n':'𝕟','o':'𝕠','p':'𝕡','q':'𝕢','r':'𝕣','s':'𝕤','t':'𝕥','u':'𝕦','v':'𝕧','w':'𝕨','x':'𝕩','y':'𝕪','z':'𝕫'};return map[c]||c;}).join(''); }
+
+const TRANSFORMS = [
+  {label:'🙃 Upside Down', fn: flip},
+  {label:'🪞 Reversed', fn: mirror},
+  {label:'↩ Backwards', fn: reverse},
+  {label:'𝐁 Bold', fn: t=>mapText(t,BOLD_MAP)},
+  {label:'𝘐 Italic', fn: t=>mapText(t,ITALIC_MAP)},
+  {label:'𝑩 Bold Italic', fn: t=>mapText(t,BOLD_ITALIC_MAP)},
+  {label:'𝙼 Monospace', fn: t=>mapText(t,MONO_MAP)},
+  {label:'Ⓒ Circled', fn: t=>mapText(t,CIRCLE_MAP)},
+  {label:'ꜱᴍᴀʟʟ ᴄᴀᴘꜱ', fn: t=>mapText(t.toLowerCase(),SMALL_CAPS)},
+  {label:'S̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶', fn: strikethrough},
+  {label:'U̲n̲d̲e̲r̲l̲i̲n̲e̲', fn: underline},
+  {label:'𝔻 Double Strike', fn: doubleStrike},
+];
+
+function buildGrid(text) {
+  const grid = document.getElementById('transform-grid');
+  grid.innerHTML = '';
+  TRANSFORMS.forEach(({label,fn}) => {
+    const out = fn(text);
+    const card = document.createElement('div');
+    card.className = 'transform-card';
+    card.innerHTML = `<div class="tf-label">${label}</div><div class="tf-output">${out||'—'}</div><button class="tf-copy" data-val="${encodeURIComponent(out)}">Copy</button>`;
+    card.querySelector('.tf-copy').addEventListener('click', e => {
+      const val = decodeURIComponent(e.target.dataset.val);
+      navigator.clipboard.writeText(val).then(()=>{const t=e.target.textContent;e.target.textContent='Copied!';setTimeout(()=>e.target.textContent='Copy',1100);});
+    });
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('inp').addEventListener('input', e => buildGrid(e.target.value));
+buildGrid('Hello World');
+</script>
+</body>
+</html>

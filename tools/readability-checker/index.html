@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Readability Checker — Test Text Reading Level | OMIToolKit</title>
+<meta name="description" content="Check the readability of any text. Get Flesch Reading Ease score, grade level, sentence complexity and improvement suggestions. Free online readability analyzer.">
+<link rel="canonical" href="../../tools/readability-checker/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.score-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;border:8px solid var(--color-border);position:relative;transition:border-color .3s}
+.score-circle .score-num{font-size:38px;font-weight:700;font-family:var(--font-display);line-height:1}
+.score-circle .score-lbl{font-size:12px;font-weight:500;margin-top:4px}
+.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.metric-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px}
+.metric-card .m-val{font-size:22px;font-weight:600;color:var(--color-primary);font-family:var(--font-display)}
+.metric-card .m-lbl{font-size:12.5px;color:var(--color-text-muted);margin-top:3px}
+.score-bar{height:10px;border-radius:999px;background:var(--color-border);overflow:hidden;margin:6px 0}
+.score-bar-fill{height:100%;border-radius:999px;transition:width .4s ease}
+.grade-badge{display:inline-block;padding:5px 16px;border-radius:999px;font-weight:600;font-size:14px;margin-bottom:16px}
+.suggestions-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.suggestion-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-sm);font-size:13.5px}
+.suggestion-item.warn{background:#FFFBEB;border:1px solid #FCD34D}
+.suggestion-item.tip{background:#F0FDF4;border:1px solid #86EFAC}
+.suggestion-item .sicon{flex-shrink:0;font-size:15px;margin-top:1px}
+.highlight-passive{background:#FEF3C7;border-radius:2px;padding:0 2px}
+.highlight-long{background:#FEE2E2;border-radius:2px;padding:0 2px}
+.highlight-legend{display:flex;gap:14px;font-size:12px;margin-top:10px;flex-wrap:wrap}
+.hl-item{display:flex;align-items:center;gap:5px}
+.hl-dot{width:12px;height:12px;border-radius:2px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Readability Checker</div>
+<div class="container tool-page-header">
+  <h1>Readability Checker</h1>
+  <p>Paste any text and instantly see how easy it is to read — with grade level, complexity score and improvement tips.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:760px">
+    <div class="field-row">
+      <label class="field-label">Your text</label>
+      <textarea id="inp" class="field-input" rows="8" placeholder="Paste or type your article, blog post, email or any content here…"></textarea>
+    </div>
+    <button class="btn btn-primary" id="analyze-btn" style="width:100%;justify-content:center;padding:13px">Analyze Readability</button>
+
+    <div id="results" style="display:none;margin-top:22px">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin-bottom:20px">
+        <div>
+          <div class="score-circle" id="score-circle">
+            <div class="score-num" id="score-num">0</div>
+            <div class="score-lbl" id="score-lbl">—</div>
+          </div>
+          <div style="text-align:center;font-size:12.5px;color:var(--color-text-muted)">Flesch Reading Ease</div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="grade-badge" id="grade-badge">Grade —</div>
+          <div class="score-bar"><div class="score-bar-fill" id="score-bar-fill" style="width:0%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-muted);margin-bottom:14px"><span>Harder</span><span>Easier</span></div>
+          <div class="metrics-grid">
+            <div class="metric-card"><div class="m-val" id="m-words">0</div><div class="m-lbl">Words</div></div>
+            <div class="metric-card"><div class="m-val" id="m-sents">0</div><div class="m-lbl">Sentences</div></div>
+            <div class="metric-card"><div class="m-val" id="m-apw">0</div><div class="m-lbl">Avg words/sentence</div></div>
+            <div class="metric-card"><div class="m-val" id="m-aps">0</div><div class="m-lbl">Avg syllables/word</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Suggestions</div>
+      <ul class="suggestions-list" id="suggestions"></ul>
+
+      <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--color-border)">
+        <div class="field-label" style="margin-bottom:8px">Highlighted text</div>
+        <div id="highlighted-text" style="font-size:15px;line-height:1.8;padding:16px;background:#FAFAF9;border:1px solid var(--color-border);border-radius:var(--radius-sm)"></div>
+        <div class="highlight-legend">
+          <div class="hl-item"><div class="hl-dot" style="background:#FEF3C7;border:1px solid #FCD34D"></div> Long sentence (&gt;25 words)</div>
+          <div class="hl-item"><div class="hl-dot" style="background:#FEE2E2;border:1px solid #FCA5A5"></div> Complex word (&gt;3 syllables)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is Flesch Reading Ease?</h2>
+  <p>The Flesch Reading Ease score is a well-established formula developed by Rudolf Flesch in 1948. It gives a score from 0 to 100 based on average sentence length and average syllables per word. A score of 60–70 is considered ideal for general web content — roughly equivalent to an 8th-9th grade reading level. News articles typically score 60–70. Academic papers often score 30–50. Simple children's books score above 90.</p>
+  <h2>How to improve readability</h2>
+  <p>The most effective changes are: shorten long sentences (aim for an average of 15-20 words), replace complex multi-syllable words with simpler alternatives, use active voice instead of passive constructions, and break large paragraphs into smaller ones. Even very technical content can be made clearer without dumbing it down — the goal is reducing the cognitive load on the reader, not simplifying the ideas themselves.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function syllableCount(word) {
+  word = word.toLowerCase().replace(/[^a-z]/g,'');
+  if(!word) return 1;
+  const vowels = word.match(/[aeiouy]+/g);
+  let count = vowels ? vowels.length : 1;
+  if(word.endsWith('e') && count > 1) count--;
+  return Math.max(1, count);
+}
+
+function analyze() {
+  const text = document.getElementById('inp').value.trim();
+  if(!text) return;
+
+  const sentences = text.split(/[.!?]+/).filter(s=>s.trim().length>2);
+  const words = text.match(/\b[a-zA-Z']+\b/g) || [];
+  const nWords = words.length;
+  const nSents = Math.max(1, sentences.length);
+  const totalSyllables = words.reduce((s,w) => s+syllableCount(w), 0);
+
+  const apw = nWords/nSents;
+  const aps = totalSyllables/Math.max(1,nWords);
+  const flesch = Math.max(0, Math.min(100, 206.835 - 1.015*apw - 84.6*aps));
+
+  // Grade (Flesch-Kincaid)
+  const grade = Math.max(0, Math.min(18, 0.39*apw + 11.8*aps - 15.59));
+
+  let ease, easeColor, easeCircleColor, barColor;
+  if(flesch>=90){ease='Very Easy';easeColor='#166534';easeCircleColor='#16A34A';barColor='#16A34A';}
+  else if(flesch>=70){ease='Easy';easeColor='#166534';easeCircleColor='#4ADE80';barColor='#4ADE80';}
+  else if(flesch>=60){ease='Standard';easeColor='#1D4ED8';easeCircleColor='#60A5FA';barColor='#60A5FA';}
+  else if(flesch>=50){ease='Fairly Difficult';easeColor='#B45309';easeCircleColor='#FBBF24';barColor='#FBBF24';}
+  else if(flesch>=30){ease='Difficult';easeColor='#B91C1C';easeCircleColor='#F97316';barColor='#F97316';}
+  else{ease='Very Difficult';easeColor='#991B1B';easeCircleColor='#EF4444';barColor='#EF4444';}
+
+  const gradeNames=['K','1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th','College','College+'];
+  const gradeIdx = Math.min(14, Math.max(0, Math.round(grade)));
+  const gradeName = gradeNames[gradeIdx] || 'College+';
+
+  document.getElementById('score-num').textContent = Math.round(flesch);
+  document.getElementById('score-lbl').textContent = ease;
+  document.getElementById('score-circle').style.borderColor = easeCircleColor;
+  document.getElementById('score-num').style.color = easeColor;
+  document.getElementById('score-lbl').style.color = easeColor;
+  document.getElementById('score-bar-fill').style.width = flesch+'%';
+  document.getElementById('score-bar-fill').style.background = barColor;
+  document.getElementById('grade-badge').textContent = `Grade ${gradeIdx <= 12 ? gradeNames[gradeIdx] : 'College+'}`;
+  document.getElementById('grade-badge').style.background = barColor+'22';
+  document.getElementById('grade-badge').style.color = easeColor;
+
+  document.getElementById('m-words').textContent = nWords.toLocaleString();
+  document.getElementById('m-sents').textContent = nSents;
+  document.getElementById('m-apw').textContent = apw.toFixed(1);
+  document.getElementById('m-aps').textContent = aps.toFixed(2);
+
+  // Suggestions
+  const suggestions = [];
+  if(apw > 25) suggestions.push({type:'warn',icon:'⚠️',text:`Your average sentence is <strong>${apw.toFixed(0)} words</strong> — aim for under 20. Long sentences increase cognitive load.`});
+  else if(apw < 10) suggestions.push({type:'tip',icon:'✅',text:`Great sentence length (${apw.toFixed(0)} words average) — easy to scan and understand.`});
+  else suggestions.push({type:'tip',icon:'✅',text:`Sentence length looks good at ${apw.toFixed(1)} words average.`});
+
+  const complexWords = words.filter(w=>syllableCount(w)>=4).length;
+  const complexPct = Math.round(complexWords/Math.max(1,nWords)*100);
+  if(complexPct > 15) suggestions.push({type:'warn',icon:'📝',text:`<strong>${complexPct}%</strong> of your words have 4+ syllables. Try replacing some with simpler alternatives.`});
+  else suggestions.push({type:'tip',icon:'✅',text:`Vocabulary complexity is reasonable — ${complexPct}% multi-syllable words.`});
+
+  const passiveMatches = text.match(/\b(is|are|was|were|be|been|being)\s+\w+ed\b/gi)||[];
+  if(passiveMatches.length > 3) suggestions.push({type:'warn',icon:'🔄',text:`Found <strong>${passiveMatches.length} passive voice</strong> constructions. Active voice is clearer and more direct.`});
+
+  if(flesch >= 60) suggestions.push({type:'tip',icon:'🎯',text:`Overall reading ease score of <strong>${Math.round(flesch)}</strong> is good for web content. Suitable for a general audience.`});
+  else suggestions.push({type:'warn',icon:'🎯',text:`Reading ease of <strong>${Math.round(flesch)}</strong> is challenging. Consider simplifying for a wider audience.`});
+
+  document.getElementById('suggestions').innerHTML = suggestions.map(s=>`
+    <li class="suggestion-item ${s.type}"><span class="sicon">${s.icon}</span><span>${s.text}</span></li>`).join('');
+
+  // Highlighted text
+  const sentenceArr = text.split(/([.!?]+)/).reduce((acc,part,i,arr)=>{
+    if(i%2===0 && part.trim()) acc.push(part+(arr[i+1]||''));
+    return acc;
+  },[]);
+
+  const highlighted = sentenceArr.map(sent=>{
+    const wc = (sent.match(/\b[a-zA-Z']+\b/g)||[]).length;
+    let s = sent;
+    // Highlight complex words
+    s = s.replace(/\b([a-zA-Z']{4,})\b/g, w => syllableCount(w)>=4 ? `<mark class="highlight-long">${w}</mark>` : w);
+    return wc > 25 ? `<span style="background:#FFFBEB;border-radius:3px;padding:1px 0">${s}</span>` : s;
+  }).join('');
+
+  document.getElementById('highlighted-text').innerHTML = highlighted;
+  document.getElementById('results').style.display = '';
+}
+
+document.getElementById('analyze-btn').addEventListener('click', analyze);
+document.getElementById('inp').addEventListener('input', () => {
+  if(document.getElementById('results').style.display!=='none') analyze();
+});
+
+// Demo text
+document.getElementById('inp').value = `The quick brown fox jumps over the lazy dog. This sentence is easy to read and understand. However, when writers utilize unnecessarily complicated terminology and construct excessively lengthy sentences with multiple subordinate clauses, the comprehensibility of the text decreases substantially. Short sentences help. They keep readers engaged. Try to mix sentence lengths for the best reading experience.`;
+</script>
+</body>
+</html>

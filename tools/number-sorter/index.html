@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Number & List Sorter Online | OMIToolKit</title>
+<meta name="description" content="Sort numbers or text lists in ascending, descending, alphabetical or random order. Remove duplicates, trim whitespace and clean your list. Free online list sorter.">
+<link rel="canonical" href="../../tools/number-sorter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.sort-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.sort-btn-opt{padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
+.sort-btn-opt:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.sort-btn-opt.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.options-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.stat-pill{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
+.sep-select{padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13.5px;font-family:var(--font-body)}
+textarea.code-area{font-family:var(--font-mono);font-size:14px;resize:vertical;min-height:180px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / List Sorter</div>
+<div class="container tool-page-header">
+  <h1>Number &amp; List Sorter</h1>
+  <p>Sort any list of numbers or text — ascending, descending, alphabetical, reverse or random. Remove duplicates in one click.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:780px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
+      <div>
+        <label class="field-label">Input list</label>
+        <textarea id="inp" class="field-input code-area" placeholder="One item per line:&#10;banana&#10;apple&#10;cherry&#10;&#10;Or paste numbers:&#10;42&#10;7&#10;156&#10;3"></textarea>
+        <div class="stats-row" id="inp-stats"></div>
+      </div>
+      <div>
+        <label class="field-label">Output</label>
+        <textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea>
+        <div class="stats-row" id="out-stats"></div>
+      </div>
+    </div>
+
+    <div class="sort-options">
+      <button class="sort-btn-opt active" data-sort="asc-num">↑ Ascending (numeric)</button>
+      <button class="sort-btn-opt" data-sort="desc-num">↓ Descending (numeric)</button>
+      <button class="sort-btn-opt" data-sort="asc-alpha">A→Z Alphabetical</button>
+      <button class="sort-btn-opt" data-sort="desc-alpha">Z→A Reverse alpha</button>
+      <button class="sort-btn-opt" data-sort="reverse">⇅ Reverse order</button>
+      <button class="sort-btn-opt" data-sort="random">🔀 Randomize</button>
+      <button class="sort-btn-opt" data-sort="len-asc">↑ By length</button>
+      <button class="sort-btn-opt" data-sort="len-desc">↓ By length (longest first)</button>
+    </div>
+
+    <div class="options-row">
+      <label class="checkbox-item"><input type="checkbox" id="opt-dedup"> Remove duplicates</label>
+      <label class="checkbox-item"><input type="checkbox" id="opt-trim" checked> Trim whitespace</label>
+      <label class="checkbox-item"><input type="checkbox" id="opt-empty"> Remove empty lines</label>
+      <label class="checkbox-item"><input type="checkbox" id="opt-number"> Add line numbers</label>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <label class="field-label" style="margin:0">Separator:</label>
+      <select id="sep-select" class="sep-select">
+        <option value="newline">New line</option>
+        <option value="comma">Comma</option>
+        <option value="semicolon">Semicolon</option>
+        <option value="space">Space</option>
+        <option value="pipe">Pipe (|)</option>
+      </select>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="sort-btn">Sort List</button>
+      <button class="btn btn-outline" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>When to use a list sorter</h2>
+  <p>List sorters are useful whenever you need to organize data quickly without opening a spreadsheet. Common uses include sorting a list of names alphabetically for a class register, ordering product prices numerically to find the highest or lowest, randomizing a list of names for a raffle draw, removing duplicate email addresses from a collected list, or reversing the order of a numbered list to put the newest items first.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let activeSort = 'asc-num';
+
+document.querySelectorAll('.sort-btn-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeSort = btn.dataset.sort;
+  });
+});
+
+function secRand(){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/0xFFFFFFFF;}
+
+function getItems() {
+  const raw = document.getElementById('inp').value;
+  const sep = document.getElementById('sep-select').value;
+  let items;
+  if(sep==='newline') items=raw.split('\n');
+  else if(sep==='comma') items=raw.split(',');
+  else if(sep==='semicolon') items=raw.split(';');
+  else if(sep==='space') items=raw.split(/\s+/);
+  else items=raw.split('|');
+  if(document.getElementById('opt-trim').checked) items=items.map(i=>i.trim());
+  if(document.getElementById('opt-empty').checked) items=items.filter(i=>i.length>0);
+  return items;
+}
+
+function sortAndRender() {
+  let items = getItems();
+  const inp = document.getElementById('inp').value;
+  document.getElementById('inp-stats').innerHTML=`<span class="stat-pill">${items.length} items</span>`;
+
+  if(document.getElementById('opt-dedup').checked) items=[...new Set(items)];
+
+  const isNumeric = items.every(i=>!isNaN(parseFloat(i))&&i.trim()!=='');
+
+  switch(activeSort) {
+    case 'asc-num': items.sort((a,b)=>isNumeric?parseFloat(a)-parseFloat(b):a.localeCompare(b,'en',{numeric:true})); break;
+    case 'desc-num': items.sort((a,b)=>isNumeric?parseFloat(b)-parseFloat(a):b.localeCompare(a,'en',{numeric:true})); break;
+    case 'asc-alpha': items.sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase())); break;
+    case 'desc-alpha': items.sort((a,b)=>b.toLowerCase().localeCompare(a.toLowerCase())); break;
+    case 'reverse': items.reverse(); break;
+    case 'random': for(let i=items.length-1;i>0;i--){const j=Math.floor(secRand()*(i+1));[items[i],items[j]]=[items[j],items[i]];} break;
+    case 'len-asc': items.sort((a,b)=>a.length-b.length); break;
+    case 'len-desc': items.sort((a,b)=>b.length-a.length); break;
+  }
+
+  if(document.getElementById('opt-number').checked) items=items.map((it,i)=>`${i+1}. ${it}`);
+
+  const sep=document.getElementById('sep-select').value;
+  const joiner=sep==='newline'?'\n':sep==='comma'?', ':sep==='semicolon'?'; ':sep==='space':' ':sep==='pipe':' | ':'\n';
+  const result=items.join(joiner==='space'?' ':joiner==='pipe':' | ':sep==='comma'?', ':sep==='semicolon'?'; ':'\n');
+  document.getElementById('out').value=result;
+  document.getElementById('out-stats').innerHTML=`<span class="stat-pill">${items.length} items</span>`;
+}
+
+document.getElementById('sort-btn').addEventListener('click',sortAndRender);
+document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
+document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';['inp-stats','out-stats'].forEach(id=>document.getElementById(id).innerHTML='');});
+
+// Demo
+document.getElementById('inp').value='banana\napple\ncherry\ndate\nmango\nblueberry\napple\nkiwi';
+sortAndRender();
+</script>
+</body>
+</html>
