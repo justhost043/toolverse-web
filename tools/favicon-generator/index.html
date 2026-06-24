@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Favicon Generator — Create Favicon from Image | OMIToolKit</title>
+<meta name="description" content="Generate favicons in all sizes (16x16 to 512x512) from any image. Download all sizes as a ZIP with HTML code. Free online favicon generator, no sign-up.">
+<link rel="canonical" href="../../tools/favicon-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:52px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.favicon-previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:20px}
+.fav-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.fav-card canvas{display:block;margin:0 auto 8px;image-rendering:pixelated;border:1px solid var(--color-border);border-radius:4px;background:#fff}
+.fav-card .fav-label{font-size:12px;font-weight:500;color:var(--color-text-muted)}
+.html-snippet{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:var(--font-mono);font-size:12.5px;color:#86EFAC;line-height:1.8;margin-top:14px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Favicon Generator</div>
+<div class="container tool-page-header">
+  <h1>Favicon Generator</h1>
+  <p>Upload any image and get all standard favicon sizes — plus the HTML code to add them to your site.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:720px">
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:40px;margin-bottom:12px">🖼️</div>
+      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop your logo or icon here, or click to select</div>
+      <div style="font-size:13px;margin-top:6px">PNG, JPG, SVG — square images work best</div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+
+    <div id="result-section" style="display:none">
+      <div style="display:flex;gap:10px;margin:16px 0;flex-wrap:wrap">
+        <button class="btn btn-primary" id="download-zip">⬇ Download All (ZIP)</button>
+        <button class="btn btn-outline" id="reset-btn">Reset</button>
+      </div>
+
+      <div class="favicon-previews" id="fav-previews"></div>
+
+      <div style="margin-top:20px">
+        <div class="field-label" style="margin-bottom:8px">HTML code — paste into your &lt;head&gt;</div>
+        <div class="html-snippet" id="html-snippet"></div>
+        <button class="btn btn-outline" id="copy-html" style="margin-top:10px">Copy HTML</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What favicon sizes do I need?</h2>
+  <p>Modern websites need multiple favicon sizes to look sharp across all browsers and devices. The classic 16×16 and 32×32 are used in browser tabs and bookmarks. 180×180 is the Apple Touch Icon for iOS home screens. 192×192 and 512×512 are used by Android and Progressive Web Apps (PWA). 48×48 is used by some Windows browsers. This generator creates all of them in one click.</p>
+  <h2>Why should my favicon be square?</h2>
+  <p>Browsers and operating systems display favicons in square or circular crops. Starting with a square image ensures nothing important gets cropped. If your logo is wider than it is tall (landscape), consider creating a square version that contains just the icon or symbol part of your logo for the best favicon result.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const SIZES = [16, 32, 48, 64, 96, 128, 180, 192, 256, 512];
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+let canvases = {};
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if (e.dataTransfer.files[0]) processImage(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) processImage(fileInput.files[0]); });
+
+function processImage(file) {
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    const container = document.getElementById('fav-previews');
+    container.innerHTML = '';
+    canvases = {};
+
+    SIZES.forEach(size => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, size, size);
+      canvases[size] = canvas;
+
+      const displaySize = Math.min(size, 80);
+      const displayCanvas = document.createElement('canvas');
+      displayCanvas.width = displaySize; displayCanvas.height = displaySize;
+      displayCanvas.style.width = displaySize + 'px';
+      displayCanvas.style.height = displaySize + 'px';
+      const dctx = displayCanvas.getContext('2d');
+      dctx.drawImage(canvas, 0, 0, displaySize, displaySize);
+
+      const card = document.createElement('div');
+      card.className = 'fav-card';
+      card.innerHTML = `<div class="fav-label">${size}×${size}</div>`;
+      card.insertBefore(displayCanvas, card.firstChild);
+      container.appendChild(card);
+    });
+
+    // HTML snippet
+    document.getElementById('html-snippet').textContent =
+`<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">`;
+
+    document.getElementById('result-section').style.display = '';
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+}
+
+document.getElementById('download-zip').addEventListener('click', async () => {
+  const btn = document.getElementById('download-zip');
+  btn.textContent = '⏳ Creating ZIP…'; btn.disabled = true;
+
+  const zip = new JSZip();
+  const names = { 16:'favicon-16x16', 32:'favicon-32x32', 48:'favicon-48x48',
+    64:'favicon-64x64', 96:'favicon-96x96', 128:'favicon-128x128',
+    180:'apple-touch-icon', 192:'android-chrome-192x192',
+    256:'favicon-256x256', 512:'android-chrome-512x512' };
+
+  for (const [size, canvas] of Object.entries(canvases)) {
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    const buf = await blob.arrayBuffer();
+    zip.file(`${names[size]}.png`, buf);
+  }
+
+  const htmlCode = document.getElementById('html-snippet').textContent;
+  zip.file('favicon-instructions.html', `<!DOCTYPE html><html><head>${htmlCode}\n<title>Your Site</title></head><body><h1>Copy the code from the &lt;head&gt; section above into your website's &lt;head&gt;</h1></body></html>`);
+  zip.file('README.txt', `Favicon Package — Generated by OMIToolKit\n\nFiles included:\n${SIZES.map(s => `  ${names[s]}.png (${s}x${s})`).join('\n')}\n\nHow to use:\n1. Upload all PNG files to your website root or /images/ folder\n2. Copy the HTML code from favicon-instructions.html\n3. Paste it inside the <head> tag of every page\n\nGenerated at OMIToolKit: https://justhost043.github.io/toolverse-web/tools/favicon-generator/`);
+
+  const blob = await zip.generateAsync({ type:'blob' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'favicons.zip'; a.click();
+  btn.textContent = '⬇ Download All (ZIP)'; btn.disabled = false;
+});
+
+document.getElementById('copy-html').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('html-snippet').textContent).then(() => {
+    const b = document.getElementById('copy-html'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy HTML',1200);
+  });
+});
+document.getElementById('reset-btn').addEventListener('click', () => {
+  document.getElementById('result-section').style.display = 'none';
+  fileInput.value = ''; canvases = {};
+});
+</script>
+</body>
+</html>

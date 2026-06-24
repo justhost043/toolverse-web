@@ -37,5 +37,10 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/character-frequency/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/timezone-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/currency-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/favicon-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/aspect-ratio-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/morse-code-translator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/text-to-speech/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/pomodoro-timer/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/about/</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
 </urlset>

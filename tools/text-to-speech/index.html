@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Text to Speech Online — Listen to Any Text | OMIToolKit</title>
+<meta name="description" content="Convert text to speech instantly in your browser. Choose from multiple voices, control speed and pitch. Free online text to speech tool — no sign-up, no download.">
+<link rel="canonical" href="../../tools/text-to-speech/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.tts-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+@media(max-width:480px){.tts-controls{grid-template-columns:1fr 1fr}}
+.ctrl-group label{display:block;font-size:12.5px;font-weight:500;color:var(--color-text-muted);margin-bottom:6px}
+.ctrl-val{font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--color-primary);float:right}
+.play-row{display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap}
+.big-play{width:60px;height:60px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.big-play:hover{background:var(--color-primary-dark);transform:scale(1.05)}
+.big-play.speaking{background:#EF4444;animation:pulse-ring .8s ease infinite}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+.word-highlight{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));color:#fff;border-radius:3px;padding:0 2px}
+.tts-text-output{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:16px;min-height:80px;font-size:16px;line-height:1.8;margin-top:14px;word-break:break-word}
+.char-counter{text-align:right;font-size:12.5px;color:var(--color-text-muted);margin-top:4px}
+.voice-select{width:100%;margin-bottom:14px}
+.status-pill{font-size:13px;color:var(--color-text-muted);padding:4px 0;flex:1}
+.status-pill.active{color:var(--color-primary);font-weight:500}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-productivity">Productivity</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-productivity">Productivity</a> / Text to Speech</div>
+<div class="container tool-page-header">
+  <h1>Text to Speech</h1>
+  <p>Convert any text to audio instantly — choose your voice, speed and pitch, then listen or follow along.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+
+    <div class="field-row">
+      <label class="field-label">Text to read aloud</label>
+      <textarea id="tts-input" class="field-input" rows="6" placeholder="Type or paste text here — click the play button to listen…">Welcome to OMIToolKit. This is a free text to speech tool that runs entirely in your browser. No sign-up required, and nothing is uploaded anywhere.</textarea>
+    </div>
+    <div class="char-counter"><span id="char-count">0</span> / 5000 characters</div>
+
+    <div class="field-row">
+      <label class="field-label">Voice</label>
+      <select id="voice-select" class="field-select voice-select">
+        <option>Loading voices…</option>
+      </select>
+    </div>
+
+    <div class="tts-controls">
+      <div class="ctrl-group">
+        <label>Speed <span class="ctrl-val" id="rate-val">1.0×</span></label>
+        <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1" style="width:100%;accent-color:var(--color-primary)">
+      </div>
+      <div class="ctrl-group">
+        <label>Pitch <span class="ctrl-val" id="pitch-val">1.0</span></label>
+        <input type="range" id="pitch" min="0.5" max="2" value="1" step="0.1" style="width:100%;accent-color:var(--color-primary)">
+      </div>
+      <div class="ctrl-group">
+        <label>Volume <span class="ctrl-val" id="vol-val">100%</span></label>
+        <input type="range" id="volume" min="0" max="1" value="1" step="0.05" style="width:100%;accent-color:var(--color-primary)">
+      </div>
+    </div>
+
+    <div class="play-row">
+      <button class="big-play" id="play-btn" title="Play / Pause">▶</button>
+      <button class="btn btn-outline" id="stop-btn">⏹ Stop</button>
+      <button class="btn btn-outline" id="reset-btn">Reset</button>
+      <div class="status-pill" id="status-pill">Ready</div>
+    </div>
+
+    <div style="margin-top:16px;font-size:13px;color:var(--color-text-muted)">Reading along:</div>
+    <div class="tts-text-output" id="tts-output"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Uses for text to speech</h2>
+  <p>Text to speech is useful for proofreading — hearing your own writing read aloud exposes awkward phrasing and errors that your eyes skip over. It helps people with dyslexia or visual impairments consume written content more easily. Language learners use it to hear correct pronunciation. Busy people use it to "read" articles while commuting or exercising. Content creators use it to test how scripts sound before recording.</p>
+  <h2>About the voices</h2>
+  <p>This tool uses your browser's built-in Web Speech API, which accesses the text-to-speech voices installed on your operating system. The number and quality of available voices depends on your device and browser. Windows, macOS, iOS and Android each come with different built-in voices. Chrome and Edge on desktop typically have the largest selection of voices available.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let synth = window.speechSynthesis;
+let voices = [];
+let utterance = null;
+let isPaused = false;
+
+// Load voices
+function loadVoices() {
+  voices = synth.getVoices();
+  const sel = document.getElementById('voice-select');
+  sel.innerHTML = '';
+  const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+  const others = voices.filter(v => !v.lang.startsWith('en'));
+  [...englishVoices, ...others].forEach((v, i) => {
+    sel.innerHTML += `<option value="${voices.indexOf(v)}">${v.name} (${v.lang})</option>`;
+  });
+}
+loadVoices();
+if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
+
+// Char counter
+const inp = document.getElementById('tts-input');
+const updateCount = () => document.getElementById('char-count').textContent = inp.value.length;
+inp.addEventListener('input', () => { updateCount(); updateOutput(); });
+
+function updateOutput() {
+  const words = inp.value.split(/(\s+)/);
+  document.getElementById('tts-output').innerHTML = words.map(w => `<span>${w.replace(/</g,'&lt;')}</span>`).join('');
+}
+
+// Sliders
+document.getElementById('rate').addEventListener('input', e => document.getElementById('rate-val').textContent = (+e.target.value).toFixed(1)+'×');
+document.getElementById('pitch').addEventListener('input', e => document.getElementById('pitch-val').textContent = (+e.target.value).toFixed(1));
+document.getElementById('volume').addEventListener('input', e => document.getElementById('vol-val').textContent = Math.round(e.target.value*100)+'%');
+
+function setStatus(text, active=false) {
+  const p = document.getElementById('status-pill');
+  p.textContent = text;
+  p.className = 'status-pill' + (active?' active':'');
+}
+
+function speak() {
+  synth.cancel();
+  const text = inp.value.trim();
+  if (!text) return;
+
+  utterance = new SpeechSynthesisUtterance(text);
+  const voiceIdx = parseInt(document.getElementById('voice-select').value);
+  if (voices[voiceIdx]) utterance.voice = voices[voiceIdx];
+  utterance.rate = parseFloat(document.getElementById('rate').value);
+  utterance.pitch = parseFloat(document.getElementById('pitch').value);
+  utterance.volume = parseFloat(document.getElementById('volume').value);
+
+  const words = inp.value.split(/(\s+)/);
+  const spans = document.getElementById('tts-output').querySelectorAll('span');
+
+  utterance.onboundary = e => {
+    spans.forEach(s => s.classList.remove('word-highlight'));
+    let charCount = 0;
+    for (let i = 0; i < words.length; i++) {
+      if (charCount >= e.charIndex && words[i].trim()) { spans[i]?.classList.add('word-highlight'); break; }
+      charCount += words[i].length;
+    }
+  };
+
+  utterance.onstart = () => {
+    document.getElementById('play-btn').textContent = '⏸';
+    document.getElementById('play-btn').classList.add('speaking');
+    setStatus('Speaking…', true);
+    isPaused = false;
+  };
+  utterance.onend = utterance.onerror = () => {
+    document.getElementById('play-btn').textContent = '▶';
+    document.getElementById('play-btn').classList.remove('speaking');
+    spans.forEach(s => s.classList.remove('word-highlight'));
+    setStatus('Ready');
+    isPaused = false;
+  };
+
+  synth.speak(utterance);
+}
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  if (synth.speaking && !synth.paused && !isPaused) {
+    synth.pause(); isPaused = true;
+    document.getElementById('play-btn').textContent = '▶';
+    document.getElementById('play-btn').classList.remove('speaking');
+    setStatus('Paused');
+  } else if (isPaused) {
+    synth.resume(); isPaused = false;
+    document.getElementById('play-btn').textContent = '⏸';
+    document.getElementById('play-btn').classList.add('speaking');
+    setStatus('Speaking…', true);
+  } else {
+    speak();
+  }
+});
+
+document.getElementById('stop-btn').addEventListener('click', () => {
+  synth.cancel(); isPaused = false;
+  document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('play-btn').classList.remove('speaking');
+  document.querySelectorAll('#tts-output span').forEach(s => s.classList.remove('word-highlight'));
+  setStatus('Stopped');
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  synth.cancel();
+  document.getElementById('rate').value = 1;
+  document.getElementById('pitch').value = 1;
+  document.getElementById('volume').value = 1;
+  ['rate-val','pitch-val'].forEach(id => document.getElementById(id).textContent = '1.0');
+  document.getElementById('vol-val').textContent = '100%';
+  document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('play-btn').classList.remove('speaking');
+  setStatus('Ready'); isPaused = false;
+});
+
+updateCount();
+updateOutput();
+</script>
+</body>
+</html>

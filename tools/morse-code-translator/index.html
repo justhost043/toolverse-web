@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Morse Code Translator — Text to Morse & Back | OMIToolKit</title>
+<meta name="description" content="Translate text to Morse code and Morse code back to text instantly. Play audio at adjustable speed. Free online Morse code translator with sound.">
+<link rel="canonical" href="../../tools/morse-code-translator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.mode-toggle{display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin:0 auto 22px}
+.mode-btn{padding:9px 26px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--color-primary);color:#fff}
+.morse-output{background:#1E1B2E;border-radius:var(--radius-md);padding:20px;font-family:var(--font-mono);font-size:18px;font-weight:500;color:#A78BFA;line-height:1.8;min-height:100px;word-break:break-all;letter-spacing:.08em;margin-top:14px}
+.audio-controls{display:flex;align-items:center;gap:14px;background:#F4F3FE;border-radius:var(--radius-md);padding:16px 18px;margin-top:16px;flex-wrap:wrap}
+.play-btn{width:52px;height:52px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.play-btn:hover{background:var(--color-primary-dark);transform:scale(1.05)}
+.play-btn.playing{background:#EF4444}
+.speed-label{font-size:13px;color:var(--color-text-muted);flex-shrink:0}
+.dot-flash{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--color-primary);margin-right:4px;animation:none}
+.dot-flash.active{animation:flash .1s ease}
+@keyframes flash{0%,100%{opacity:.2}50%{opacity:1;transform:scale(1.4)}}
+.visual-ticker{display:flex;gap:4px;align-items:center;margin-top:14px;min-height:32px;flex-wrap:wrap}
+.tick-dot{width:8px;height:8px;border-radius:50%;background:var(--color-primary);opacity:.2;transition:opacity .1s}
+.tick-dash{width:22px;height:8px;border-radius:4px;background:var(--color-primary);opacity:.2;transition:opacity .1s}
+.tick-space{width:14px}
+.tick-dot.lit,.tick-dash.lit{opacity:1}
+.morse-reference{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin-top:14px;max-height:280px;overflow-y:auto}
+.ref-item{background:#F9F9F9;border:1px solid var(--color-border);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.ref-char{font-weight:600;color:var(--color-primary)}
+.ref-code{font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Morse Code Translator</div>
+<div class="container tool-page-header">
+  <h1>Morse Code Translator</h1>
+  <p>Translate text to Morse code or decode Morse back to text — with audio playback.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-encode">Text → Morse</button>
+      <button class="mode-btn" id="btn-decode">Morse → Text</button>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" id="inp-label">Enter text to translate</label>
+      <textarea id="inp" class="field-input" rows="4" placeholder="Hello World"></textarea>
+    </div>
+
+    <div class="morse-output" id="output">Your Morse code will appear here…</div>
+
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-outline" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+
+    <div class="audio-controls">
+      <button class="play-btn" id="play-btn" title="Play audio">▶</button>
+      <div style="flex:1">
+        <div class="speed-label">Speed — <span id="wpm-val">15</span> WPM</div>
+        <input type="range" id="wpm" min="5" max="40" value="15" style="width:100%;accent-color:var(--color-primary)">
+      </div>
+      <div class="dot-flash" id="dot-flash"></div>
+    </div>
+
+    <div class="visual-ticker" id="visual-ticker"></div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:10px">Morse code reference</div>
+      <div class="morse-reference" id="morse-ref"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is Morse code?</h2>
+  <p>Morse code is a communication system that represents letters and numbers as sequences of dots (short signals) and dashes (long signals). It was invented in the 1830s by Samuel Morse and Alfred Vail for use with the electric telegraph. Before telephone and radio, it was the primary method of long-distance communication — and it's still used today by amateur radio operators worldwide.</p>
+  <h2>How to read Morse code</h2>
+  <p>Each character is made up of dots (·) and dashes (−). A dot is a short signal; a dash is three times as long as a dot. Characters are separated by a short pause, and words are separated by a longer pause. The most famous Morse code sequence is SOS (· · · − − − · · ·) — three dots, three dashes, three dots — used as an international distress signal.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const MORSE = {
+  A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',
+  J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',
+  S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',
+  '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....',
+  '6':'-....','7':'--...','8':'---..','9':'----.','.':'.-.-.-',',':'--..--',
+  '?':'..--..','!':'-.-.--','/':'-..-.','(':'-.--.',')':'-.--.-','&':'.-...',
+  ':':'---...',';':'-.-.-.','=':'-...-','+':'.-.-.','-':'-....-',
+  '"':'.-..-.','@':'.--.-.','\'':'.----.'
+};
+const REVERSE = Object.fromEntries(Object.entries(MORSE).map(([k,v])=>[v,k]));
+
+let isEncode = true;
+let audioCtx = null;
+let playTimeout = null;
+let isPlaying = false;
+
+function encode(text) {
+  return text.toUpperCase().split('').map(c => {
+    if (c === ' ') return '/';
+    return MORSE[c] || '';
+  }).filter(Boolean).join(' ');
+}
+
+function decode(morse) {
+  return morse.trim().split(' / ').map(word =>
+    word.split(' ').map(code => REVERSE[code] || '?').join('')
+  ).join(' ');
+}
+
+function translate() {
+  const inp = document.getElementById('inp').value;
+  const out = isEncode ? encode(inp) : decode(inp);
+  document.getElementById('output').textContent = out || '—';
+  buildVisualTicker(isEncode ? out : encode(decode(document.getElementById('inp').value)));
+}
+
+function buildVisualTicker(morse) {
+  const ticker = document.getElementById('visual-ticker');
+  ticker.innerHTML = '';
+  if (!morse) return;
+  morse.split(' ').forEach(sym => {
+    if (sym === '/') {
+      const sp = document.createElement('div'); sp.className='tick-space'; ticker.appendChild(sp);
+    } else {
+      [...sym].forEach(c => {
+        const el = document.createElement('div');
+        el.className = c === '.' ? 'tick-dot' : 'tick-dash';
+        ticker.appendChild(el);
+      });
+    }
+  });
+}
+
+document.getElementById('btn-encode').addEventListener('click',()=>{
+  isEncode=true;
+  document.getElementById('btn-encode').classList.add('active');
+  document.getElementById('btn-decode').classList.remove('active');
+  document.getElementById('inp-label').textContent='Enter text to translate';
+  document.getElementById('inp').placeholder='Hello World';
+  translate();
+});
+document.getElementById('btn-decode').addEventListener('click',()=>{
+  isEncode=false;
+  document.getElementById('btn-decode').classList.add('active');
+  document.getElementById('btn-encode').classList.remove('active');
+  document.getElementById('inp-label').textContent='Enter Morse code (use space between chars, / between words)';
+  document.getElementById('inp').placeholder='.... . .-.. .-.. --- / .-- --- .-. .-.. -..';
+  translate();
+});
+document.getElementById('inp').addEventListener('input',translate);
+document.getElementById('wpm').addEventListener('input',()=>document.getElementById('wpm-val').textContent=document.getElementById('wpm').value);
+document.getElementById('copy-btn').addEventListener('click',()=>navigator.clipboard.writeText(document.getElementById('output').textContent).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);}));
+document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';translate();});
+
+// Audio playback
+document.getElementById('play-btn').addEventListener('click',()=>{
+  if(isPlaying){stopAudio();return;}
+  const morse=isEncode?document.getElementById('output').textContent:encode(decode(document.getElementById('inp').value));
+  if(!morse||morse==='—') return;
+  playMorse(morse);
+});
+
+function stopAudio(){
+  clearTimeout(playTimeout);
+  if(audioCtx){audioCtx.close();audioCtx=null;}
+  isPlaying=false;
+  document.getElementById('play-btn').textContent='▶';
+  document.getElementById('play-btn').classList.remove('playing');
+  document.querySelectorAll('.tick-dot,.tick-dash').forEach(el=>el.classList.remove('lit'));
+}
+
+function playMorse(morse){
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const wpm=parseInt(document.getElementById('wpm').value)||15;
+  const dotDur=1200/wpm;
+  const dashDur=dotDur*3;
+  const gapDur=dotDur;
+  const charGap=dotDur*3;
+  const wordGap=dotDur*7;
+  isPlaying=true;
+  document.getElementById('play-btn').textContent='⏹';
+  document.getElementById('play-btn').classList.add('playing');
+
+  const ticks=document.querySelectorAll('.tick-dot,.tick-dash');
+  let tickIdx=0;
+  let t=audioCtx.currentTime+0.05;
+
+  morse.split(' ').forEach(sym=>{
+    if(sym==='/'){t+=wordGap/1000;return;}
+    [...sym].forEach(c=>{
+      const dur=(c==='.'?dotDur:dashDur)/1000;
+      const osc=audioCtx.createOscillator();
+      const gain=audioCtx.createGain();
+      osc.connect(gain);gain.connect(audioCtx.destination);
+      osc.frequency.value=600;
+      gain.gain.setValueAtTime(0,t);
+      gain.gain.linearRampToValueAtTime(0.3,t+0.005);
+      gain.gain.setValueAtTime(0.3,t+dur-0.005);
+      gain.gain.linearRampToValueAtTime(0,t+dur);
+      osc.start(t);osc.stop(t+dur);
+      // Visual tick
+      const ti=tickIdx++;
+      if(ticks[ti]){
+        const delay=(t-audioCtx.currentTime)*1000;
+        setTimeout(()=>{ticks[ti].classList.add('lit');setTimeout(()=>ticks[ti].classList.remove('lit'),dur*1000);},delay);
+      }
+      t+=dur+gapDur/1000;
+    });
+    t+=charGap/1000;
+  });
+
+  playTimeout=setTimeout(stopAudio,(t-audioCtx.currentTime)*1000+100);
+}
+
+// Reference table
+const ref=document.getElementById('morse-ref');
+Object.entries(MORSE).forEach(([k,v])=>{
+  const d=document.createElement('div');d.className='ref-item';
+  d.innerHTML=`<span class="ref-char">${k}</span><span class="ref-code">${v}</span>`;
+  ref.appendChild(d);
+});
+
+// Init
+document.getElementById('inp').value='Hello World';
+translate();
+</script>
+</body>
+</html>

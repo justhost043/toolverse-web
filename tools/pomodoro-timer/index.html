@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Pomodoro Timer Online — Focus & Productivity | OMIToolKit</title>
+<meta name="description" content="Free online Pomodoro timer with 25-minute focus sessions and breaks. Track tasks, count sessions, get browser notifications. No sign-up, runs in your browser.">
+<link rel="canonical" href="../../tools/pomodoro-timer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+body{background:#FAFAF9}
+.pomo-card{background:linear-gradient(135deg,#1E1B2E,#2D2050);border-radius:var(--radius-lg);padding:36px 28px;text-align:center;color:#fff;margin-bottom:20px;position:relative;overflow:hidden}
+.pomo-card::before{content:'';position:absolute;width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.04);top:-80px;right:-80px;pointer-events:none}
+.mode-pills{display:flex;gap:8px;justify-content:center;margin-bottom:28px}
+.mode-pill{padding:7px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-pill.active{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)}
+.timer-ring{position:relative;width:220px;height:220px;margin:0 auto 28px}
+.timer-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:8}
+.ring-fill{fill:none;stroke:url(#ring-grad);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s ease;stroke-dasharray:628.3;stroke-dashoffset:0}
+.timer-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-num{font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:600;color:#fff;line-height:1;letter-spacing:-.02em}
+.timer-mode-lbl{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px;text-transform:uppercase;letter-spacing:.08em}
+.pomo-btns{display:flex;gap:12px;justify-content:center}
+.pomo-btn{padding:12px 28px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+.pomo-btn.primary{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4)}
+.pomo-btn:hover{background:rgba(255,255,255,.2)}
+.session-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.sdot{width:10px;height:10px;border-radius:50%;border:2px solid rgba(255,255,255,.3);transition:all .3s}
+.sdot.done{background:#A78BFA;border-color:#A78BFA}
+.sdot.current{background:transparent;border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.5)}
+.pomo-settings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.setting-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.setting-box label{display:block;font-size:11.5px;font-weight:500;color:var(--color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.setting-box input{width:100%;border:none;background:transparent;font-size:20px;font-weight:600;color:var(--color-primary);font-family:var(--font-display);text-align:center;outline:none}
+.task-list{display:flex;flex-direction:column;gap:8px;margin-top:14px;max-height:260px;overflow-y:auto}
+.task-item{display:flex;align-items:center;gap:10px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px}
+.task-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--color-primary);flex-shrink:0}
+.task-item .task-name{flex:1}
+.task-item .task-del{background:none;border:none;color:#E24B4A;cursor:pointer;font-size:16px;padding:0;line-height:1}
+.task-item.done .task-name{text-decoration:line-through;color:var(--color-text-muted)}
+.task-input-row{display:flex;gap:8px;margin-bottom:10px}
+.task-input-row input{flex:1}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.stat-chip{background:#F4F3FE;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:500;color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-productivity">Productivity</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-productivity">Productivity</a> / Pomodoro Timer</div>
+<div class="container tool-page-header">
+  <h1>Pomodoro Timer</h1>
+  <p>Focus for 25 minutes, take a break, repeat. Track tasks and sessions with browser notifications.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+
+    <!-- Main timer card -->
+    <div class="pomo-card">
+      <div class="mode-pills">
+        <button class="mode-pill active" data-mode="focus">Focus</button>
+        <button class="mode-pill" data-mode="short">Short Break</button>
+        <button class="mode-pill" data-mode="long">Long Break</button>
+      </div>
+
+      <div class="timer-ring">
+        <svg width="220" height="220" viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#A78BFA"/>
+              <stop offset="100%" stop-color="#6366F1"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="110" cy="110" r="100"/>
+          <circle class="ring-fill" id="ring-fill" cx="110" cy="110" r="100"/>
+        </svg>
+        <div class="timer-inner">
+          <div class="timer-num" id="timer-num">25:00</div>
+          <div class="timer-mode-lbl" id="timer-mode-lbl">Focus Time</div>
+        </div>
+      </div>
+
+      <div class="pomo-btns">
+        <button class="pomo-btn primary" id="start-btn">Start</button>
+        <button class="pomo-btn" id="reset-btn">Reset</button>
+        <button class="pomo-btn" id="skip-btn">Skip ›</button>
+      </div>
+
+      <div class="session-dots" id="session-dots"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="field-label" style="margin-bottom:10px">Timer settings (minutes)</div>
+    <div class="pomo-settings">
+      <div class="setting-box"><label>Focus</label><input type="number" id="set-focus" value="25" min="1" max="60"></div>
+      <div class="setting-box"><label>Short break</label><input type="number" id="set-short" value="5" min="1" max="30"></div>
+      <div class="setting-box"><label>Long break</label><input type="number" id="set-long" value="15" min="1" max="60"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-row" id="stat-row">
+      <span class="stat-chip">🍅 <span id="s-pomos">0</span> pomodoros</span>
+      <span class="stat-chip">✅ <span id="s-tasks">0</span> tasks done</span>
+      <span class="stat-chip">⏱ <span id="s-time">0</span> min focused</span>
+    </div>
+
+    <!-- Task list -->
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:10px">Task list</div>
+      <div class="task-input-row">
+        <input type="text" id="task-input" class="field-input" placeholder="Add a task for this session…">
+        <button class="btn btn-primary" id="add-task">Add</button>
+      </div>
+      <div class="task-list" id="task-list"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is the Pomodoro Technique?</h2>
+  <p>The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. The method uses a timer to break work into 25-minute focus intervals (called "pomodoros") separated by 5-minute short breaks. After completing four pomodoros, you take a longer 15–30 minute break. The technique helps maintain focus by creating a sense of urgency, reduces the impact of interruptions, and builds awareness of how you actually spend your time.</p>
+  <h2>Why 25 minutes?</h2>
+  <p>Research on attention spans suggests that most people can sustain focused concentration for about 20–30 minutes before needing a mental rest. The 25-minute interval is short enough to create urgency (making procrastination harder) but long enough to make meaningful progress on most tasks. The frequent breaks prevent mental fatigue from accumulating over long work sessions.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const MODES = {
+  focus: {label:'Focus Time', color:'#6366F1'},
+  short: {label:'Short Break', color:'#10B981'},
+  long:  {label:'Long Break', color:'#F59E0B'},
+};
+
+let mode = 'focus';
+let running = false;
+let secondsLeft = 25*60;
+let totalSeconds = 25*60;
+let intervalId = null;
+let pomosCompleted = 0;
+let tasksCompleted = 0;
+let minutesFocused = 0;
+let sessionCount = 0;
+let tasks = [];
+
+function getDurations() {
+  return {
+    focus: (parseInt(document.getElementById('set-focus').value)||25)*60,
+    short: (parseInt(document.getElementById('set-short').value)||5)*60,
+    long:  (parseInt(document.getElementById('set-long').value)||15)*60,
+  };
+}
+
+function pad(n){return String(n).padStart(2,'0');}
+
+function updateDisplay() {
+  const m = Math.floor(secondsLeft/60), s = secondsLeft%60;
+  document.getElementById('timer-num').textContent = `${pad(m)}:${pad(s)}`;
+  document.title = `${pad(m)}:${pad(s)} — OMIToolKit Pomodoro`;
+  const pct = 1 - secondsLeft/totalSeconds;
+  const circumference = 2*Math.PI*100;
+  document.getElementById('ring-fill').style.strokeDashoffset = circumference*(1-pct);
+}
+
+function updateMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-pill').forEach(p => p.classList.toggle('active', p.dataset.mode===m));
+  document.getElementById('timer-mode-lbl').textContent = MODES[m].label;
+  totalSeconds = getDurations()[m];
+  secondsLeft = totalSeconds;
+  stopTimer();
+  updateDisplay();
+}
+
+function startTimer() {
+  running = true;
+  document.getElementById('start-btn').textContent = 'Pause';
+  intervalId = setInterval(() => {
+    secondsLeft--;
+    if (mode==='focus') minutesFocused++;
+    if (minutesFocused%60===0&&minutesFocused>0) document.getElementById('s-time').textContent=Math.floor(minutesFocused/60)*60;
+    document.getElementById('s-time').textContent=Math.floor(minutesFocused/60);
+    if (secondsLeft<=0) timerComplete();
+    else updateDisplay();
+  }, 1000);
+}
+
+function pauseTimer() {
+  running = false;
+  clearInterval(intervalId);
+  document.getElementById('start-btn').textContent = 'Resume';
+}
+
+function stopTimer() {
+  running = false;
+  clearInterval(intervalId);
+  document.getElementById('start-btn').textContent = 'Start';
+}
+
+function timerComplete() {
+  stopTimer();
+  if (mode==='focus') {
+    pomosCompleted++;
+    sessionCount++;
+    document.getElementById('s-pomos').textContent = pomosCompleted;
+    renderSessionDots();
+    notify('🍅 Pomodoro complete! Time for a break.', sessionCount%4===0?'Take a long break!':'Take a short break.');
+    updateMode(sessionCount%4===0?'long':'short');
+  } else {
+    notify('Break over!', 'Time to focus again.');
+    updateMode('focus');
+  }
+  playBeep();
+}
+
+function playBeep() {
+  try {
+    const ctx = new(window.AudioContext||window.webkitAudioContext)();
+    [0,0.15,0.3].forEach(t => {
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value=800; g.gain.value=0.3;
+      o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.12);
+    });
+  } catch(e){}
+}
+
+function notify(title, body) {
+  if(Notification.permission==='granted') new Notification(title,{body,icon:'/favicon.ico'});
+}
+
+function renderSessionDots() {
+  const dots = document.getElementById('session-dots');
+  dots.innerHTML = '';
+  for (let i=0;i<4;i++) {
+    const d=document.createElement('div');
+    d.className='sdot'+(i<sessionCount%4?' done':i===sessionCount%4?' current':'');
+    dots.appendChild(d);
+  }
+}
+
+// Controls
+document.getElementById('start-btn').addEventListener('click',()=>{
+  if (!running) {
+    if (Notification.permission==='default') Notification.requestPermission();
+    startTimer();
+  } else pauseTimer();
+});
+document.getElementById('reset-btn').addEventListener('click',()=>{ stopTimer(); secondsLeft=totalSeconds; updateDisplay(); });
+document.getElementById('skip-btn').addEventListener('click',timerComplete);
+
+document.querySelectorAll('.mode-pill').forEach(p=>p.addEventListener('click',()=>updateMode(p.dataset.mode)));
+['set-focus','set-short','set-long'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{
+  stopTimer(); totalSeconds=getDurations()[mode]; secondsLeft=totalSeconds; updateDisplay();
+}));
+
+// Tasks
+function renderTasks() {
+  const list=document.getElementById('task-list');
+  list.innerHTML='';
+  const done=tasks.filter(t=>t.done).length;
+  document.getElementById('s-tasks').textContent=done;
+  tasks.forEach((t,i)=>{
+    const row=document.createElement('div');
+    row.className='task-item'+(t.done?' done':'');
+    row.innerHTML=`<input type="checkbox" ${t.done?'checked':''}><span class="task-name">${t.name}</span><button class="task-del" data-i="${i}">×</button>`;
+    row.querySelector('input').addEventListener('change',e=>{tasks[i].done=e.target.checked;renderTasks();tasksCompleted=tasks.filter(x=>x.done).length;document.getElementById('s-tasks').textContent=tasksCompleted;});
+    row.querySelector('.task-del').addEventListener('click',()=>{tasks.splice(i,1);renderTasks();});
+    list.appendChild(row);
+  });
+}
+
+function addTask() {
+  const inp=document.getElementById('task-input');
+  if(!inp.value.trim()) return;
+  tasks.push({name:inp.value.trim(),done:false});
+  inp.value=''; renderTasks();
+}
+document.getElementById('add-task').addEventListener('click',addTask);
+document.getElementById('task-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+
+// Init
+renderSessionDots();
+updateDisplay();
+</script>
+</body>
+</html>

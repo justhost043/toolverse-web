@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Aspect Ratio Calculator — Resize Without Distortion | OMIToolKit</title>
+<meta name="description" content="Calculate aspect ratios and find missing dimensions instantly. Lock width or height and resize images without distortion. Common presets included. Free online tool.">
+<link rel="canonical" href="../../tools/aspect-ratio-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.ratio-display{background:linear-gradient(135deg,var(--color-primary),var(--color-accent));border-radius:var(--radius-lg);padding:28px;text-align:center;color:#fff;margin:18px 0}
+.ratio-num{font-size:clamp(32px,8vw,52px);font-weight:700;font-family:var(--font-display);letter-spacing:-.02em}
+.ratio-sub{font-size:14px;opacity:.8;margin-top:6px}
+.dim-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;margin-bottom:20px}
+.lock-btn{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--color-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s;flex-shrink:0}
+.lock-btn.locked{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.lock-btn:hover{border-color:var(--color-primary)}
+.presets-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:4px}
+.preset-btn{padding:9px 10px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;line-height:1.4}
+.preset-btn:hover{border-color:var(--color-primary);color:var(--color-primary);background:#F4F3FE}
+.preset-btn .pr-ratio{font-family:var(--font-mono);font-size:11px;color:var(--color-text-muted);display:block;margin-top:2px}
+.visual-box-wrap{margin:20px 0;display:flex;justify-content:center;align-items:center;min-height:120px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px}
+.visual-box{background:linear-gradient(135deg,#EDE9FE,#DDD6FE);border:2px solid var(--color-primary);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;color:var(--color-primary);font-weight:500;transition:all .3s;max-width:280px;max-height:200px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Aspect Ratio Calculator</div>
+<div class="container tool-page-header">
+  <h1>Aspect Ratio Calculator</h1>
+  <p>Find the simplified ratio for any dimensions, or calculate a missing side while keeping proportions exact.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:600px">
+
+    <div class="dim-grid">
+      <div>
+        <label class="field-label">Width (px)</label>
+        <input type="number" id="inp-w" class="field-input" value="1920" min="1">
+      </div>
+      <button class="lock-btn" id="lock-btn" title="Lock ratio">🔒</button>
+      <div>
+        <label class="field-label">Height (px)</label>
+        <input type="number" id="inp-h" class="field-input" value="1080" min="1">
+      </div>
+    </div>
+
+    <div class="ratio-display">
+      <div class="ratio-num" id="ratio-display">16 : 9</div>
+      <div class="ratio-sub" id="ratio-desc">Widescreen — HD / Full HD / 4K</div>
+    </div>
+
+    <div class="visual-box-wrap">
+      <div class="visual-box" id="visual-box">1920 × 1080</div>
+    </div>
+
+    <div class="field-label" style="margin-bottom:12px">Lock ratio, then change one dimension — the other auto-fills</div>
+
+    <div class="field-label" style="margin-bottom:10px">Common presets</div>
+    <div class="presets-wrap" id="presets-wrap"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is aspect ratio?</h2>
+  <p>Aspect ratio is the proportional relationship between the width and height of an image or screen, expressed as two numbers separated by a colon. A 1920×1080 image has a 16:9 ratio — for every 16 units wide, it is 9 units tall. The ratio stays the same regardless of the actual pixel dimensions, which is why 1280×720 and 3840×2160 are both "16:9".</p>
+  <h2>Why aspect ratio matters</h2>
+  <p>Resizing an image without maintaining its aspect ratio causes distortion — people and objects look stretched or squashed. Knowing the correct ratio lets you scale to any size while keeping the image looking natural. Different platforms have different required ratios: Instagram posts are 1:1, YouTube thumbnails are 16:9, Instagram Stories are 9:16, and standard A4 documents are approximately 1:√2 (around 1:1.414).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const PRESETS = [
+  {label:'Instagram Post', w:1080, h:1080, desc:'1:1 Square'},
+  {label:'Instagram Story', w:1080, h:1920, desc:'9:16 Vertical'},
+  {label:'YouTube / HD', w:1920, h:1080, desc:'16:9 Widescreen'},
+  {label:'YouTube Thumb', w:1280, h:720, desc:'16:9 HD'},
+  {label:'Twitter Post', w:1600, h:900, desc:'16:9'},
+  {label:'Facebook Cover', w:820, h:312, desc:'~5:2'},
+  {label:'Pinterest Pin', w:1000, h:1500, desc:'2:3 Vertical'},
+  {label:'A4 Portrait', w:2480, h:3508, desc:'~1:1.41'},
+  {label:'US Letter', w:2550, h:3300, desc:'~17:22'},
+  {label:'LinkedIn Banner', w:1584, h:396, desc:'4:1'},
+  {label:'OG Image', w:1200, h:630, desc:'~1.91:1'},
+  {label:'Square Print', w:3000, h:3000, desc:'1:1'},
+];
+
+const RATIO_DESCS = {
+  '1:1':'Perfect square', '16:9':'Widescreen — HD / Full HD / 4K',
+  '9:16':'Vertical — Stories / Reels / TikTok', '4:3':'Classic TV / photo',
+  '3:2':'DSLR camera / 35mm film', '2:3':'Portrait photo / Pinterest',
+  '4:1':'Banner / header', '3:1':'Wide banner', '21:9':'Ultrawide',
+};
+
+let locked = false;
+let lockedRatioW = 16, lockedRatioH = 9;
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+function simplify(w, h) {
+  const d = gcd(Math.round(w), Math.round(h));
+  return [Math.round(w/d), Math.round(h/d)];
+}
+
+function updateDisplay() {
+  const w = parseFloat(document.getElementById('inp-w').value) || 1;
+  const h = parseFloat(document.getElementById('inp-h').value) || 1;
+  const [rw, rh] = simplify(w, h);
+  const ratioStr = `${rw}:${rh}`;
+  document.getElementById('ratio-display').textContent = `${rw} : ${rh}`;
+  document.getElementById('ratio-desc').textContent = RATIO_DESCS[ratioStr] || `${(w/h).toFixed(3)} : 1 ratio`;
+
+  // Visual box — max 240w x 160h
+  const maxW = 240, maxH = 160;
+  let bw = maxW, bh = Math.round(maxW * h / w);
+  if (bh > maxH) { bh = maxH; bw = Math.round(maxH * w / h); }
+  const box = document.getElementById('visual-box');
+  box.style.width = bw + 'px'; box.style.height = bh + 'px';
+  box.textContent = `${Math.round(w)} × ${Math.round(h)}`;
+}
+
+document.getElementById('inp-w').addEventListener('input', () => {
+  if (locked) {
+    const w = parseFloat(document.getElementById('inp-w').value) || 1;
+    document.getElementById('inp-h').value = Math.round(w * lockedRatioH / lockedRatioW);
+  }
+  updateDisplay();
+});
+document.getElementById('inp-h').addEventListener('input', () => {
+  if (locked) {
+    const h = parseFloat(document.getElementById('inp-h').value) || 1;
+    document.getElementById('inp-w').value = Math.round(h * lockedRatioW / lockedRatioH);
+  }
+  updateDisplay();
+});
+
+document.getElementById('lock-btn').addEventListener('click', () => {
+  locked = !locked;
+  const btn = document.getElementById('lock-btn');
+  btn.classList.toggle('locked', locked);
+  btn.textContent = locked ? '🔒' : '🔓';
+  btn.title = locked ? 'Ratio locked — change one side to auto-fill the other' : 'Click to lock ratio';
+  if (locked) {
+    const w = parseFloat(document.getElementById('inp-w').value) || 1;
+    const h = parseFloat(document.getElementById('inp-h').value) || 1;
+    const [rw, rh] = simplify(w, h);
+    lockedRatioW = rw; lockedRatioH = rh;
+  }
+});
+
+// Presets
+const pw = document.getElementById('presets-wrap');
+PRESETS.forEach(p => {
+  const btn = document.createElement('button');
+  btn.className = 'preset-btn';
+  btn.innerHTML = `${p.label}<span class="pr-ratio">${p.w}×${p.h} — ${p.desc}</span>`;
+  btn.addEventListener('click', () => {
+    document.getElementById('inp-w').value = p.w;
+    document.getElementById('inp-h').value = p.h;
+    if (locked) { const [rw,rh]=simplify(p.w,p.h); lockedRatioW=rw; lockedRatioH=rh; }
+    updateDisplay();
+  });
+  pw.appendChild(btn);
+});
+
+updateDisplay();
+</script>
+</body>
+</html>
