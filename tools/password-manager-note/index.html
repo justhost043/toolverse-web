@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Encrypted Notes — Secure Private Notes Online | OMIToolKit</title>
+<meta name="description" content="Write private notes encrypted with a password using AES-256. Notes stay in your browser — nothing is sent to any server. Free secure notes tool.">
+<link rel="canonical" href="../../tools/password-manager-note/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.lock-screen{text-align:center;padding:40px 24px}
+.lock-icon{font-size:52px;margin-bottom:16px}
+.notes-grid{display:grid;grid-template-columns:240px 1fr;gap:0;min-height:420px;border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden}
+@media(max-width:600px){.notes-grid{grid-template-columns:1fr;}}
+.notes-sidebar{background:#F4F3FE;border-right:1px solid var(--color-border);display:flex;flex-direction:column}
+.sidebar-header{padding:14px;border-bottom:1px solid var(--color-border);display:flex;gap:8px;align-items:center}
+.sidebar-header .title{font-size:13.5px;font-weight:600;flex:1}
+.add-note-btn{width:28px;height:28px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.note-list{flex:1;overflow-y:auto}
+.note-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(99,102,241,.1);transition:background .1s}
+.note-item:hover{background:#EDE9FE}
+.note-item.active{background:#4F46E5;color:#fff}
+.note-item.active .ni-date{color:rgba(255,255,255,.6)}
+.ni-title{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ni-preview{font-size:12px;color:var(--color-text-muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-item.active .ni-preview{color:rgba(255,255,255,.7)}
+.ni-date{font-size:11px;color:var(--color-text-muted);margin-top:3px}
+.note-editor{display:flex;flex-direction:column}
+.editor-header{padding:12px 16px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:8px}
+.note-title-input{flex:1;border:none;font-size:15px;font-weight:600;font-family:var(--font-body);outline:none;background:transparent}
+.del-note-btn{background:none;border:none;color:#E24B4A;cursor:pointer;font-size:18px;padding:0 4px}
+.note-body{flex:1;padding:16px;border:none;resize:none;font-family:var(--font-body);font-size:14.5px;line-height:1.7;outline:none;min-height:320px;background:#fff}
+.saved-badge{font-size:11px;color:#16A34A;opacity:0;transition:opacity .3s}
+.saved-badge.show{opacity:1}
+.encrypt-badge{font-size:12px;background:#DCFCE7;color:#166534;padding:3px 10px;border-radius:999px;font-weight:500}
+.lock-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;cursor:pointer;transition:all .15s}
+.lock-btn:hover{background:#FEE2E2;color:#E24B4A;border-color:#FCA5A5}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--color-text-muted);font-size:14px;gap:8px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-productivity">Productivity</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-productivity">Productivity</a> / Encrypted Notes</div>
+<div class="container tool-page-header">
+  <h1>Encrypted Notes</h1>
+  <p>Private notes encrypted with your password — stored only in your browser, never sent anywhere.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:780px">
+
+    <!-- Lock screen -->
+    <div id="lock-screen">
+      <div class="lock-screen">
+        <div class="lock-icon">🔐</div>
+        <h2 style="font-size:20px;margin-bottom:8px">Password Protected Notes</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:20px;font-size:14px">Enter a password to encrypt and decrypt your notes. Notes are stored locally — we never see them.</p>
+        <div style="max-width:320px;margin:0 auto">
+          <div class="field-row"><label class="field-label">Password</label><input type="password" id="master-pw" class="field-input" placeholder="Enter your password…" autocomplete="off"></div>
+          <button class="btn btn-primary" id="unlock-btn" style="width:100%;justify-content:center;padding:13px">Unlock / Create</button>
+          <div style="font-size:12.5px;color:var(--color-text-muted);margin-top:12px;text-align:center">⚠️ If you forget your password, notes cannot be recovered — encryption is real.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes UI -->
+    <div id="notes-ui" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div class="encrypt-badge">🔒 AES-256 Encrypted</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="saved-badge" id="saved-badge">✓ Saved</span>
+          <button class="lock-btn" id="lock-btn">🔒 Lock</button>
+        </div>
+      </div>
+      <div class="notes-grid">
+        <div class="notes-sidebar">
+          <div class="sidebar-header">
+            <span class="title">My Notes</span>
+            <button class="add-note-btn" id="add-note-btn" title="New note">+</button>
+          </div>
+          <div class="note-list" id="note-list"></div>
+        </div>
+        <div class="note-editor" id="note-editor">
+          <div class="empty-state" id="empty-state">
+            <span style="font-size:32px">📝</span>
+            <span>Select a note or create a new one</span>
+          </div>
+          <div id="editor-wrap" style="display:none;height:100%;flex-direction:column;display:none">
+            <div class="editor-header">
+              <input type="text" class="note-title-input" id="note-title" placeholder="Note title…">
+              <button class="del-note-btn" id="del-note-btn" title="Delete note">🗑</button>
+            </div>
+            <textarea class="note-body" id="note-body" placeholder="Write your note here…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How the encryption works</h2>
+  <p>This tool uses the browser's built-in Web Crypto API with AES-GCM 256-bit encryption. Your password is never stored anywhere — it's used to derive an encryption key using PBKDF2 (a standard key derivation function) each time you unlock. The encrypted notes are stored in your browser's localStorage. Without the correct password, the encrypted data is completely unreadable. Even if someone accessed your browser storage, they would see only random bytes.</p>
+  <h2>Important limitations</h2>
+  <p>Because notes are stored in localStorage, they are tied to this browser on this device. Clearing your browser data will delete your notes. If you forget your password, there is no recovery — the encryption is genuine, not a simulation. For notes you want to keep long-term, consider copying the text to a backup location.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let cryptoKey = null, notes = [], activeNoteId = null;
+let saveTimer = null;
+
+// Crypto helpers
+async function deriveKey(password, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+    keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']
+  );
+}
+
+async function encrypt(text, key) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const ciphertext = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(text));
+  return btoa(String.fromCharCode(...iv, ...new Uint8Array(ciphertext)));
+}
+
+async function decrypt(b64, key) {
+  try {
+    const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const iv = bytes.slice(0,12), data = bytes.slice(12);
+    const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, data);
+    return new TextDecoder().decode(plain);
+  } catch(e) { return null; }
+}
+
+const SALT_KEY = 'omi-notes-salt';
+const NOTES_KEY = 'omi-notes-data';
+
+async function unlockNotes() {
+  const pw = document.getElementById('master-pw').value;
+  if(!pw) return;
+
+  let salt = localStorage.getItem(SALT_KEY);
+  if(salt) {
+    salt = Uint8Array.from(atob(salt), c=>c.charCodeAt(0));
+  } else {
+    salt = crypto.getRandomValues(new Uint8Array(16));
+    localStorage.setItem(SALT_KEY, btoa(String.fromCharCode(...salt)));
+  }
+
+  try {
+    cryptoKey = await deriveKey(pw, salt);
+    // Try to load existing notes
+    const stored = localStorage.getItem(NOTES_KEY);
+    if(stored) {
+      const decrypted = await decrypt(stored, cryptoKey);
+      if(decrypted === null) {
+        alert('Wrong password — cannot decrypt notes.');
+        cryptoKey = null; return;
+      }
+      notes = JSON.parse(decrypted);
+    } else {
+      notes = [];
+    }
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('notes-ui').style.display = '';
+    renderNoteList();
+  } catch(e) {
+    alert('Error unlocking: ' + e.message);
+  }
+}
+
+async function saveNotes() {
+  if(!cryptoKey) return;
+  const enc = await encrypt(JSON.stringify(notes), cryptoKey);
+  localStorage.setItem(NOTES_KEY, enc);
+  const badge = document.getElementById('saved-badge');
+  badge.classList.add('show');
+  setTimeout(()=>badge.classList.remove('show'), 1500);
+}
+
+function renderNoteList() {
+  const list = document.getElementById('note-list');
+  list.innerHTML = notes.length ? notes.map(n=>`
+    <div class="note-item${n.id===activeNoteId?' active':''}" data-id="${n.id}">
+      <div class="ni-title">${n.title||'Untitled'}</div>
+      <div class="ni-preview">${(n.body||'').substring(0,40)||'No content'}</div>
+      <div class="ni-date">${new Date(n.updated).toLocaleDateString()}</div>
+    </div>`).join('') : '<div style="padding:20px;font-size:13px;color:#94A3B8;text-align:center">No notes yet.<br>Click + to create one.</div>';
+
+  list.querySelectorAll('.note-item').forEach(item => {
+    item.addEventListener('click', () => {
+      activeNoteId = +item.dataset.id;
+      renderNoteList();
+      openNote();
+    });
+  });
+}
+
+function openNote() {
+  const note = notes.find(n=>n.id===activeNoteId);
+  if(!note) return;
+  document.getElementById('empty-state').style.display = 'none';
+  const wrap = document.getElementById('editor-wrap');
+  wrap.style.display = 'flex';
+  wrap.style.flexDirection = 'column';
+  document.getElementById('note-title').value = note.title || '';
+  document.getElementById('note-body').value = note.body || '';
+}
+
+function getActiveNote() { return notes.find(n=>n.id===activeNoteId); }
+
+document.getElementById('add-note-btn').addEventListener('click', () => {
+  const note = {id:Date.now(), title:'', body:'', updated:Date.now()};
+  notes.unshift(note);
+  activeNoteId = note.id;
+  renderNoteList();
+  openNote();
+  document.getElementById('note-title').focus();
+});
+
+document.getElementById('note-title').addEventListener('input', e => {
+  const n=getActiveNote(); if(n){n.title=e.target.value;n.updated=Date.now();}
+  clearTimeout(saveTimer); saveTimer=setTimeout(()=>{renderNoteList();saveNotes();},800);
+});
+
+document.getElementById('note-body').addEventListener('input', e => {
+  const n=getActiveNote(); if(n){n.body=e.target.value;n.updated=Date.now();}
+  clearTimeout(saveTimer); saveTimer=setTimeout(()=>{renderNoteList();saveNotes();},800);
+});
+
+document.getElementById('del-note-btn').addEventListener('click', () => {
+  if(!activeNoteId||!confirm('Delete this note?')) return;
+  notes = notes.filter(n=>n.id!==activeNoteId);
+  activeNoteId = notes[0]?.id||null;
+  renderNoteList();
+  if(activeNoteId) openNote();
+  else { document.getElementById('editor-wrap').style.display='none'; document.getElementById('empty-state').style.display=''; }
+  saveNotes();
+});
+
+document.getElementById('lock-btn').addEventListener('click', () => {
+  cryptoKey=null; notes=[]; activeNoteId=null;
+  document.getElementById('master-pw').value='';
+  document.getElementById('notes-ui').style.display='none';
+  document.getElementById('lock-screen').style.display='';
+});
+
+document.getElementById('unlock-btn').addEventListener('click', unlockNotes);
+document.getElementById('master-pw').addEventListener('keydown', e=>{if(e.key==='Enter')unlockNotes();});
+</script>
+</body>
+</html>

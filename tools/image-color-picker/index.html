@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Image Color Picker — Pick Colors from Any Image | OMIToolKit</title>
+<meta name="description" content="Upload any image and click to pick colors. Get HEX, RGB and HSL values instantly. Extract a complete color palette from your image. Free online image color picker.">
+<link rel="canonical" href="../../tools/image-color-picker/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.canvas-wrap{position:relative;display:inline-block;cursor:crosshair;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--color-border);max-width:100%}
+.canvas-wrap canvas{display:block;max-width:100%;height:auto}
+.magnifier{position:absolute;width:80px;height:80px;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;display:none;overflow:hidden;z-index:10}
+.magnifier canvas{position:absolute;image-rendering:pixelated}
+.color-result{background:#1E1B2E;border-radius:var(--radius-md);padding:20px;display:flex;align-items:center;gap:16px;margin:16px 0}
+.picked-swatch{width:64px;height:64px;border-radius:var(--radius-sm);border:3px solid rgba(255,255,255,.2);flex-shrink:0;transition:background .1s}
+.picked-values{flex:1}
+.picked-val-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.pv-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6B6B8A;width:36px}
+.pv-val{font-family:'JetBrains Mono',monospace;font-size:14px;color:#A78BFA;font-weight:500}
+.pv-copy{padding:3px 10px;border-radius:4px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:11px;transition:all .15s}
+.pv-copy:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.palette-section{margin-top:20px}
+.extracted-palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ext-swatch{width:48px;height:48px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
+.ext-swatch:hover{transform:scale(1.1);border-color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.ext-swatch .ext-hex{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--color-text-muted);white-space:nowrap}
+.history-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hist-swatch{width:36px;height:36px;border-radius:6px;cursor:pointer;border:2px solid var(--color-border);transition:all .15s}
+.hist-swatch:hover{transform:scale(1.1);border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Image Color Picker</div>
+<div class="container tool-page-header">
+  <h1>Image Color Picker</h1>
+  <p>Upload any image and click anywhere to pick exact colors — get HEX, RGB and HSL values instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:760px">
+
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:40px;margin-bottom:12px">🎨</div>
+      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop an image here or click to select</div>
+      <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP, GIF — then click anywhere on the image to pick a color</div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+
+    <div id="picker-section" style="display:none;margin-top:16px">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="img-canvas"></canvas>
+        <div class="magnifier" id="magnifier"><canvas id="mag-canvas" width="80" height="80"></canvas></div>
+      </div>
+
+      <div class="color-result" id="color-result">
+        <div class="picked-swatch" id="picked-swatch" style="background:#6366F1"></div>
+        <div class="picked-values">
+          <div class="picked-val-row">
+            <span class="pv-label">HEX</span>
+            <span class="pv-val" id="pv-hex">#6366F1</span>
+            <button class="pv-copy" data-target="pv-hex">Copy</button>
+          </div>
+          <div class="picked-val-row">
+            <span class="pv-label">RGB</span>
+            <span class="pv-val" id="pv-rgb">rgb(99, 102, 241)</span>
+            <button class="pv-copy" data-target="pv-rgb">Copy</button>
+          </div>
+          <div class="picked-val-row" style="margin-bottom:0">
+            <span class="pv-label">HSL</span>
+            <span class="pv-val" id="pv-hsl">hsl(239, 84%, 67%)</span>
+            <button class="pv-copy" data-target="pv-hsl">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <div class="field-label" style="margin-bottom:6px">Pick history</div>
+        <div class="history-row" id="history-row"></div>
+      </div>
+
+      <div class="palette-section">
+        <div class="field-label" style="margin-bottom:6px">Extracted palette <span style="font-size:12px;font-weight:400;color:var(--color-text-muted)">(dominant colors)</span></div>
+        <div class="extracted-palette" id="extracted-palette"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to use the image color picker</h2>
+  <p>Drop or upload any image, then move your mouse over the image — a magnified preview follows your cursor for pixel-precise selection. Click anywhere to "lock in" the color at that point. The HEX, RGB and HSL values appear below the image, and each can be copied with a single click. Your pick history is shown as color swatches — click any previous pick to copy it again.</p>
+  <h2>Why pick colors from images?</h2>
+  <p>Designers frequently need to match colors from photos, brand assets, screenshots or reference images. Instead of estimating visually, an image color picker gives you the exact hex code of any pixel. This is useful when building websites to match a client's brand photo, when designing marketing materials to stay consistent with existing imagery, or when recreating a color scheme you've seen in another design.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const canvas = document.getElementById('img-canvas');
+const ctx = canvas.getContext('2d');
+const magCanvas = document.getElementById('mag-canvas');
+const magCtx = magCanvas.getContext('2d');
+const magnifier = document.getElementById('magnifier');
+const pickHistory = [];
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if(e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if(fileInput.files[0]) loadImage(fileInput.files[0]); });
+
+let imgEl = null;
+function loadImage(file) {
+  const url = URL.createObjectURL(file);
+  imgEl = new Image();
+  imgEl.onload = () => {
+    const maxW = 700, maxH = 500;
+    let w = imgEl.naturalWidth, h = imgEl.naturalHeight;
+    if(w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+    if(h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+    canvas.width = w; canvas.height = h;
+    ctx.drawImage(imgEl, 0, 0, w, h);
+    document.getElementById('picker-section').style.display = '';
+    extractPalette();
+    URL.revokeObjectURL(url);
+  };
+  imgEl.src = url;
+}
+
+function rgbToHex(r,g,b) { return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join(''); }
+function rgbToHsl(r,g,b) {
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}}
+  return`hsl(${Math.round(h*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+}
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = Math.floor((e.clientX - rect.left) * scaleX);
+  const y = Math.floor((e.clientY - rect.top) * scaleY);
+  if(x<0||y<0||x>=canvas.width||y>=canvas.height) return;
+
+  // Magnifier
+  magnifier.style.display = 'block';
+  const mx = e.clientX - rect.left + canvas.getBoundingClientRect().left - document.getElementById('canvas-wrap').getBoundingClientRect().left;
+  const my = e.clientY - rect.top + canvas.getBoundingClientRect().top - document.getElementById('canvas-wrap').getBoundingClientRect().top;
+  magnifier.style.left = (mx - 40) + 'px';
+  magnifier.style.top = (my - 80) + 'px';
+  magCtx.imageSmoothingEnabled = false;
+  magCtx.clearRect(0,0,80,80);
+  magCtx.drawImage(canvas, x-8, y-8, 16, 16, 0, 0, 80, 80);
+  // Crosshair
+  magCtx.strokeStyle='rgba(255,255,255,.8)'; magCtx.lineWidth=1;
+  magCtx.beginPath(); magCtx.moveTo(40,0); magCtx.lineTo(40,80); magCtx.moveTo(0,40); magCtx.lineTo(80,40); magCtx.stroke();
+});
+canvas.addEventListener('mouseleave', () => magnifier.style.display = 'none');
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+  const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+  const [r,g,b] = ctx.getImageData(x,y,1,1).data;
+  const hex = rgbToHex(r,g,b);
+  updatePicked(r,g,b,hex);
+  addToHistory(hex);
+});
+
+function updatePicked(r,g,b,hex) {
+  document.getElementById('picked-swatch').style.background = hex;
+  document.getElementById('pv-hex').textContent = hex.toUpperCase();
+  document.getElementById('pv-rgb').textContent = `rgb(${r}, ${g}, ${b})`;
+  document.getElementById('pv-hsl').textContent = rgbToHsl(r,g,b);
+}
+
+document.querySelectorAll('.pv-copy').forEach(btn => {
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById(btn.dataset.target).textContent).then(() => {
+      const t=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=t,1000);
+    });
+  });
+});
+
+function addToHistory(hex) {
+  if(pickHistory.includes(hex)) return;
+  pickHistory.unshift(hex);
+  if(pickHistory.length > 12) pickHistory.pop();
+  const row = document.getElementById('history-row');
+  row.innerHTML = pickHistory.map(h=>`<div class="hist-swatch" style="background:${h}" title="${h}" onclick="navigator.clipboard.writeText('${h}')"></div>`).join('');
+}
+
+function extractPalette() {
+  // Sample pixels in a grid
+  const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const step = Math.max(1, Math.floor(canvas.width * canvas.height / 2000));
+  const buckets = {};
+  for(let i=0;i<data.length;i+=step*4) {
+    const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
+    if(a<128) continue;
+    const key = `${Math.round(r/32)*32},${Math.round(g/32)*32},${Math.round(b/32)*32}`;
+    buckets[key]=(buckets[key]||0)+1;
+  }
+  const sorted = Object.entries(buckets).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const palette = document.getElementById('extracted-palette');
+  palette.innerHTML = sorted.map(([k])=>{
+    const [r,g,b]=k.split(',').map(Number);
+    const hex=rgbToHex(r,g,b);
+    return `<div style="position:relative;margin-bottom:24px"><div class="ext-swatch" style="background:${hex}" onclick="navigator.clipboard.writeText('${hex}')" title="${hex}"></div><div class="ext-hex">${hex.toUpperCase()}</div></div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>

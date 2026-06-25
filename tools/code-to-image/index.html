@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Code to Image Generator — Beautiful Code Screenshots | OMIToolKit</title>
+<meta name="description" content="Convert code snippets to beautiful images with syntax highlighting. Multiple themes and languages. Download as PNG. Free online code screenshot generator.">
+<link rel="canonical" href="../../tools/code-to-image/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.preview-stage{border-radius:var(--radius-lg);padding:40px;display:flex;align-items:center;justify-content:center;min-height:300px;margin:16px 0;transition:background .3s;position:relative}
+.code-window{border-radius:12px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4);min-width:300px;max-width:100%;width:100%}
+.window-bar{display:flex;align-items:center;gap:7px;padding:13px 16px}
+.dot{width:12px;height:12px;border-radius:50%}
+.window-title{margin-left:8px;font-size:12px;flex:1;text-align:center;opacity:.5;font-family:'JetBrains Mono',monospace}
+.code-body{padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;tab-size:2}
+.line-numbers{display:inline-block;user-select:none;min-width:28px;margin-right:16px;text-align:right;opacity:.35;font-size:13px}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.ctrl-group label{display:block;font-size:12.5px;font-weight:500;color:var(--color-text-muted);margin-bottom:6px}
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.theme-swatch{padding:10px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;font-size:12px;font-weight:500;font-family:'JetBrains Mono',monospace;transition:all .15s;text-align:center}
+.theme-swatch.active{border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Code to Image</div>
+<div class="container tool-page-header">
+  <h1>Code to Image</h1>
+  <p>Turn your code into beautiful shareable images — perfect for social media, presentations and blogs.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:860px">
+
+    <div class="field-row">
+      <label class="field-label">Paste your code</label>
+      <textarea id="code-input" class="field-input" rows="8" style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6" placeholder="// Paste your code here…
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+console.log(greet('World'));"></textarea>
+    </div>
+
+    <div class="controls-grid">
+      <div class="ctrl-group">
+        <label>Language</label>
+        <select id="lang-sel" class="field-select">
+          <option value="js">JavaScript</option>
+          <option value="py">Python</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="ts">TypeScript</option>
+          <option value="php">PHP</option>
+          <option value="java">Java</option>
+          <option value="sql">SQL</option>
+          <option value="bash">Bash</option>
+          <option value="json">JSON</option>
+          <option value="plain">Plain text</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Background</label>
+        <select id="bg-sel" class="field-select">
+          <option value="linear-gradient(135deg,#6366F1,#A855F7)">Purple gradient</option>
+          <option value="linear-gradient(135deg,#0EA5E9,#6366F1)">Blue-Indigo</option>
+          <option value="linear-gradient(135deg,#10B981,#0EA5E9)">Green-Blue</option>
+          <option value="linear-gradient(135deg,#F97316,#EF4444)">Sunset</option>
+          <option value="linear-gradient(135deg,#1E1B2E,#2D2A4A)">Dark</option>
+          <option value="#F4F3FE">Light lavender</option>
+          <option value="#F0FDF4">Mint</option>
+          <option value="#FFF7ED">Warm white</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Font size</label>
+        <select id="font-sel" class="field-select">
+          <option value="12">12px</option>
+          <option value="14" selected>14px</option>
+          <option value="16">16px</option>
+          <option value="18">18px</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Padding</label>
+        <select id="pad-sel" class="field-select">
+          <option value="24">Compact</option>
+          <option value="40" selected>Normal</option>
+          <option value="64">Spacious</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+      <label class="checkbox-item"><input type="checkbox" id="opt-lines" checked> Line numbers</label>
+      <label class="checkbox-item"><input type="checkbox" id="opt-shadow" checked> Drop shadow</label>
+      <label class="field-label" style="margin:0">Theme:</label>
+    </div>
+
+    <div class="theme-grid" id="theme-grid"></div>
+
+    <!-- Preview -->
+    <div class="preview-stage" id="preview-stage">
+      <div class="code-window" id="code-window">
+        <div class="window-bar" id="window-bar">
+          <div class="dot" style="background:#EF4444"></div>
+          <div class="dot" style="background:#FBBF24"></div>
+          <div class="dot" style="background:#34D399"></div>
+          <div class="window-title" id="window-title">script.js</div>
+        </div>
+        <div class="code-body" id="code-body"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="download-btn">⬇ Download PNG</button>
+      <button class="btn btn-outline" id="copy-img-btn">Copy Image</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why share code as images?</h2>
+  <p>Plain code snippets don't render with syntax highlighting on most social platforms — Twitter, LinkedIn, Reddit, WhatsApp, and Instagram all show code as unformatted text. Converting code to a beautiful highlighted image lets you share readable, visually appealing snippets anywhere. It's also the standard format used by developer influencers, coding tutorial accounts, and tech blogs for shareable code content.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const THEMES = {
+  'One Dark': {bg:'#282C34',text:'#ABB2BF',kw:'#C678DD',str:'#98C379',num:'#D19A66',cmt:'#5C6370',fn:'#61AFEF',bar:'#21252B'},
+  'Night Owl': {bg:'#011627',text:'#D6DEEB',kw:'#C792EA',str:'#ECC48D',num:'#F78C6C',cmt:'#637777',fn:'#82AAFF',bar:'#01111D'},
+  'Monokai': {bg:'#272822',text:'#F8F8F2',kw:'#F92672',str:'#E6DB74',num:'#AE81FF',cmt:'#75715E',fn:'#A6E22E',bar:'#1E1F1C'},
+  'Dracula': {bg:'#282A36',text:'#F8F8F2',kw:'#FF79C6',str:'#F1FA8C',num:'#BD93F9',cmt:'#6272A4',fn:'#8BE9FD',bar:'#21222C'},
+  'GitHub Dark': {bg:'#0D1117',text:'#C9D1D9',kw:'#FF7B72',str:'#A5D6FF',num:'#79C0FF',cmt:'#8B949E',fn:'#D2A8FF',bar:'#161B22'},
+  'Solarized': {bg:'#002B36',text:'#839496',kw:'#859900',str:'#2AA198',num:'#D33682',cmt:'#657B83',fn:'#268BD2',bar:'#073642'},
+};
+
+let currentTheme = 'One Dark';
+
+const themeGrid = document.getElementById('theme-grid');
+Object.entries(THEMES).forEach(([name, t]) => {
+  const sw = document.createElement('div');
+  sw.className = 'theme-swatch' + (name===currentTheme?' active':'');
+  sw.style.background = t.bg; sw.style.color = t.text; sw.style.border = '2px solid '+(name===currentTheme?'#6366F1':t.bg);
+  sw.textContent = name;
+  sw.addEventListener('click', () => {
+    currentTheme = name;
+    document.querySelectorAll('.theme-swatch').forEach(x=>{x.classList.remove('active');x.style.border='2px solid '+THEMES[x.textContent]?.bg||'transparent';});
+    sw.classList.add('active'); sw.style.border='2px solid #6366F1';
+    render();
+  });
+  themeGrid.appendChild(sw);
+});
+
+const LANG_EXTS = {js:'script.js',py:'main.py',html:'index.html',css:'styles.css',ts:'app.ts',php:'index.php',java:'Main.java',sql:'query.sql',bash:'script.sh',json:'data.json',plain:'code.txt'};
+
+function highlight(code, lang) {
+  const t = THEMES[currentTheme];
+  let s = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  
+  const colorize = (pattern, color) => s = s.replace(pattern, m=>`<span style="color:${color}">${m}</span>`);
+
+  if(lang!=='plain') {
+    colorize(/(\/\/[^\n]*|#[^\n]*|\/\*[\s\S]*?\*\/)/g, t.cmt);
+    colorize(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, t.str);
+    colorize(/\b(\d+\.?\d*)\b/g, t.num);
+  }
+  if(['js','ts','java','php'].includes(lang)) {
+    colorize(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|new|this|typeof|instanceof|true|false|null|undefined|void|=>)\b/g, t.kw);
+    colorize(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g, t.fn);
+  } else if(lang==='py') {
+    colorize(/\b(def|class|import|from|return|if|elif|else|for|while|in|not|and|or|True|False|None|with|as|try|except|finally|lambda|yield|pass|break|continue)\b/g, t.kw);
+    colorize(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, t.fn);
+  } else if(lang==='html') {
+    s = s.replace(/(&lt;\/?)([a-zA-Z][a-zA-Z0-9]*)/g, (m,sl,tag)=>`${sl}<span style="color:${t.kw}">${tag}</span>`);
+    s = s.replace(/\s([a-zA-Z-]+)(?==)/g, (m,attr)=>` <span style="color:${t.fn}">${attr}</span>`);
+  } else if(lang==='css') {
+    colorize(/([a-zA-Z-]+)\s*(?=:)/g, t.fn);
+    colorize(/(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)|[a-z]+(?=;))/g, t.str);
+  } else if(lang==='sql') {
+    colorize(/\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|ON|AND|OR|NOT|IN|IS|NULL|ORDER|BY|GROUP|HAVING|LIMIT|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|AS|DISTINCT|COUNT|SUM|AVG|MIN|MAX)\b/gi, t.kw);
+  } else if(lang==='bash') {
+    colorize(/\b(echo|if|then|else|fi|for|do|done|while|case|esac|function|export|source|cd|ls|grep|awk|sed|cat|rm|mkdir|chmod|sudo)\b/g, t.kw);
+  } else if(lang==='json') {
+    s = s.replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, (m,k,c)=>`<span style="color:${t.fn}">${k}</span>${c}`);
+    s = s.replace(/:\s*("(?:[^"\\]|\\.)*")/g, (m,v)=>`: <span style="color:${t.str}">${v}</span>`);
+    colorize(/\b(true|false|null)\b/g, t.kw);
+  }
+  return s;
+}
+
+function render() {
+  const code = document.getElementById('code-input').value || '// your code here';
+  const lang = document.getElementById('lang-sel').value;
+  const bg = document.getElementById('bg-sel').value;
+  const fontSize = document.getElementById('font-sel').value;
+  const padding = document.getElementById('pad-sel').value;
+  const showLines = document.getElementById('opt-lines').checked;
+  const showShadow = document.getElementById('opt-shadow').checked;
+  const t = THEMES[currentTheme];
+
+  document.getElementById('preview-stage').style.background = bg;
+  document.getElementById('preview-stage').style.padding = padding + 'px';
+  document.getElementById('code-window').style.boxShadow = showShadow ? '0 24px 60px rgba(0,0,0,.4)':'none';
+  document.getElementById('window-bar').style.background = t.bar;
+  document.getElementById('window-title').style.color = t.text;
+  document.getElementById('window-title').textContent = LANG_EXTS[lang] || 'code.txt';
+
+  const body = document.getElementById('code-body');
+  body.style.background = t.bg;
+  body.style.color = t.text;
+  body.style.fontSize = fontSize + 'px';
+
+  const lines = code.split('\n');
+  const highlighted = highlight(code, lang);
+  const hLines = highlighted.split('\n');
+
+  body.innerHTML = lines.map((_, i) => {
+    const lnSpan = showLines ? `<span class="line-numbers" style="color:${t.cmt}">${i+1}</span>` : '';
+    return `<div>${lnSpan}${hLines[i]||''}</div>`;
+  }).join('');
+}
+
+['code-input','lang-sel','bg-sel','font-sel','pad-sel'].forEach(id => {
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+['opt-lines','opt-shadow'].forEach(id => document.getElementById(id).addEventListener('change', render));
+
+async function captureImage() {
+  const el = document.getElementById('preview-stage');
+  return await html2canvas(el, {scale:2, useCORS:true, backgroundColor:null, logging:false});
+}
+
+document.getElementById('download-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('download-btn');
+  btn.textContent = '⏳ Generating…'; btn.disabled = true;
+  const cvs = await captureImage();
+  const a = document.createElement('a');
+  a.href = cvs.toDataURL('image/png');
+  a.download = 'code-snippet.png'; a.click();
+  btn.textContent = '⬇ Download PNG'; btn.disabled = false;
+});
+
+document.getElementById('copy-img-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('copy-img-btn');
+  btn.textContent = '⏳ Copying…'; btn.disabled = true;
+  try {
+    const cvs = await captureImage();
+    cvs.toBlob(async blob => {
+      await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      btn.textContent = '✓ Copied!'; setTimeout(()=>{btn.textContent='Copy Image';btn.disabled=false;},1500);
+    });
+  } catch(e) {
+    btn.textContent = 'Copy Image'; btn.disabled = false;
+  }
+});
+
+// Demo
+document.getElementById('code-input').value = `function fibonacci(n) {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\n// Generate first 10 numbers\nconst sequence = Array.from(\n  { length: 10 },\n  (_, i) => fibonacci(i)\n);\nconsole.log(sequence);`;
+render();
+</script>
+</body>
+</html>
