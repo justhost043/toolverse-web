@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Unix Timestamp Converter — Epoch Time Online | OMIToolKit</title>
+<meta name="description" content="Convert Unix timestamps to human-readable dates and vice versa. See the current epoch time live. Free online timestamp converter — no sign-up needed.">
+<link rel="canonical" href="../../tools/timestamp-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.live-epoch{background:#1E1B2E;border-radius:var(--radius-lg);padding:24px;text-align:center;margin-bottom:20px}
+.epoch-num{font-family:'JetBrains Mono',monospace;font-size:clamp(28px,6vw,44px);font-weight:500;color:#A78BFA;letter-spacing:.04em}
+.epoch-sub{font-size:13px;color:#6B6B8A;margin-top:6px}
+.copy-epoch{margin-top:12px;padding:7px 20px;border-radius:999px;border:1px solid #3D3A5C;background:transparent;color:#A78BFA;cursor:pointer;font-size:13px;transition:all .15s}
+.copy-epoch:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.result-box{background:#F4F3FE;border:2px solid #C9C5F7;border-radius:var(--radius-md);padding:20px;margin-top:14px}
+.result-box .r-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500;color:var(--color-primary)}
+.result-box .r-lbl{font-size:12.5px;color:var(--color-text-muted);margin-top:3px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:480px){.result-grid{grid-template-columns:1fr}}
+.rel-time{font-size:18px;font-weight:600;color:var(--color-primary);text-align:center;padding:14px;background:#F9F9F9;border-radius:var(--radius-sm);margin-top:10px}
+.dir-toggle{display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin-bottom:20px}
+.dir-btn{padding:9px 22px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.dir-btn.active{background:var(--color-primary);color:#fff}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Timestamp Converter</div>
+<div class="container tool-page-header">
+  <h1>Unix Timestamp Converter</h1>
+  <p>Convert between Unix epoch timestamps and human-readable dates — with live current time.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:600px">
+
+    <!-- Live epoch -->
+    <div class="live-epoch">
+      <div style="font-size:12px;color:#6B6B8A;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Current Unix timestamp</div>
+      <div class="epoch-num" id="live-epoch">0</div>
+      <div class="epoch-sub" id="live-epoch-ms">0 milliseconds</div>
+      <button class="copy-epoch" id="copy-live">Copy timestamp</button>
+    </div>
+
+    <div class="dir-toggle">
+      <button class="dir-btn active" id="btn-to-date">Timestamp → Date</button>
+      <button class="dir-btn" id="btn-to-epoch">Date → Timestamp</button>
+    </div>
+
+    <!-- Panel: timestamp → date -->
+    <div id="panel-to-date">
+      <div class="field-row">
+        <label class="field-label">Unix timestamp (seconds or milliseconds)</label>
+        <input type="text" id="inp-epoch" class="field-input" placeholder="e.g. 1700000000" style="font-family:var(--font-mono);font-size:16px;font-weight:500">
+      </div>
+      <div class="result-grid" id="epoch-result" style="display:none">
+        <div class="result-box"><div class="r-val" id="r-utc">—</div><div class="r-lbl">UTC</div></div>
+        <div class="result-box"><div class="r-val" id="r-local">—</div><div class="r-lbl">Your local time</div></div>
+        <div class="result-box"><div class="r-val" id="r-iso">—</div><div class="r-lbl">ISO 8601</div></div>
+        <div class="result-box"><div class="r-val" id="r-relative">—</div><div class="r-lbl">Relative time</div></div>
+      </div>
+    </div>
+
+    <!-- Panel: date → timestamp -->
+    <div id="panel-to-epoch" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field-row"><label class="field-label">Date</label><input type="date" id="inp-date" class="field-input"></div>
+        <div class="field-row"><label class="field-label">Time</label><input type="time" id="inp-time" class="field-input" step="1" value="00:00:00"></div>
+      </div>
+      <div class="result-grid" id="date-result" style="display:none">
+        <div class="result-box"><div class="r-val" id="r-epoch-s">—</div><div class="r-lbl">Unix (seconds)</div></div>
+        <div class="result-box"><div class="r-val" id="r-epoch-ms">—</div><div class="r-lbl">Unix (milliseconds)</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is a Unix timestamp?</h2>
+  <p>A Unix timestamp (also called epoch time or POSIX time) is the number of seconds that have elapsed since January 1, 1970 at 00:00:00 UTC, not counting leap seconds. It's a universal standard for storing and comparing times in software systems because it's a simple integer — no time zones, no ambiguity, no daylight saving complications. The same timestamp represents the exact same moment in time everywhere on Earth.</p>
+  <h2>Seconds vs milliseconds</h2>
+  <p>The original Unix timestamp counts seconds. Modern JavaScript and many APIs use milliseconds (Unix timestamp × 1000). A 10-digit number is seconds (current standard); a 13-digit number is milliseconds. This converter detects which format you've entered automatically.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Live clock
+function updateLive() {
+  const now = Date.now();
+  const secs = Math.floor(now / 1000);
+  document.getElementById('live-epoch').textContent = secs.toLocaleString();
+  document.getElementById('live-epoch-ms').textContent = now.toLocaleString() + ' ms';
+}
+setInterval(updateLive, 100);
+updateLive();
+
+document.getElementById('copy-live').addEventListener('click', () => {
+  navigator.clipboard.writeText(Math.floor(Date.now()/1000).toString()).then(() => {
+    const b = document.getElementById('copy-live'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy timestamp',1200);
+  });
+});
+
+// Mode toggle
+let mode = 'to-date';
+document.getElementById('btn-to-date').addEventListener('click', () => {
+  mode='to-date'; document.getElementById('btn-to-date').classList.add('active'); document.getElementById('btn-to-epoch').classList.remove('active');
+  document.getElementById('panel-to-date').style.display=''; document.getElementById('panel-to-epoch').style.display='none';
+});
+document.getElementById('btn-to-epoch').addEventListener('click', () => {
+  mode='to-epoch'; document.getElementById('btn-to-epoch').classList.add('active'); document.getElementById('btn-to-date').classList.remove('active');
+  document.getElementById('panel-to-date').style.display='none'; document.getElementById('panel-to-epoch').style.display='';
+  const now=new Date(); document.getElementById('inp-date').valueAsDate=now;
+  convertDate();
+});
+
+// Relative time
+function relativeTime(ms) {
+  const diff = Date.now() - ms;
+  const abs = Math.abs(diff);
+  const future = diff < 0;
+  const s=abs/1000, m=s/60, h=m/60, d=h/24, mo=d/30, y=d/365;
+  let str;
+  if(s<60) str=Math.round(s)+'s';
+  else if(m<60) str=Math.round(m)+'m';
+  else if(h<24) str=Math.round(h)+'h';
+  else if(d<30) str=Math.round(d)+' days';
+  else if(mo<12) str=Math.round(mo)+' months';
+  else str=Math.round(y)+' years';
+  return future ? str+' from now' : str+' ago';
+}
+
+// Timestamp → date
+document.getElementById('inp-epoch').addEventListener('input', convertEpoch);
+function convertEpoch() {
+  const raw = document.getElementById('inp-epoch').value.trim();
+  if(!raw) { document.getElementById('epoch-result').style.display='none'; return; }
+  let num = parseFloat(raw);
+  if(isNaN(num)) return;
+  // Auto-detect ms vs s
+  if(num > 1e12) {} else { num *= 1000; }
+  const d = new Date(num);
+  if(isNaN(d.getTime())) return;
+  document.getElementById('r-utc').textContent = d.toUTCString();
+  document.getElementById('r-local').textContent = d.toLocaleString();
+  document.getElementById('r-iso').textContent = d.toISOString();
+  document.getElementById('r-relative').textContent = relativeTime(num);
+  document.getElementById('epoch-result').style.display='grid';
+}
+
+// Date → timestamp
+function convertDate() {
+  const d = document.getElementById('inp-date').value;
+  const t = document.getElementById('inp-time').value || '00:00:00';
+  if(!d) { document.getElementById('date-result').style.display='none'; return; }
+  const dt = new Date(d+'T'+t);
+  if(isNaN(dt.getTime())) return;
+  const s = Math.floor(dt.getTime()/1000);
+  document.getElementById('r-epoch-s').textContent = s.toLocaleString();
+  document.getElementById('r-epoch-ms').textContent = (s*1000).toLocaleString();
+  document.getElementById('date-result').style.display='grid';
+}
+['inp-date','inp-time'].forEach(id=>document.getElementById(id).addEventListener('input',convertDate));
+
+// Seed with current timestamp
+document.getElementById('inp-epoch').value = Math.floor(Date.now()/1000);
+convertEpoch();
+const now2=new Date(); document.getElementById('inp-date').valueAsDate=now2;
+</script>
+</body>
+</html>

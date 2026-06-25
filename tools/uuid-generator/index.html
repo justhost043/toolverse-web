@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free UUID Generator Online — Generate v1 & v4 UUIDs | OMIToolKit</title>
+<meta name="description" content="Generate UUID v1 and v4 identifiers in bulk. Validate existing UUIDs. Format as uppercase, lowercase or without hyphens. Free online UUID generator.">
+<link rel="canonical" href="../../tools/uuid-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.uuid-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto;margin:14px 0}
+.uuid-item{display:flex;align-items:center;gap:10px;background:#1E1B2E;border-radius:var(--radius-sm);padding:10px 14px}
+.uuid-val{flex:1;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:#A78BFA;user-select:all;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uuid-copy-btn{padding:4px 12px;border-radius:5px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;flex-shrink:0;transition:all .15s}
+.uuid-copy-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.version-tabs{display:flex;gap:8px;margin-bottom:16px}
+.v-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.v-tab.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.validate-result{padding:12px 16px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;margin-top:10px}
+.validate-result.valid{background:#DCFCE7;color:#166534}
+.validate-result.invalid{background:#FEE2E2;color:#991B1B}
+.format-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.fmt-chip{padding:6px 14px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
+.fmt-chip.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / UUID Generator</div>
+<div class="container tool-page-header">
+  <h1>UUID Generator</h1>
+  <p>Generate universally unique identifiers in bulk. Validate existing UUIDs. Multiple format options.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+
+    <div class="version-tabs">
+      <button class="v-tab active" data-v="4">UUID v4 (Random)</button>
+      <button class="v-tab" data-v="1">UUID v1 (Time-based)</button>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">
+        <label class="field-label">Count</label>
+        <input type="number" id="count" class="field-input" value="5" min="1" max="100">
+      </div>
+      <button class="btn btn-primary" id="generate-btn" style="padding:12px 24px">Generate</button>
+      <button class="btn btn-outline" id="copy-all-btn">Copy all</button>
+    </div>
+
+    <div class="field-label" style="margin-bottom:6px">Format</div>
+    <div class="format-chips">
+      <button class="fmt-chip active" data-fmt="lower">lowercase</button>
+      <button class="fmt-chip" data-fmt="upper">UPPERCASE</button>
+      <button class="fmt-chip" data-fmt="no-hyphens">no-hyphens</button>
+      <button class="fmt-chip" data-fmt="braces">{braces}</button>
+    </div>
+
+    <div class="uuid-list" id="uuid-list"></div>
+
+    <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:8px">Validate a UUID</div>
+      <input type="text" id="validate-inp" class="field-input" placeholder="Paste a UUID to validate…" style="font-family:'JetBrains Mono',monospace;font-size:14px">
+      <div id="validate-result"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is a UUID?</h2>
+  <p>A UUID (Universally Unique Identifier) is a 128-bit label used to identify information in computer systems. Written as 32 hexadecimal characters in a specific pattern (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx), UUIDs are designed to be unique across all computers and all time without requiring a central registration authority. They're used as primary keys in databases, file names, session tokens, and anywhere a guaranteed-unique identifier is needed.</p>
+  <h2>UUID v4 vs v1</h2>
+  <p><strong>UUID v4</strong> is generated using random or pseudo-random numbers. It has no predictable structure and is the most widely used version for general purposes — it's what you should use when you just need a unique ID. <strong>UUID v1</strong> is generated from the current timestamp and the MAC address of the generating machine, making it time-sortable. This is useful when you need to order records by when they were created, but it exposes the generating machine's network address.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let version = 4;
+let fmt = 'lower';
+let uuids = [];
+
+document.querySelectorAll('.v-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.v-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); version=+t.dataset.v; generate();
+}));
+document.querySelectorAll('.fmt-chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.fmt-chip').forEach(x=>x.classList.remove('active'));
+  c.classList.add('active'); fmt=c.dataset.fmt; render();
+}));
+
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>
+    (c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
+}
+
+function uuidv1() {
+  const now = Date.now();
+  const t = BigInt(now)*10000n + 122192928000000000n;
+  const th = (t>>28n&0xFFFFFFFFn).toString(16).padStart(8,'0');
+  const tm = (t>>12n&0xFFFFn).toString(16).padStart(4,'0');
+  const tl = (0x1000n|(t&0xFFFn)).toString(16).padStart(4,'0');
+  const r1 = (0x80|(Math.random()*0x3F|0)).toString(16).padStart(2,'0');
+  const r2 = (Math.random()*0xFF|0).toString(16).padStart(2,'0');
+  const node = Array.from({length:6},()=>(Math.random()*0xFF|0).toString(16).padStart(2,'0')).join('');
+  return `${th}-${tm}-${tl}-${r1}${r2}-${node}`;
+}
+
+function applyFmt(uuid) {
+  if(fmt==='upper') return uuid.toUpperCase();
+  if(fmt==='no-hyphens') return uuid.replace(/-/g,'');
+  if(fmt==='braces') return '{'+uuid+'}';
+  return uuid;
+}
+
+function generate() {
+  const count = Math.min(100,Math.max(1,parseInt(document.getElementById('count').value)||5));
+  uuids = Array.from({length:count},()=>version===4?uuidv4():uuidv1());
+  render();
+}
+
+function render() {
+  const list = document.getElementById('uuid-list');
+  list.innerHTML = uuids.map((u,i)=>`
+    <div class="uuid-item">
+      <div class="uuid-val" title="${applyFmt(u)}">${applyFmt(u)}</div>
+      <button class="uuid-copy-btn" data-i="${i}">Copy</button>
+    </div>`).join('');
+  list.querySelectorAll('.uuid-copy-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(applyFmt(uuids[+btn.dataset.i])).then(()=>{
+        const t=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=t,1000);
+      });
+    });
+  });
+}
+
+document.getElementById('generate-btn').addEventListener('click',generate);
+document.getElementById('copy-all-btn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(uuids.map(applyFmt).join('\n')).then(()=>{
+    const b=document.getElementById('copy-all-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy all',1200);
+  });
+});
+
+const UUID_REGEX = /^(\{)?[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(\})?$/i;
+const UUID_NO_HYPHENS = /^[0-9a-f]{32}$/i;
+document.getElementById('validate-inp').addEventListener('input', e=>{
+  const v = e.target.value.trim();
+  const res = document.getElementById('validate-result');
+  if(!v){res.textContent='';res.className='';return;}
+  const isValid = UUID_REGEX.test(v)||UUID_NO_HYPHENS.test(v);
+  res.className='validate-result '+(isValid?'valid':'invalid');
+  if(isValid){
+    const clean=v.replace(/[{}]/g,'').replace(/-/g,'');
+    const ver=clean[12];
+    res.textContent=`✓ Valid UUID version ${ver||'?'}`;
+  } else {
+    res.textContent='✗ Invalid UUID format';
+  }
+});
+
+generate();
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen Resolution & Device Info Checker | OMIToolKit</title>
+<meta name="description" content="Check your screen resolution, viewport size, device pixel ratio, browser, operating system and connection type instantly. Free online device info tool.">
+<link rel="canonical" href="../../tools/screen-resolution/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.info-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px}
+.info-card .ic-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:500;color:var(--color-primary);line-height:1.2;word-break:break-all}
+.info-card .ic-lbl{font-size:12px;color:var(--color-text-muted);margin-top:5px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.info-card.highlight{background:linear-gradient(135deg,#F4F3FE,#EDE9FE);border-color:#C9C5F7}
+.screen-visual{position:relative;border:3px solid var(--color-primary);border-radius:6px;background:#1E1B2E;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:#A78BFA;font-weight:500;transition:all .3s}
+.screen-label{position:absolute;top:-22px;left:0;font-size:12px;color:var(--color-text-muted);font-weight:500}
+.device-type-badge{display:inline-flex;align-items:center;gap:8px;background:#F4F3FE;border:1px solid #C9C5F7;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:500;color:var(--color-primary);margin-bottom:16px}
+.live-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:#DCFCE7;color:#16A34A;padding:4px 12px;border-radius:999px;margin-bottom:16px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#16A34A;animation:blink 1.5s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.ua-box{font-family:'JetBrains Mono',monospace;font-size:12px;background:#1E1B2E;color:#94A3B8;padding:12px 14px;border-radius:var(--radius-sm);word-break:break-all;line-height:1.6;margin-top:10px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Screen Resolution</div>
+<div class="container tool-page-header">
+  <h1>Screen Resolution &amp; Device Info</h1>
+  <p>Your device's display, browser, OS and network information — updated in real time as you resize the window.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:800px">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+      <div class="live-badge"><div class="live-dot"></div>Live</div>
+      <div class="device-type-badge" id="device-badge">🖥️ Desktop</div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="screen-visual" id="screen-visual" style="width:180px;height:101px">
+        <span id="sv-label">1920×1080</span>
+        <span class="screen-label">Your viewport</span>
+      </div>
+    </div>
+
+    <div class="info-grid" id="info-grid"></div>
+
+    <div class="field-label" style="margin-bottom:6px">User Agent string</div>
+    <div class="ua-box" id="ua-box"></div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-info">Copy all info</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Screen resolution vs viewport size</h2>
+  <p>Your screen resolution is the total number of physical pixels on your display — for example, 1920×1080 (Full HD). Your viewport is the area of the browser window that's actually showing web content — this is smaller than the screen resolution because it excludes the browser's toolbar, address bar, bookmarks bar, and window borders. When you resize the browser window, the viewport changes but your screen resolution stays the same.</p>
+  <h2>What is device pixel ratio (DPR)?</h2>
+  <p>DPR is the ratio between physical pixels and logical pixels. On a standard screen, DPR is 1 — one CSS pixel equals one physical pixel. On Retina and high-DPI screens (common on modern MacBooks, iPhones and Android flagships), DPR is 2 or more, meaning 4 physical pixels are used to render each CSS pixel, resulting in sharper text and images. A DPR of 3 is common on high-end phones like recent iPhones. Web developers use DPR to serve appropriate image resolutions for each screen type.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function detectOS(ua){
+  if(/Windows NT 10/.test(ua)) return 'Windows 11/10';
+  if(/Windows/.test(ua)) return 'Windows';
+  if(/Mac OS X/.test(ua)) return 'macOS '+(/Mac OS X ([\d_]+)/.exec(ua)?.[1]?.replace(/_/g,'.')||'');
+  if(/iPhone|iPad/.test(ua)) return 'iOS';
+  if(/Android/.test(ua)) return 'Android '+(/Android ([\d.]+)/.exec(ua)?.[1]||'');
+  if(/Linux/.test(ua)) return 'Linux';
+  return 'Unknown';
+}
+function detectBrowser(ua){
+  if(/Edg\//.test(ua)) return 'Microsoft Edge';
+  if(/OPR\/|Opera/.test(ua)) return 'Opera';
+  if(/Chrome\//.test(ua)) return 'Chrome '+(/Chrome\/([\d.]+)/.exec(ua)?.[1]||'');
+  if(/Firefox\//.test(ua)) return 'Firefox '+(/Firefox\/([\d.]+)/.exec(ua)?.[1]||'');
+  if(/Safari\//.test(ua)&&!/Chrome/.test(ua)) return 'Safari '+(/Version\/([\d.]+)/.exec(ua)?.[1]||'');
+  return 'Unknown';
+}
+function detectDevice(w){
+  if(w<768) return {icon:'📱',label:'Mobile'};
+  if(w<1024) return {icon:'📱',label:'Tablet'};
+  return {icon:'🖥️',label:'Desktop'};
+}
+function getConnection(){
+  const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(!c) return 'Unknown';
+  return [c.effectiveType||'',c.type||''].filter(Boolean).join(' / ')||'Unknown';
+}
+
+function update(){
+  const ua=navigator.userAgent;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const sw=screen.width, sh=screen.height;
+  const dpr=window.devicePixelRatio||1;
+  const avw=screen.availWidth, avh=screen.availHeight;
+  const {icon,label}=detectDevice(vw);
+
+  document.getElementById('device-badge').textContent=icon+' '+label;
+
+  // Scale visual (max 260x146, 16:9 ish)
+  const maxW=Math.min(260,vw/5), maxH=maxW*vh/vw;
+  const sv=document.getElementById('screen-visual');
+  sv.style.width=maxW+'px'; sv.style.height=maxH+'px';
+  document.getElementById('sv-label').textContent=vw+'×'+vh;
+
+  const infos=[
+    {label:'Viewport width',val:vw+'px',h:true},
+    {label:'Viewport height',val:vh+'px',h:true},
+    {label:'Screen resolution',val:sw+'×'+sh,h:false},
+    {label:'Available screen',val:avw+'×'+avh,h:false},
+    {label:'Device pixel ratio',val:'×'+dpr,h:false},
+    {label:'Physical pixels',val:Math.round(vw*dpr)+'×'+Math.round(vh*dpr),h:false},
+    {label:'Color depth',val:screen.colorDepth+' bit',h:false},
+    {label:'Orientation',val:screen.orientation?.type?.replace('-primary','').replace('-secondary','→')||'Unknown',h:false},
+    {label:'Browser',val:detectBrowser(ua),h:false},
+    {label:'Operating system',val:detectOS(ua),h:false},
+    {label:'Touch support',val:('ontouchstart' in window||navigator.maxTouchPoints>0)?'Yes ('+navigator.maxTouchPoints+' pts)':'No',h:false},
+    {label:'Network type',val:getConnection(),h:false},
+  ];
+
+  document.getElementById('info-grid').innerHTML=infos.map(i=>`
+    <div class="info-card${i.h?' highlight':''}">
+      <div class="ic-val">${i.val}</div>
+      <div class="ic-lbl">${i.label}</div>
+    </div>`).join('');
+
+  document.getElementById('ua-box').textContent=ua;
+}
+
+window.addEventListener('resize',update);
+window.addEventListener('orientationchange',update);
+update();
+
+document.getElementById('copy-info').addEventListener('click',()=>{
+  const cards=document.querySelectorAll('.info-card');
+  const text=['=== Device Info ==='];
+  cards.forEach(c=>{
+    text.push(c.querySelector('.ic-lbl').textContent+': '+c.querySelector('.ic-val').textContent);
+  });
+  text.push('\nUser Agent:\n'+navigator.userAgent);
+  navigator.clipboard.writeText(text.join('\n')).then(()=>{
+    const b=document.getElementById('copy-info');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy all info',1200);
+  });
+});
+</script>
+</body>
+</html>

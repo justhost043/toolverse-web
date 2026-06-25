@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Temperature Converter — Celsius to Fahrenheit & More | OMIToolKit</title>
+<meta name="description" content="Convert temperatures between Celsius, Fahrenheit, Kelvin and Rankine instantly. Visual thermometer display with common temperature references. Free online tool.">
+<link rel="canonical" href="../../tools/temperature-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.temp-card{background:linear-gradient(135deg,#1E1B2E,#2D2050);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;color:#fff;text-align:center}
+.temp-big{font-family:'JetBrains Mono',monospace;font-size:clamp(42px,10vw,68px);font-weight:500;color:#A78BFA;line-height:1;transition:color .3s}
+.temp-unit{font-size:20px;color:#6B6B8A;margin-left:4px}
+.thermometer-wrap{display:flex;justify-content:center;gap:24px;margin:16px 0}
+.thermometer{width:40px;border-radius:999px;background:#2D2A4A;padding:6px;display:flex;flex-direction:column;align-items:center;position:relative}
+.therm-bar{width:14px;border-radius:999px;background:var(--color-border);position:relative;overflow:hidden;flex:1;min-height:120px}
+.therm-fill{position:absolute;bottom:0;left:0;right:0;border-radius:999px;transition:height .4s ease}
+.therm-bulb{width:26px;height:26px;border-radius:50%;margin-top:6px}
+.therm-label{font-size:10px;color:#6B6B8A;margin-top:6px;text-align:center}
+.grid-4{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.temp-input-row{display:flex;align-items:center;gap:10px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer;transition:border-color .15s}
+.temp-input-row:focus-within{border-color:var(--color-primary)}
+.temp-input-row input{flex:1;border:none;background:transparent;font-size:17px;font-weight:600;font-family:var(--font-display);color:var(--color-text);outline:none;min-width:0}
+.temp-input-row .unit-lbl{font-size:14px;font-weight:600;color:var(--color-primary);flex-shrink:0;min-width:20px}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:10px}
+.ref-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:all .15s}
+.ref-card:hover{border-color:var(--color-primary);background:#F4F3FE}
+.ref-name{font-size:12.5px;font-weight:500;color:var(--color-text-muted)}
+.ref-val{font-size:14px;font-weight:600;color:var(--color-primary);font-family:var(--font-mono);margin-top:2px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Temperature Converter</div>
+<div class="container tool-page-header">
+  <h1>Temperature Converter</h1>
+  <p>Convert between Celsius, Fahrenheit, Kelvin and Rankine — type in any field to convert all others.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:580px">
+    <div class="temp-card">
+      <div><span class="temp-big" id="display-num">100</span><span class="temp-unit" id="display-unit">°C</span></div>
+      <div style="font-size:13px;color:#6B6B8A;margin-top:8px" id="display-desc">Boiling point of water</div>
+    </div>
+
+    <div class="grid-4">
+      <div class="temp-input-row">
+        <input type="number" id="inp-c" value="100" step="any" placeholder="°C">
+        <span class="unit-lbl">°C</span>
+      </div>
+      <div class="temp-input-row">
+        <input type="number" id="inp-f" step="any" placeholder="°F">
+        <span class="unit-lbl">°F</span>
+      </div>
+      <div class="temp-input-row">
+        <input type="number" id="inp-k" step="any" placeholder="K">
+        <span class="unit-lbl">K</span>
+      </div>
+      <div class="temp-input-row">
+        <input type="number" id="inp-r" step="any" placeholder="°R">
+        <span class="unit-lbl">°R</span>
+      </div>
+    </div>
+
+    <div class="field-label" style="margin-bottom:10px">Common temperature references</div>
+    <div class="ref-grid" id="ref-grid"></div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Temperature scale history</h2>
+  <p><strong>Celsius</strong> was defined by Swedish astronomer Anders Celsius in 1742, originally with 0° as the boiling point and 100° as freezing — later reversed to the familiar scale. <strong>Fahrenheit</strong> was created by German physicist Daniel Fahrenheit in 1724; 32°F is the freezing point of water and 212°F is the boiling point. <strong>Kelvin</strong> is the SI base unit for temperature, starting at absolute zero (−273.15°C) — the theoretical lowest possible temperature where all molecular motion stops. <strong>Rankine</strong> is an absolute scale like Kelvin but uses Fahrenheit-sized degrees; it's primarily used in some US engineering applications.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const REFS = [
+  {name:'Absolute zero',c:-273.15,desc:'Lowest possible temperature'},
+  {name:'Freezing water',c:0,desc:'Ice melts at this point'},
+  {name:'Room temperature',c:22,desc:'Comfortable indoor climate'},
+  {name:'Body temperature',c:37,desc:'Normal human body temp'},
+  {name:'Fever',c:39,desc:'Mild fever in adults'},
+  {name:'Boiling water',c:100,desc:'At sea level (1 atm)'},
+  {name:'Oven — Low',c:150,desc:'Slow cooking'},
+  {name:'Oven — High',c:230,desc:'High-heat baking'},
+];
+
+const DESCS = [
+  {min:-300,max:-100,d:'Well below absolute zero range'},
+  {min:-273,max:-273,d:'Absolute zero'},
+  {min:-100,max:0,d:'Freezing cold'},
+  {min:0,max:10,d:'Very cold'},
+  {min:10,max:20,d:'Cool weather'},
+  {min:20,max:26,d:'Room temperature'},
+  {min:26,max:35,d:'Warm'},
+  {min:35,max:40,d:'Human body temperature range'},
+  {min:40,max:60,d:'Very hot'},
+  {min:60,max:100,d:'Extremely hot — danger zone'},
+  {min:100,max:100,d:'Boiling point of water'},
+  {min:100,max:300,d:'Cooking temperatures'},
+  {min:300,max:1000,d:'Industrial/furnace temperatures'},
+];
+
+function getDesc(c) {
+  for(const d of DESCS) if(c>=d.min&&c<=d.max) return d.d;
+  return '';
+}
+
+function fmt(n,d=2){ return isNaN(n)?'':parseFloat(n.toFixed(d)).toString(); }
+
+function fromC(c){
+  return {
+    c,
+    f: c*9/5+32,
+    k: c+273.15,
+    r: (c+273.15)*9/5
+  };
+}
+function toC(v,unit){
+  if(unit==='c') return v;
+  if(unit==='f') return (v-32)*5/9;
+  if(unit==='k') return v-273.15;
+  if(unit==='r') return v*5/9-273.15;
+}
+
+let converting = false;
+function convert(src) {
+  if(converting) return;
+  converting = true;
+  const raw = parseFloat(document.getElementById('inp-'+src).value);
+  if(isNaN(raw)){converting=false;return;}
+  const c = toC(raw,src);
+  const all = fromC(c);
+  if(src!=='c') document.getElementById('inp-c').value=fmt(all.c);
+  if(src!=='f') document.getElementById('inp-f').value=fmt(all.f);
+  if(src!=='k') document.getElementById('inp-k').value=fmt(all.k,4);
+  if(src!=='r') document.getElementById('inp-r').value=fmt(all.r,4);
+
+  // Display
+  const umap={c:'°C',f:'°F',k:'K',r:'°R'};
+  document.getElementById('display-num').textContent=fmt(raw);
+  document.getElementById('display-unit').textContent=umap[src];
+
+  // Color by temp
+  let color='#A78BFA';
+  if(c<0) color='#60A5FA';
+  else if(c<20) color='#34D399';
+  else if(c<40) color='#FBBF24';
+  else color='#F97316';
+  document.getElementById('display-num').style.color=color;
+  document.getElementById('display-desc').textContent=getDesc(c);
+  converting=false;
+}
+
+['c','f','k','r'].forEach(u=>{
+  document.getElementById('inp-'+u).addEventListener('input',()=>convert(u));
+});
+
+// Refs
+const rg=document.getElementById('ref-grid');
+REFS.forEach(r=>{
+  const all=fromC(r.c);
+  const div=document.createElement('div');
+  div.className='ref-card';
+  div.innerHTML=`<div class="ref-name">${r.name}</div><div class="ref-val">${fmt(r.c)}°C / ${fmt(all.f)}°F</div>`;
+  div.addEventListener('click',()=>{
+    document.getElementById('inp-c').value=fmt(r.c);
+    convert('c');
+  });
+  rg.appendChild(div);
+});
+
+convert('c');
+</script>
+</body>
+</html>

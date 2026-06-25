@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free SQL Formatter & Beautifier Online | OMIToolKit</title>
+<meta name="description" content="Format and beautify SQL queries online instantly. Uppercase keywords, proper indentation, clean output. Free online SQL formatter — no sign-up needed.">
+<link rel="canonical" href="../../tools/sql-formatter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.sql-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.sql-layout{grid-template-columns:1fr}}
+textarea.sql-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;resize:vertical;min-height:280px}
+.sql-output{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;background:#1E1B2E;color:#E8E6F0;border:1px solid #3D3A5C;border-radius:var(--radius-sm);padding:14px;min-height:280px;overflow:auto;white-space:pre;tab-size:2}
+.kw{color:#C084FC}.fn{color:#60A5FA}.str{color:#86EFAC}.num{color:#FCA5A5}.cmt{color:#6B7280;font-style:italic}
+.opt-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.opt-select{padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13.5px;font-family:var(--font-body)}
+.stat-bar{font-size:12.5px;color:var(--color-text-muted);margin-top:6px;display:flex;gap:14px}
+.stat-chip{background:#F4F3FE;color:var(--color-primary);padding:3px 10px;border-radius:999px;font-weight:500}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / SQL Formatter</div>
+<div class="container tool-page-header">
+  <h1>SQL Formatter</h1>
+  <p>Paste a minified or messy SQL query and get it formatted, indented and syntax-highlighted instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:960px">
+    <div class="opt-row">
+      <label style="font-size:13.5px;font-weight:500">Keywords:</label>
+      <select id="kw-case" class="opt-select">
+        <option value="upper">UPPERCASE</option>
+        <option value="lower">lowercase</option>
+        <option value="preserve">Preserve</option>
+      </select>
+      <label style="font-size:13.5px;font-weight:500">Indent:</label>
+      <select id="indent-style" class="opt-select">
+        <option value="2">2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="tab">Tab</option>
+      </select>
+      <button class="btn btn-primary" id="format-btn">Format SQL</button>
+      <button class="btn btn-outline" id="copy-btn">Copy</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+
+    <div class="sql-layout">
+      <div>
+        <label class="field-label">Input SQL</label>
+        <textarea id="inp" class="field-input sql-area" placeholder="Paste your SQL query here…
+&#10;SELECT u.id, u.name, o.total FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE u.active = 1 AND o.total > 100 ORDER BY o.total DESC LIMIT 10;"></textarea>
+        <div class="stat-bar" id="inp-stat"></div>
+      </div>
+      <div>
+        <label class="field-label">Formatted output</label>
+        <div class="sql-output" id="output">Formatted SQL will appear here…</div>
+        <div class="stat-bar" id="out-stat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why format SQL queries?</h2>
+  <p>Minified or auto-generated SQL is often a single long line with inconsistent capitalization and no indentation. Formatted SQL is dramatically easier to read, debug, and review. When sharing queries with teammates or in code reviews, well-formatted SQL communicates intent clearly. Consistent uppercase keywords are a widely-used SQL convention that makes the structural parts of a query visually distinct from table and column names.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const SQL_KEYWORDS = ['SELECT','FROM','WHERE','JOIN','LEFT','RIGHT','INNER','OUTER','FULL','CROSS','ON','AND','OR','NOT','IN','IS','NULL','ORDER','BY','GROUP','HAVING','LIMIT','OFFSET','UNION','ALL','DISTINCT','AS','INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','ALTER','DROP','INDEX','VIEW','TRIGGER','PROCEDURE','FUNCTION','BEGIN','END','CASE','WHEN','THEN','ELSE','EXISTS','BETWEEN','LIKE','COUNT','SUM','AVG','MIN','MAX','COALESCE','NULLIF','CAST','CONVERT','WITH','RECURSIVE','RETURNING'];
+
+const SQL_FUNCTIONS = ['COUNT','SUM','AVG','MIN','MAX','COALESCE','NULLIF','CAST','CONVERT','NOW','DATE','YEAR','MONTH','DAY','SUBSTR','SUBSTRING','LENGTH','UPPER','LOWER','TRIM','CONCAT','REPLACE','ROUND','FLOOR','CEIL','ABS','MOD','IF','IFNULL','ISNULL'];
+
+const INDENT_BEFORE = new Set(['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN','CROSS JOIN','ON','AND','OR','ORDER BY','GROUP BY','HAVING','LIMIT','OFFSET','UNION','UNION ALL','INSERT INTO','VALUES','UPDATE','SET','CREATE','ALTER','DROP','RETURNING']);
+
+function getIndent(){
+  const v=document.getElementById('indent-style').value;
+  return v==='tab'?'\t':' '.repeat(+v);
+}
+
+function applyKwCase(word){
+  const kc=document.getElementById('kw-case').value;
+  const upper=word.toUpperCase();
+  if(!SQL_KEYWORDS.includes(upper)) return word;
+  if(kc==='upper') return upper;
+  if(kc==='lower') return word.toLowerCase();
+  return word;
+}
+
+function tokenize(sql){
+  const tokens=[];
+  const regex=/('(?:''|[^'])*'|"(?:""|[^"])*"|--[^\n]*|\bWORD\b|[(),;]|\s+)/gi.compile ? 
+    /('(?:''|[^'])*'|"(?:""|[^"])*"|--[^\n]*|\w+|[(),;\n\r\t ])/g :
+    /('(?:''|[^'])*'|"(?:""|[^"])*"|--[^\n]*|\w+|[(),;]|\s+)/g;
+  let m;
+  while((m=regex.exec(sql))!==null) tokens.push(m[0]);
+  return tokens;
+}
+
+function format(sql){
+  const indent=getIndent();
+  const tokens=tokenize(sql);
+  let out='', depth=0, i=0;
+  
+  while(i<tokens.length){
+    const t=tokens[i].trim();
+    const upper=t.toUpperCase();
+    
+    if(!t){i++;continue;}
+    
+    // Multi-word keywords
+    let combined=upper;
+    if(i+2<tokens.length){
+      const next1=tokens[i+1]?.trim().toUpperCase();
+      const next2=tokens[i+2]?.trim().toUpperCase();
+      if(upper==='LEFT'&&next1==='JOIN'){combined='LEFT JOIN';i+=2;}
+      else if(upper==='RIGHT'&&next1==='JOIN'){combined='RIGHT JOIN';i+=2;}
+      else if(upper==='INNER'&&next1==='JOIN'){combined='INNER JOIN';i+=2;}
+      else if(upper==='FULL'&&(next1==='OUTER'||next1==='JOIN')){combined=next1==='OUTER'?'FULL OUTER JOIN':'FULL JOIN';i+=next1==='OUTER'?4:2;}
+      else if(upper==='CROSS'&&next1==='JOIN'){combined='CROSS JOIN';i+=2;}
+      else if((upper==='ORDER'||upper==='GROUP')&&next1==='BY'){combined=upper+' BY';i+=2;}
+      else if(upper==='UNION'&&next1==='ALL'){combined='UNION ALL';i+=2;}
+      else if(upper==='INSERT'&&next1==='INTO'){combined='INSERT INTO';i+=2;}
+      else i++;
+    } else i++;
+    
+    if(t==='('){
+      out+=t;depth++;continue;
+    }
+    if(t===')'){
+      depth=Math.max(0,depth-1);
+      out=out.trimEnd()+t;continue;
+    }
+    if(t===';'){out+=t+'\n\n';continue;}
+    if(t===','){out+=',\n'+indent.repeat(depth+1);continue;}
+    
+    if(INDENT_BEFORE.has(combined)&&depth===0){
+      out=out.trimEnd()+'\n'+applyKwCase(combined)+'\n'+indent;
+    } else if(SQL_KEYWORDS.includes(combined.split(' ')[0])){
+      out+=(out.endsWith(indent)||out.endsWith('\n'))?applyKwCase(combined)+' ':applyKwCase(combined)+' ';
+    } else {
+      out+=t+' ';
+    }
+  }
+  
+  return out.replace(/\n\s+\n/g,'\n').trim();
+}
+
+function highlight(sql){
+  return sql
+    .replace(/('(?:''|[^'])*')/g,'<span class="str">$1</span>')
+    .replace(/(--[^\n]*)/g,'<span class="cmt">$1</span>')
+    .replace(/\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|AND|OR|NOT|IN|IS|NULL|ORDER\s+BY|GROUP\s+BY|HAVING|LIMIT|OFFSET|UNION|ALL|DISTINCT|AS|INSERT\s+INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|ALTER|DROP|WITH|RECURSIVE|RETURNING|CASE|WHEN|THEN|ELSE|EXISTS|BETWEEN|LIKE)\b/gi,w=>`<span class="kw">${w}</span>`)
+    .replace(/\b(COUNT|SUM|AVG|MIN|MAX|COALESCE|NULLIF|CAST|NOW|DATE|SUBSTR|LENGTH|UPPER|LOWER|TRIM|CONCAT|REPLACE|ROUND)\b(?=\s*\()/gi,w=>`<span class="fn">${w}</span>`)
+    .replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="num">$1</span>');
+}
+
+function run(){
+  const sql=document.getElementById('inp').value.trim();
+  if(!sql){document.getElementById('output').textContent='Formatted SQL will appear here…';return;}
+  const formatted=format(sql);
+  document.getElementById('output').innerHTML=highlight(formatted);
+  const lines=formatted.split('\n').length;
+  document.getElementById('inp-stat').innerHTML=`<span class="stat-chip">${sql.length} chars</span>`;
+  document.getElementById('out-stat').innerHTML=`<span class="stat-chip">${formatted.length} chars</span><span class="stat-chip">${lines} lines</span>`;
+}
+
+document.getElementById('format-btn').addEventListener('click',run);
+document.getElementById('inp').addEventListener('input',()=>{if(document.getElementById('output').textContent!=='Formatted SQL will appear here…')run();});
+document.getElementById('copy-btn').addEventListener('click',()=>{
+  const text=document.getElementById('output').textContent;
+  navigator.clipboard.writeText(text).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1200);});
+});
+document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('output').textContent='Formatted SQL will appear here…';});
+
+// Demo
+document.getElementById('inp').value=`select u.id,u.name,u.email,o.total,o.created_at from users u left join orders o on u.id=o.user_id where u.active=1 and o.total>100 order by o.total desc limit 10;`;
+run();
+</script>
+</body>
+</html>
