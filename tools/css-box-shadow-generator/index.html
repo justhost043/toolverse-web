@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free CSS Box Shadow Generator Online | OMIToolKit</title>
+<meta name="description" content="Generate CSS box shadows visually. Add multiple shadows, control offset, blur, spread and color. Live preview with instant CSS code copy. Free online tool.">
+<link rel="canonical" href="../../tools/css-box-shadow-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.preview-stage{background:repeating-conic-gradient(#E7E5EE 0% 25%,#EFECFA 0% 50%) 0 0/24px 24px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;min-height:220px;margin-bottom:20px;border:1px solid var(--color-border)}
+.preview-box{width:140px;height:100px;border-radius:10px;background:#fff;transition:box-shadow .2s ease;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--color-text-muted);font-weight:500;cursor:pointer;user-select:none}
+.shadow-layers{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.shadow-layer{background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;position:relative}
+.shadow-layer.active-layer{border-color:var(--color-primary);background:#FAFAFE}
+.layer-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer}
+.layer-num{width:24px;height:24px;border-radius:50%;background:var(--color-primary);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.layer-preview{width:28px;height:18px;border-radius:4px;background:#fff;flex-shrink:0}
+.del-layer{margin-left:auto;background:none;border:none;color:#E24B4A;cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+.del-layer:hover{color:#DC2626}
+.sliders-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.sliders-grid{grid-template-columns:1fr}}
+.slider-row label{display:block;font-size:12px;font-weight:500;color:var(--color-text-muted);margin-bottom:5px;display:flex;justify-content:space-between}
+.slider-row label span{font-family:var(--font-mono);color:var(--color-primary)}
+.slider-row input[type=range]{width:100%;accent-color:var(--color-primary)}
+.color-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.color-inp{width:44px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--color-border);padding:2px;cursor:pointer}
+.opacity-inp{flex:1}
+.inset-chk{margin-top:8px}
+.css-out{background:#1E1B2E;border-radius:var(--radius-sm);padding:14px;font-family:var(--font-mono);font-size:13px;color:#86EFAC;line-height:1.7;word-break:break-all;position:relative;margin-top:14px}
+.copy-css{position:absolute;top:8px;right:8px;padding:4px 12px;border-radius:5px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;transition:all .15s}
+.copy-css:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.presets-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.preset-shadow{width:52px;height:36px;border-radius:6px;background:#fff;cursor:pointer;border:1px solid var(--color-border);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-muted)}
+.preset-shadow:hover{border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Box Shadow Generator</div>
+<div class="container tool-page-header">
+  <h1>CSS Box Shadow Generator</h1>
+  <p>Build CSS box shadows visually — stack multiple layers and copy the code instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+    <div class="preview-stage">
+      <div class="preview-box" id="preview-box">Preview</div>
+    </div>
+
+    <div class="field-label" style="margin-bottom:8px">Preset shadows</div>
+    <div class="presets-row" id="presets-row"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="field-label" style="margin:0">Shadow layers</div>
+      <button class="btn btn-outline" id="add-layer" style="font-size:13px;padding:7px 14px">+ Add layer</button>
+    </div>
+
+    <div class="shadow-layers" id="shadow-layers"></div>
+
+    <div class="css-out">
+      <button class="copy-css" id="copy-css">Copy CSS</button>
+      <div id="css-code"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>CSS box shadow syntax</h2>
+  <p>The CSS <code>box-shadow</code> property takes these values in order: horizontal offset, vertical offset, blur radius, spread radius, and color. A positive horizontal offset moves the shadow right; negative moves it left. A positive vertical offset moves it down; negative moves it up. The blur radius controls how soft or sharp the shadow is — 0 gives a hard-edged shadow. The spread radius expands or contracts the shadow's overall size. Adding the <code>inset</code> keyword places the shadow inside the element instead of outside.</p>
+  <h2>Layering multiple shadows</h2>
+  <p>CSS allows multiple box shadows on a single element by comma-separating them. This enables complex effects like combining a soft ambient shadow with a sharper contact shadow below an element — a technique used in Material Design. The shadows are rendered from the first in the list (on top) to the last (on bottom).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let layers = [
+  {x:0,y:8,blur:24,spread:0,color:'#000000',opacity:15,inset:false}
+];
+let activeLayer = 0;
+
+const PRESETS = [
+  {label:'Soft',[`shadow`]:[{x:0,y:4,blur:16,spread:0,color:'#000000',opacity:12,inset:false}]},
+  {label:'Card',[`shadow`]:[{x:0,y:2,blur:4,spread:0,color:'#000000',opacity:6,inset:false},{x:0,y:8,blur:24,spread:0,color:'#000000',opacity:10,inset:false}]},
+  {label:'Glow',[`shadow`]:[{x:0,y:0,blur:20,spread:4,color:'#6366F1',opacity:40,inset:false}]},
+  {label:'Hard',[`shadow`]:[{x:4,y:4,blur:0,spread:0,color:'#000000',opacity:30,inset:false}]},
+  {label:'Inset',[`shadow`]:[{x:0,y:4,blur:8,spread:0,color:'#000000',opacity:20,inset:true}]},
+  {label:'Float',[`shadow`]:[{x:0,y:20,blur:40,spread:-10,color:'#000000',opacity:20,inset:false}]},
+];
+
+function hexToRgba(hex, opacity) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${opacity/100})`;
+}
+
+function buildCSS() {
+  return layers.map(l => `${l.inset?'inset ':''}${l.x}px ${l.y}px ${l.blur}px ${l.spread}px ${hexToRgba(l.color,l.opacity)}`).join(',\n    ');
+}
+
+function render() {
+  const shadow = buildCSS();
+  document.getElementById('preview-box').style.boxShadow = shadow;
+  document.getElementById('css-code').textContent = `box-shadow: ${shadow};`;
+}
+
+function renderLayers() {
+  const container = document.getElementById('shadow-layers');
+  container.innerHTML = '';
+  layers.forEach((l,i) => {
+    const div = document.createElement('div');
+    div.className = 'shadow-layer' + (i===activeLayer?' active-layer':'');
+    div.innerHTML = `
+      <div class="layer-header" data-i="${i}">
+        <div class="layer-num">${i+1}</div>
+        <div class="layer-preview" style="box-shadow:${l.inset?'inset ':''}${l.x}px ${l.y}px ${l.blur}px ${l.spread}px ${hexToRgba(l.color,l.opacity)}"></div>
+        <span style="font-size:13px;font-weight:500">Layer ${i+1}${l.inset?' (inset)':''}</span>
+        ${layers.length>1?`<button class="del-layer" data-i="${i}">×</button>`:''}
+      </div>
+      <div ${i!==activeLayer?'style="display:none"':''}>
+        <div class="sliders-grid">
+          <div class="slider-row"><label>Horizontal <span id="lx-${i}">${l.x}px</span></label><input type="range" min="-50" max="50" value="${l.x}" data-p="x" data-i="${i}"></div>
+          <div class="slider-row"><label>Vertical <span id="ly-${i}">${l.y}px</span></label><input type="range" min="-50" max="50" value="${l.y}" data-p="y" data-i="${i}"></div>
+          <div class="slider-row"><label>Blur <span id="lblur-${i}">${l.blur}px</span></label><input type="range" min="0" max="100" value="${l.blur}" data-p="blur" data-i="${i}"></div>
+          <div class="slider-row"><label>Spread <span id="lspread-${i}">${l.spread}px</span></label><input type="range" min="-30" max="50" value="${l.spread}" data-p="spread" data-i="${i}"></div>
+        </div>
+        <div class="color-row">
+          <input type="color" class="color-inp" value="${l.color}" data-p="color" data-i="${i}">
+          <div style="flex:1">
+            <label style="font-size:12px;color:var(--color-text-muted);display:flex;justify-content:space-between;margin-bottom:4px">Opacity <span id="lopacity-${i}" style="font-family:var(--font-mono);color:var(--color-primary)">${l.opacity}%</span></label>
+            <input type="range" min="0" max="100" value="${l.opacity}" class="opacity-inp" data-p="opacity" data-i="${i}">
+          </div>
+        </div>
+        <label class="checkbox-item inset-chk"><input type="checkbox" data-p="inset" data-i="${i}" ${l.inset?'checked':''}> Inset shadow</label>
+      </div>`;
+    container.appendChild(div);
+  });
+
+  // Events
+  container.querySelectorAll('.layer-header').forEach(h => {
+    h.addEventListener('click', e => {
+      if(e.target.classList.contains('del-layer')) return;
+      activeLayer = +h.dataset.i;
+      renderLayers();
+    });
+  });
+  container.querySelectorAll('.del-layer').forEach(btn => {
+    btn.addEventListener('click', () => {
+      layers.splice(+btn.dataset.i,1);
+      activeLayer = Math.min(activeLayer, layers.length-1);
+      renderLayers(); render();
+    });
+  });
+  container.querySelectorAll('input[data-p]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i=+inp.dataset.i, p=inp.dataset.p;
+      if(p==='inset') layers[i][p]=inp.checked;
+      else layers[i][p]=p==='color'?inp.value:+inp.value;
+      const labelEl=document.getElementById('l'+p+'-'+i);
+      if(labelEl) labelEl.textContent=p==='opacity'?inp.value+'%':p==='color'?'':inp.value+'px';
+      renderLayers(); render();
+    });
+  });
+}
+
+document.getElementById('add-layer').addEventListener('click', () => {
+  layers.push({x:2,y:4,blur:8,spread:0,color:'#000000',opacity:15,inset:false});
+  activeLayer=layers.length-1;
+  renderLayers(); render();
+});
+
+document.getElementById('copy-css').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('css-code').textContent).then(()=>{
+    const b=document.getElementById('copy-css');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy CSS',1200);
+  });
+});
+
+// Presets
+const pr = document.getElementById('presets-row');
+PRESETS.forEach(p => {
+  const btn=document.createElement('div');
+  btn.className='preset-shadow';
+  const s=p.shadow[0];
+  btn.style.boxShadow=`${s.inset?'inset ':''}${s.x}px ${s.y}px ${s.blur}px ${s.spread}px ${hexToRgba(s.color,s.opacity)}`;
+  btn.title=p.label;
+  btn.textContent=p.label;
+  btn.addEventListener('click',()=>{layers=[...p.shadow.map(x=>({...x}))];activeLayer=0;renderLayers();render();});
+  pr.appendChild(btn);
+});
+
+renderLayers(); render();
+</script>
+</body>
+</html>

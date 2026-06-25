@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Calorie Calculator — TDEE & Daily Calorie Needs | OMIToolKit</title>
+<meta name="description" content="Calculate your daily calorie needs (TDEE), BMR and macros for weight loss, maintenance or muscle gain. Free online calorie calculator using the Mifflin-St Jeor formula.">
+<link rel="canonical" href="../../tools/calorie-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+@media(max-width:500px){.goal-grid{grid-template-columns:1fr}}
+.goal-card{border-radius:var(--radius-md);padding:18px;text-align:center;border:2px solid var(--color-border)}
+.goal-card.loss{border-color:#EF4444;background:#FEF2F2}
+.goal-card.maintain{border-color:#6366F1;background:#EEF2FF}
+.goal-card.gain{border-color:#16A34A;background:#F0FDF4}
+.goal-cal{font-size:28px;font-weight:700;font-family:var(--font-display);line-height:1}
+.goal-card.loss .goal-cal{color:#DC2626}
+.goal-card.maintain .goal-cal{color:#4F46E5}
+.goal-card.gain .goal-cal{color:#16A34A}
+.goal-label{font-size:12.5px;margin-top:5px;font-weight:500}
+.goal-desc{font-size:11.5px;color:var(--color-text-muted);margin-top:3px}
+.macro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.macro-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.macro-g{font-size:22px;font-weight:600;font-family:var(--font-display)}
+.macro-lbl{font-size:12px;color:var(--color-text-muted);margin-top:3px}
+.macro-bar{height:6px;border-radius:3px;margin-top:8px}
+.bmr-row{background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;font-size:14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.bmr-row strong{color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Calorie Calculator</div>
+<div class="container tool-page-header">
+  <h1>Calorie Calculator</h1>
+  <p>Calculate your daily calorie needs and macros based on your age, weight, height and activity level.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:600px">
+    <div class="mode-toggle" style="display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin-bottom:20px">
+      <button class="mode-btn active" id="btn-metric" style="padding:9px 24px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-weight:500;font-size:14px;cursor:pointer">Metric</button>
+      <button class="mode-btn" id="btn-imperial" style="padding:9px 24px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer">Imperial</button>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Sex</label>
+      <div style="display:flex;gap:10px">
+        <label class="checkbox-item"><input type="radio" name="sex" value="male" checked> Male</label>
+        <label class="checkbox-item"><input type="radio" name="sex" value="female"> Female</label>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-row"><label class="field-label">Age (years)</label><input type="number" id="age" class="field-input" value="25" min="10" max="100"></div>
+      <div class="field-row" id="weight-row"><label class="field-label">Weight (kg)</label><input type="number" id="weight" class="field-input" value="70" min="20" step="0.1"></div>
+    </div>
+
+    <div id="height-metric" class="field-row"><label class="field-label">Height (cm)</label><input type="number" id="height-cm" class="field-input" value="170" min="100" max="250"></div>
+    <div id="height-imperial" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-row"><label class="field-label">Height (ft)</label><input type="number" id="height-ft" class="field-input" value="5" min="1" max="8"></div>
+      <div class="field-row"><label class="field-label">Height (in)</label><input type="number" id="height-in" class="field-input" value="7" min="0" max="11"></div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Activity level</label>
+      <select id="activity" class="field-select">
+        <option value="1.2">Sedentary — little or no exercise</option>
+        <option value="1.375">Lightly active — 1–3 days/week</option>
+        <option value="1.55" selected>Moderately active — 3–5 days/week</option>
+        <option value="1.725">Very active — 6–7 days/week</option>
+        <option value="1.9">Extra active — hard exercise + physical job</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" id="calc-btn" style="width:100%;justify-content:center;padding:13px">Calculate</button>
+
+    <div id="results" style="display:none">
+      <div class="bmr-row">Basal Metabolic Rate (BMR): <strong id="bmr-val">0 kcal/day</strong></div>
+      <div class="goal-grid">
+        <div class="goal-card loss"><div class="goal-cal" id="g-loss">0</div><div class="goal-label">Weight Loss</div><div class="goal-desc">−500 kcal/day<br>≈ 0.5 kg/week</div></div>
+        <div class="goal-card maintain"><div class="goal-cal" id="g-maintain">0</div><div class="goal-label">Maintain Weight</div><div class="goal-desc">TDEE</div></div>
+        <div class="goal-card gain"><div class="goal-cal" id="g-gain">0</div><div class="goal-label">Weight Gain</div><div class="goal-desc">+500 kcal/day<br>≈ 0.5 kg/week</div></div>
+      </div>
+      <div style="margin-top:18px;font-size:14px;font-weight:500">Recommended daily macros (for maintenance)</div>
+      <div class="macro-grid">
+        <div class="macro-card">
+          <div class="macro-g" style="color:#6366F1" id="m-protein">0g</div>
+          <div class="macro-lbl">Protein</div>
+          <div class="macro-bar" style="background:#6366F1"></div>
+        </div>
+        <div class="macro-card">
+          <div class="macro-g" style="color:#F97316" id="m-carbs">0g</div>
+          <div class="macro-lbl">Carbohydrates</div>
+          <div class="macro-bar" style="background:#F97316"></div>
+        </div>
+        <div class="macro-card">
+          <div class="macro-g" style="color:#16A34A" id="m-fat">0g</div>
+          <div class="macro-lbl">Fat</div>
+          <div class="macro-bar" style="background:#16A34A"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What is TDEE?</h2>
+  <p>TDEE (Total Daily Energy Expenditure) is the total number of calories your body burns in a day, including both your resting metabolism and all physical activity. It's calculated by multiplying your Basal Metabolic Rate (BMR) by an activity factor. Knowing your TDEE gives you a starting point for calorie targets: eat below it to lose weight, at it to maintain, and above it to gain weight.</p>
+  <h2>What is BMR?</h2>
+  <p>BMR (Basal Metabolic Rate) is the number of calories your body needs to maintain basic life functions at complete rest — breathing, circulation, cell production, and temperature regulation. This calculator uses the Mifflin-St Jeor equation (1990), which is considered the most accurate for estimating BMR in most adults.</p>
+  <h2>About the macro split</h2>
+  <p>The recommended macro split shown here follows a standard balanced diet guideline: approximately 30% protein, 45% carbohydrates, and 25% fat. This is a starting point — individual needs vary based on goals, health conditions, and personal preference. Athletes and those doing strength training typically benefit from a higher protein intake (35–40% of calories).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+let isMetric = true;
+
+document.getElementById('btn-metric').addEventListener('click',()=>{
+  isMetric=true;
+  document.getElementById('btn-metric').style.background='var(--color-primary)';
+  document.getElementById('btn-metric').style.color='#fff';
+  document.getElementById('btn-imperial').style.background='transparent';
+  document.getElementById('btn-imperial').style.color='';
+  document.querySelector('label[for]') ;
+  document.getElementById('height-metric').style.display='';
+  document.getElementById('height-imperial').style.display='none';
+  document.querySelector('#weight-row label.field-label').textContent='Weight (kg)';
+});
+document.getElementById('btn-imperial').addEventListener('click',()=>{
+  isMetric=false;
+  document.getElementById('btn-imperial').style.background='var(--color-primary)';
+  document.getElementById('btn-imperial').style.color='#fff';
+  document.getElementById('btn-metric').style.background='transparent';
+  document.getElementById('btn-metric').style.color='';
+  document.getElementById('height-metric').style.display='none';
+  document.getElementById('height-imperial').style.display='grid';
+  document.querySelector('#weight-row label.field-label').textContent='Weight (lbs)';
+});
+
+document.getElementById('calc-btn').addEventListener('click',()=>{
+  const sex = document.querySelector('input[name="sex"]:checked').value;
+  const age = parseFloat(document.getElementById('age').value)||25;
+  let weightKg, heightCm;
+  if(isMetric){
+    weightKg=parseFloat(document.getElementById('weight').value)||70;
+    heightCm=parseFloat(document.getElementById('height-cm').value)||170;
+  } else {
+    const lbs=parseFloat(document.getElementById('weight').value)||154;
+    const ft=parseFloat(document.getElementById('height-ft').value)||5;
+    const inch=parseFloat(document.getElementById('height-in').value)||7;
+    weightKg=lbs*0.453592;
+    heightCm=(ft*12+inch)*2.54;
+  }
+  const activity=parseFloat(document.getElementById('activity').value)||1.55;
+
+  // Mifflin-St Jeor
+  const bmr = sex==='male'
+    ? 10*weightKg + 6.25*heightCm - 5*age + 5
+    : 10*weightKg + 6.25*heightCm - 5*age - 161;
+
+  const tdee = Math.round(bmr*activity);
+
+  document.getElementById('bmr-val').textContent=Math.round(bmr)+' kcal/day';
+  document.getElementById('g-loss').textContent=Math.max(1200,tdee-500);
+  document.getElementById('g-maintain').textContent=tdee;
+  document.getElementById('g-gain').textContent=tdee+500;
+
+  // Macros: 30% protein, 45% carbs, 25% fat
+  const protein=Math.round(tdee*0.30/4);
+  const carbs=Math.round(tdee*0.45/4);
+  const fat=Math.round(tdee*0.25/9);
+  document.getElementById('m-protein').textContent=protein+'g';
+  document.getElementById('m-carbs').textContent=carbs+'g';
+  document.getElementById('m-fat').textContent=fat+'g';
+
+  document.getElementById('results').style.display='';
+});
+
+document.getElementById('calc-btn').click();
+</script>
+</body>
+</html>

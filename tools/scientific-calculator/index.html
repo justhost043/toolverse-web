@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Scientific Calculator Online | OMIToolKit</title>
+<meta name="description" content="Full-featured scientific calculator online. Trigonometry, logarithms, powers, memory functions and calculation history. Free, keyboard-supported, runs in your browser.">
+<link rel="canonical" href="../../tools/scientific-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.calc-wrap{background:#1E1B2E;border-radius:var(--radius-lg);overflow:hidden;max-width:380px;margin:0 auto;box-shadow:0 20px 60px rgba(30,27,46,.4)}
+.calc-display{padding:20px 20px 14px;background:#16132A;border-bottom:1px solid rgba(255,255,255,.06)}
+.calc-expr{font-family:var(--font-mono);font-size:13px;color:#6B6B8A;min-height:20px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calc-result{font-family:var(--font-mono);font-size:clamp(28px,7vw,40px);font-weight:500;color:#E8E6F0;text-align:right;line-height:1.2;min-height:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:6px 0}
+.calc-mode{font-size:11px;color:#6B6B8A;display:flex;gap:10px;justify-content:space-between;margin-top:4px}
+.mode-tag{padding:2px 8px;border-radius:4px;cursor:pointer;transition:all .15s}
+.mode-tag.active{background:#4F46E5;color:#fff}
+.calc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:2px;background:#0E0C1F}
+.key{padding:0;border:none;cursor:pointer;font-size:13.5px;font-weight:500;height:54px;transition:all .12s;border-radius:0;font-family:var(--font-body)}
+.key:active{filter:brightness(1.3)}
+.key-num{background:#2D2A4A;color:#E8E6F0}
+.key-num:hover{background:#3D3A5C}
+.key-op{background:#3730A3;color:#C4B5FD}
+.key-op:hover{background:#4338CA}
+.key-fn{background:#1E1B2E;color:#A78BFA;font-size:12px}
+.key-fn:hover{background:#2D2A4A}
+.key-eq{background:#6366F1;color:#fff;grid-column:span 1}
+.key-eq:hover{background:#4F46E5}
+.key-clear{background:#EF4444;color:#fff}
+.key-clear:hover{background:#DC2626}
+.key-zero{grid-column:span 2}
+.history-panel{margin-top:20px;max-height:200px;overflow-y:auto}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--color-border);font-size:13.5px;cursor:pointer;transition:background .1s}
+.history-item:hover{background:#F4F3FE}
+.history-item .h-expr{color:var(--color-text-muted);font-size:12px}
+.history-item .h-result{font-family:var(--font-mono);font-weight:600;color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-calculator">Calculators</a> / Scientific Calculator</div>
+<div class="container tool-page-header">
+  <h1>Scientific Calculator</h1>
+  <p>Full-featured scientific calculator with trig functions, logarithms, memory and history.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:500px">
+    <div class="calc-wrap">
+      <div class="calc-display">
+        <div class="calc-expr" id="calc-expr"></div>
+        <div class="calc-result" id="calc-result">0</div>
+        <div class="calc-mode">
+          <div>
+            <span class="mode-tag active" id="mode-deg" onclick="setAngleMode('deg')">DEG</span>
+            <span class="mode-tag" id="mode-rad" onclick="setAngleMode('rad')">RAD</span>
+          </div>
+          <span id="mem-indicator" style="color:#A78BFA;display:none">M</span>
+        </div>
+      </div>
+      <div class="calc-grid" id="calc-grid"></div>
+    </div>
+
+    <div style="margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="field-label">Calculation history</div>
+        <button class="btn btn-outline" id="clear-history" style="font-size:12px;padding:5px 12px">Clear</button>
+      </div>
+      <div class="history-panel" id="history-panel">
+        <div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:13.5px">No calculations yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Keyboard shortcuts</h2>
+  <p>This calculator supports full keyboard input. Numbers 0–9 and operators (+, −, *, /) work directly from the keyboard. Press Enter or = to calculate. Backspace removes the last character. Escape clears the input. Parentheses ( and ) work as expected for grouping operations.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let expr = '', result = '0', memory = 0, angleMode = 'deg', history = [];
+let lastWasResult = false;
+
+const KEYS = [
+  [{l:'MC',k:'MC',c:'key-fn'},{l:'MR',k:'MR',c:'key-fn'},{l:'M+',k:'M+',c:'key-fn'},{l:'M−',k:'M-',c:'key-fn'},{l:'MS',k:'MS',c:'key-fn'}],
+  [{l:'sin',k:'sin(',c:'key-fn'},{l:'cos',k:'cos(',c:'key-fn'},{l:'tan',k:'tan(',c:'key-fn'},{l:'log',k:'log(',c:'key-fn'},{l:'ln',k:'ln(',c:'key-fn'}],
+  [{l:'x²',k:'^2',c:'key-fn'},{l:'xⁿ',k:'^',c:'key-fn'},{l:'√',k:'sqrt(',c:'key-fn'},{l:'π',k:'π',c:'key-fn'},{l:'e',k:'e',c:'key-fn'}],
+  [{l:'(',k:'(',c:'key-fn'},{l:')',k:')',c:'key-op'},{l:'%',k:'%',c:'key-op'},{l:'AC',k:'AC',c:'key-clear'},{l:'⌫',k:'BS',c:'key-op'}],
+  [{l:'7',k:'7',c:'key-num'},{l:'8',k:'8',c:'key-num'},{l:'9',k:'9',c:'key-num'},{l:'÷',k:'/',c:'key-op'},{l:'1/x',k:'1/x',c:'key-fn'}],
+  [{l:'4',k:'4',c:'key-num'},{l:'5',k:'5',c:'key-num'},{l:'6',k:'6',c:'key-num'},{l:'×',k:'*',c:'key-op'},{l:'|x|',k:'abs(',c:'key-fn'}],
+  [{l:'1',k:'1',c:'key-num'},{l:'2',k:'2',c:'key-num'},{l:'3',k:'3',c:'key-num'},{l:'−',k:'-',c:'key-op'},{l:'n!',k:'fact(',c:'key-fn'}],
+  [{l:'0',k:'0',c:'key-num key-zero'},{l:'.',k:'.',c:'key-num'},{l:'+',k:'+',c:'key-op'},{l:'=',k:'=',c:'key-eq'}],
+];
+
+function buildGrid() {
+  const grid = document.getElementById('calc-grid');
+  grid.innerHTML = '';
+  KEYS.flat().forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'key ' + key.c;
+    btn.textContent = key.l;
+    btn.addEventListener('click', () => handleKey(key.k));
+    grid.appendChild(btn);
+  });
+}
+
+function setAngleMode(m) {
+  angleMode = m;
+  document.getElementById('mode-deg').classList.toggle('active', m==='deg');
+  document.getElementById('mode-rad').classList.toggle('active', m==='rad');
+}
+
+function toRad(deg) { return deg * Math.PI / 180; }
+
+function factorial(n) {
+  n = Math.floor(Math.abs(n));
+  if(n > 170) return Infinity;
+  let r = 1;
+  for(let i=2;i<=n;i++) r*=i;
+  return r;
+}
+
+function evaluate(e) {
+  try {
+    let s = e
+      .replace(/π/g, String(Math.PI))
+      .replace(/\be\b/g, String(Math.E))
+      .replace(/\^/g, '**')
+      .replace(/÷/g,'/')
+      .replace(/×/g,'*')
+      .replace(/sin\(/g, angleMode==='deg'?'Math.sin(Math.PI/180*':'Math.sin(')
+      .replace(/cos\(/g, angleMode==='deg'?'Math.cos(Math.PI/180*':'Math.cos(')
+      .replace(/tan\(/g, angleMode==='deg'?'Math.tan(Math.PI/180*':'Math.tan(')
+      .replace(/log\(/g,'Math.log10(')
+      .replace(/ln\(/g,'Math.log(')
+      .replace(/sqrt\(/g,'Math.sqrt(')
+      .replace(/abs\(/g,'Math.abs(')
+      .replace(/fact\(([^)]+)\)/g, (_,n) => factorial(eval(n)))
+      .replace(/(\d+(?:\.\d+)?)\s*%/g, '($1/100)');
+    const r = Function('"use strict";return (' + s + ')')();
+    if(!isFinite(r)) return 'Error';
+    const str = String(r);
+    return str.length > 14 ? parseFloat(r.toPrecision(10)).toString() : str;
+  } catch(e) { return 'Error'; }
+}
+
+function handleKey(k) {
+  const ops = ['+','-','*','/','**','^'];
+  if(k === 'AC') { expr=''; result='0'; lastWasResult=false; }
+  else if(k === 'BS') { if(lastWasResult){expr='';result='0';lastWasResult=false;} else expr=expr.slice(0,-1); }
+  else if(k === '=') {
+    if(!expr) return;
+    const r = evaluate(expr);
+    history.unshift({expr, result:r});
+    if(history.length > 20) history.pop();
+    renderHistory();
+    result = r; lastWasResult = true;
+    document.getElementById('calc-expr').textContent = expr + ' =';
+    document.getElementById('calc-result').textContent = result;
+    expr = r==='Error'?'':r;
+    return;
+  }
+  else if(k === 'MC') { memory=0; document.getElementById('mem-indicator').style.display='none'; return; }
+  else if(k === 'MR') { expr+=(lastWasResult?'':expr?'':'')+memory; lastWasResult=false; }
+  else if(k === 'M+') { if(result!=='Error') memory+=parseFloat(result); document.getElementById('mem-indicator').style.display=''; return; }
+  else if(k === 'M-') { if(result!=='Error') memory-=parseFloat(result); document.getElementById('mem-indicator').style.display=''; return; }
+  else if(k === 'MS') { if(result!=='Error') { memory=parseFloat(result); document.getElementById('mem-indicator').style.display=''; } return; }
+  else if(k === '1/x') { expr='1/('+result+')'; }
+  else if(k === 'π') { expr+=(lastWasResult?'π':'π'); lastWasResult=false; }
+  else if(k === 'e') { expr+='e'; lastWasResult=false; }
+  else {
+    if(lastWasResult && /\d|\./.test(k)) expr='';
+    expr += k; lastWasResult=false;
+  }
+  document.getElementById('calc-result').textContent = expr || '0';
+  document.getElementById('calc-expr').textContent = '';
+}
+
+function renderHistory() {
+  const panel = document.getElementById('history-panel');
+  if(!history.length) { panel.innerHTML='<div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:13.5px">No calculations yet</div>'; return; }
+  panel.innerHTML = history.map((h,i) => `
+    <div class="history-item" data-i="${i}">
+      <div><div class="h-expr">${h.expr}</div></div>
+      <div class="h-result">= ${h.result}</div>
+    </div>`).join('');
+  panel.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const h = history[+item.dataset.i];
+      expr = h.result; result = h.result; lastWasResult=true;
+      document.getElementById('calc-result').textContent = result;
+    });
+  });
+}
+
+document.getElementById('clear-history').addEventListener('click', () => { history=[]; renderHistory(); });
+
+document.addEventListener('keydown', e => {
+  if(['0','1','2','3','4','5','6','7','8','9','+','-','*','/','.',',','(',')','^','%'].includes(e.key)) { handleKey(e.key===',' ? '.' : e.key); }
+  else if(e.key==='Enter'||e.key==='=') handleKey('=');
+  else if(e.key==='Backspace') handleKey('BS');
+  else if(e.key==='Escape') handleKey('AC');
+});
+
+buildGrid();
+</script>
+</body>
+</html>
