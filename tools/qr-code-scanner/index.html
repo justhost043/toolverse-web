@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free QR Code Scanner Online — Scan QR Codes from Camera or Image | OMIToolKit</title>
+<meta name="description" content="Scan QR codes using your camera or upload an image. Instantly decode any QR code in your browser — free, no app download, nothing uploaded to servers.">
+<link rel="canonical" href="../../tools/qr-code-scanner/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.scan-tabs{display:flex;gap:8px;margin-bottom:20px}
+.scan-tab{flex:1;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--color-border);background:#fff;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
+.scan-tab.active{border-color:var(--color-primary);background:#F4F3FE;color:var(--color-primary)}
+.camera-wrap{position:relative;width:100%;max-width:480px;margin:0 auto;border-radius:var(--radius-md);overflow:hidden;background:#1E1B2E;aspect-ratio:1}
+video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame{width:200px;height:200px;position:relative}
+.scan-frame::before,.scan-frame::after{content:'';position:absolute;width:40px;height:40px;border-color:#A78BFA;border-style:solid}
+.scan-frame::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.scan-frame::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.scan-corners::before,.scan-corners::after{content:'';position:absolute;width:40px;height:40px;border-color:#A78BFA;border-style:solid}
+.scan-corners::before{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.scan-corners::after{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,#A78BFA,transparent);animation:scanline 2s ease-in-out infinite;top:0}
+@keyframes scanline{0%,100%{top:0}50%{top:100%}}
+.result-box{background:#1E1B2E;border-radius:var(--radius-md);padding:20px;margin-top:16px;display:none}
+.result-type{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6B6B8A;margin-bottom:8px}
+.result-val{font-family:'JetBrains Mono',monospace;font-size:14px;color:#A78BFA;word-break:break-all;line-height:1.6}
+.result-url{color:#60A5FA;text-decoration:underline;cursor:pointer}
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.scan-count{background:#F4F3FE;border-radius:var(--radius-sm);padding:10px 14px;font-size:13.5px;color:var(--color-primary);font-weight:500;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-productivity">Productivity</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-productivity">Productivity</a> / QR Code Scanner</div>
+<div class="container tool-page-header">
+  <h1>QR Code Scanner</h1>
+  <p>Scan QR codes using your camera or upload an image — decoded instantly in your browser.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:560px">
+    <div class="scan-tabs">
+      <button class="scan-tab active" id="tab-camera">📷 Camera</button>
+      <button class="scan-tab" id="tab-upload">🖼️ Upload Image</button>
+    </div>
+
+    <!-- Camera panel -->
+    <div id="panel-camera">
+      <div class="camera-wrap">
+        <video id="video" playsinline autoplay muted></video>
+        <canvas id="scan-canvas" style="display:none"></canvas>
+        <div class="scan-overlay">
+          <div class="scan-frame">
+            <div class="scan-corners"></div>
+            <div class="scan-line"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;justify-content:center">
+        <button class="btn btn-primary" id="start-camera">Start Camera</button>
+        <button class="btn btn-outline" id="stop-camera" style="display:none">Stop</button>
+      </div>
+      <div class="scan-count" id="scan-count" style="display:none">Scanning… 0 frames processed</div>
+    </div>
+
+    <!-- Upload panel -->
+    <div id="panel-upload" style="display:none">
+      <div class="drop-zone" id="drop-zone">
+        <div style="font-size:36px;margin-bottom:10px">📷</div>
+        <div style="font-size:15px;font-weight:500;color:var(--color-text)">Drop a QR code image here or click to select</div>
+        <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP, GIF</div>
+        <input type="file" id="file-input" accept="image/*" style="display:none">
+      </div>
+      <canvas id="upload-canvas" style="display:none"></canvas>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box" id="result-box">
+      <div class="result-type" id="result-type">QR Code Content</div>
+      <div class="result-val" id="result-val"></div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="copy-result">Copy</button>
+        <a class="btn btn-outline" id="open-url" href="#" target="_blank" rel="noopener" style="display:none">Open URL</a>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="scan-history" style="display:none;margin-top:16px">
+      <div class="field-label" style="margin-bottom:8px">Scan history</div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to scan a QR code with this tool</h2>
+  <p>Click "Start Camera" to use your device camera — point it at any QR code and it will be decoded automatically within a second or two. Alternatively, switch to "Upload Image" and drop or select any image file containing a QR code. The decoder works entirely in your browser using the jsQR library — no image is uploaded to any server.</p>
+  <h2>What types of QR codes can this scan?</h2>
+  <p>This scanner decodes standard QR codes including URL links, plain text, Wi-Fi network credentials (WIFI: format), contact cards (vCard format), email addresses, phone numbers, SMS messages, and any other content that can be stored in a standard QR code. It uses the jsQR open-source library for decoding.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let stream = null, scanning = false, frameCount = 0;
+const scanHistory = [];
+
+// Tab switching
+document.getElementById('tab-camera').addEventListener('click', () => {
+  document.getElementById('tab-camera').classList.add('active');
+  document.getElementById('tab-upload').classList.remove('active');
+  document.getElementById('panel-camera').style.display = '';
+  document.getElementById('panel-upload').style.display = 'none';
+});
+document.getElementById('tab-upload').addEventListener('click', () => {
+  document.getElementById('tab-upload').classList.add('active');
+  document.getElementById('tab-camera').classList.remove('active');
+  document.getElementById('panel-upload').style.display = '';
+  document.getElementById('panel-camera').style.display = 'none';
+  stopCamera();
+});
+
+// Camera
+document.getElementById('start-camera').addEventListener('click', async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}});
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+    document.getElementById('start-camera').style.display = 'none';
+    document.getElementById('stop-camera').style.display = '';
+    document.getElementById('scan-count').style.display = '';
+    scanning = true;
+    scanFrame();
+  } catch(e) {
+    alert('Camera access denied or not available: '+e.message);
+  }
+});
+
+document.getElementById('stop-camera').addEventListener('click', stopCamera);
+
+function stopCamera() {
+  scanning = false;
+  if(stream) { stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  document.getElementById('start-camera').style.display = '';
+  document.getElementById('stop-camera').style.display = 'none';
+  document.getElementById('scan-count').style.display = 'none';
+}
+
+function scanFrame() {
+  if(!scanning) return;
+  const video = document.getElementById('video');
+  if(video.readyState !== video.HAVE_ENOUGH_DATA) { requestAnimationFrame(scanFrame); return; }
+  const canvas = document.getElementById('scan-canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+  frameCount++;
+  document.getElementById('scan-count').textContent = `Scanning… ${frameCount} frames`;
+  const code = jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts:'dontInvert'});
+  if(code) {
+    showResult(code.data);
+    stopCamera();
+    return;
+  }
+  requestAnimationFrame(scanFrame);
+}
+
+// Upload
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave', ()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e=>{e.preventDefault();dropZone.classList.remove('drag');if(e.dataTransfer.files[0])decodeFile(e.dataTransfer.files[0]);});
+fileInput.addEventListener('change', ()=>{if(fileInput.files[0])decodeFile(fileInput.files[0]);});
+
+function decodeFile(file) {
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    const canvas = document.getElementById('upload-canvas');
+    canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const code = jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts:'attemptBoth'});
+    if(code) showResult(code.data);
+    else alert('No QR code found in this image. Try a clearer or higher-resolution image.');
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+}
+
+function detectType(text) {
+  if(/^https?:\/\//i.test(text)) return 'URL';
+  if(/^WIFI:/i.test(text)) return 'Wi-Fi Network';
+  if(/^mailto:/i.test(text)) return 'Email';
+  if(/^tel:/i.test(text)) return 'Phone Number';
+  if(/^sms:/i.test(text)) return 'SMS';
+  if(/^BEGIN:VCARD/i.test(text)) return 'Contact Card';
+  return 'Text';
+}
+
+function showResult(text) {
+  const type = detectType(text);
+  document.getElementById('result-type').textContent = type;
+  const valEl = document.getElementById('result-val');
+  if(type==='URL') {
+    valEl.innerHTML = `<a class="result-url" href="${text}" target="_blank" rel="noopener">${text}</a>`;
+    document.getElementById('open-url').href = text;
+    document.getElementById('open-url').style.display = '';
+  } else {
+    valEl.textContent = text;
+    document.getElementById('open-url').style.display = 'none';
+  }
+  document.getElementById('result-box').style.display = '';
+
+  // History
+  if(!scanHistory.includes(text)) {
+    scanHistory.unshift({text, type, time:new Date().toLocaleTimeString()});
+    if(scanHistory.length > 10) scanHistory.pop();
+  }
+  renderHistory();
+}
+
+function renderHistory() {
+  if(!scanHistory.length) return;
+  document.getElementById('scan-history').style.display = '';
+  document.getElementById('history-list').innerHTML = scanHistory.map(h=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:13px;gap:8px">
+      <div><span style="font-size:11px;color:var(--color-primary);font-weight:500;margin-right:6px">${h.type}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;display:inline-block;vertical-align:middle">${h.text.substring(0,60)}</span></div>
+      <button style="padding:3px 10px;border-radius:4px;border:1px solid var(--color-border);background:#fff;cursor:pointer;font-size:12px;flex-shrink:0" onclick="navigator.clipboard.writeText('${h.text.replace(/'/g,'\\\')}')">Copy</button>
+    </div>`).join('');
+}
+
+document.getElementById('copy-result').addEventListener('click', () => {
+  const text = document.getElementById('result-val').textContent || document.getElementById('result-val').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const b=document.getElementById('copy-result');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1200);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Image to PDF Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert multiple images to a PDF file online for free. Drag to reorder pages, choose page size and orientation. No upload to server — runs in your browser.">
+<link rel="canonical" href="../../tools/image-to-pdf/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin:16px 0}
+.img-card{background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;position:relative;cursor:grab;transition:all .15s}
+.img-card:active{cursor:grabbing}
+.img-card.drag-over{border-color:var(--color-primary);background:#F4F3FE;transform:scale(1.02)}
+.img-card.dragging{opacity:.4}
+.img-card img{width:100%;height:100px;object-fit:cover;display:block}
+.img-card .img-num{position:absolute;top:6px;left:6px;background:var(--color-primary);color:#fff;font-size:11px;font-weight:600;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.img-card .img-del{position:absolute;top:6px;right:6px;background:#EF4444;color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center}
+.img-card .img-name{padding:6px 8px;font-size:11px;color:var(--color-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.options-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:480px){.options-grid{grid-template-columns:1fr 1fr}}
+.progress-wrap{margin:14px 0;display:none}
+.progress-bar-inner{height:8px;background:var(--color-border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--color-primary),var(--color-accent));border-radius:4px;width:0%;transition:width .3s}
+.status-msg{font-size:13.5px;color:var(--color-text-muted);margin-top:6px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / Image to PDF</div>
+<div class="container tool-page-header">
+  <h1>Image to PDF Converter</h1>
+  <p>Convert multiple images into a single PDF — drag to reorder, choose page size, download instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:700px">
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:36px;margin-bottom:10px">🖼️</div>
+      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop images here or click to select</div>
+      <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP — select multiple at once</div>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+    </div>
+
+    <div class="img-grid" id="img-grid"></div>
+
+    <div class="options-grid" id="options-grid" style="display:none">
+      <div class="field-row">
+        <label class="field-label">Page size</label>
+        <select id="page-size" class="field-select">
+          <option value="A4">A4</option>
+          <option value="Letter">US Letter</option>
+          <option value="A3">A3</option>
+          <option value="A5">A5</option>
+          <option value="fit">Fit to image</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Orientation</label>
+        <select id="orientation" class="field-select">
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Margin (px)</label>
+        <select id="margin" class="field-select">
+          <option value="0">None</option>
+          <option value="20" selected>Small</option>
+          <option value="40">Medium</option>
+          <option value="60">Large</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-inner"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="status-msg" id="status-msg">Converting…</div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap" id="action-row" style="display:none">
+      <button class="btn btn-primary" id="convert-btn" disabled>Convert to PDF</button>
+      <button class="btn btn-outline" id="clear-btn">Clear all</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to convert images to PDF</h2>
+  <p>Drop or select your images — you can add multiple files at once. The images appear as numbered thumbnails; drag them to reorder the pages before converting. Choose your page size, orientation and margin, then click Convert. The PDF is generated entirely in your browser using pdf-lib — no images are uploaded to any server.</p>
+  <h2>Supported image types</h2>
+  <p>This converter supports JPEG, PNG and WebP images. For best quality in the PDF, use the highest-resolution source images available. The converter preserves the original image quality — it embeds images directly into the PDF without additional compression.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const dropZone=document.getElementById('drop-zone'), fileInput=document.getElementById('file-input');
+let images=[], dragSrc=null;
+
+const PAGE_SIZES={A4:[595,842],Letter:[612,792],A3:[842,1191],A5:[420,595]};
+
+dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');addFiles(e.dataTransfer.files);});
+fileInput.addEventListener('change',()=>{addFiles(fileInput.files);fileInput.value='';});
+
+function addFiles(files){
+  Array.from(files).forEach(f=>{if(/image\/(jpeg|png|webp)/.test(f.type)) images.push({file:f,url:URL.createObjectURL(f)});});
+  renderGrid();
+}
+
+function renderGrid(){
+  const grid=document.getElementById('img-grid');
+  grid.innerHTML='';
+  document.getElementById('options-grid').style.display=images.length?'grid':'none';
+  document.getElementById('action-row').style.display=images.length?'flex':'none';
+  document.getElementById('convert-btn').disabled=images.length===0;
+
+  images.forEach((img,i)=>{
+    const card=document.createElement('div');
+    card.className='img-card'; card.draggable=true; card.dataset.i=i;
+    card.innerHTML=`<img src="${img.url}" alt=""><div class="img-num">${i+1}</div><button class="img-del" data-i="${i}">×</button><div class="img-name">${img.file.name}</div>`;
+
+    card.addEventListener('dragstart',()=>{dragSrc=i;card.classList.add('dragging');});
+    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+    card.addEventListener('dragover',e=>{e.preventDefault();card.classList.add('drag-over');});
+    card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
+    card.addEventListener('drop',e=>{
+      e.preventDefault();card.classList.remove('drag-over');
+      if(dragSrc!==null&&dragSrc!==i){
+        const moved=images.splice(dragSrc,1)[0];
+        images.splice(i,0,moved);
+        dragSrc=null; renderGrid();
+      }
+    });
+    card.querySelector('.img-del').addEventListener('click',e=>{
+      e.stopPropagation();images.splice(i,1);renderGrid();
+    });
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('clear-btn').addEventListener('click',()=>{images=[];renderGrid();});
+
+document.getElementById('convert-btn').addEventListener('click',async()=>{
+  if(!images.length) return;
+  const btn=document.getElementById('convert-btn');
+  btn.disabled=true; btn.textContent='Converting…';
+  document.getElementById('progress-wrap').style.display='';
+  const fill=document.getElementById('progress-fill');
+  const status=document.getElementById('status-msg');
+
+  try{
+    const pdfDoc=await PDFLib.PDFDocument.create();
+    const pageSize=document.getElementById('page-size').value;
+    const orientation=document.getElementById('orientation').value;
+    const margin=parseInt(document.getElementById('margin').value);
+
+    for(let i=0;i<images.length;i++){
+      fill.style.width=((i/images.length)*90)+'%';
+      status.textContent=`Processing image ${i+1} of ${images.length}…`;
+
+      const buf=await images[i].file.arrayBuffer();
+      let pdfImg;
+      if(images[i].file.type==='image/png') pdfImg=await pdfDoc.embedPng(buf);
+      else pdfImg=await pdfDoc.embedJpg(buf);
+
+      let pw,ph;
+      if(pageSize==='fit'){
+        pw=pdfImg.width; ph=pdfImg.height;
+      } else {
+        [pw,ph]=PAGE_SIZES[pageSize]||PAGE_SIZES.A4;
+        if(orientation==='landscape'&&ph>pw)[pw,ph]=[ph,pw];
+        else if(orientation==='portrait'&&pw>ph)[pw,ph]=[ph,pw];
+      }
+
+      const page=pdfDoc.addPage([pw,ph]);
+      const availW=pw-margin*2, availH=ph-margin*2;
+      const scale=Math.min(availW/pdfImg.width, availH/pdfImg.height);
+      const w=pdfImg.width*scale, h=pdfImg.height*scale;
+      const x=margin+(availW-w)/2, y=margin+(availH-h)/2;
+      page.drawImage(pdfImg,{x,y,width:w,height:h});
+    }
+
+    fill.style.width='100%'; status.textContent='Creating PDF…';
+    const bytes=await pdfDoc.save();
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`images-${images.length}-pages.pdf`; a.click();
+    status.textContent=`✓ Done! ${images.length} images converted to PDF.`;
+  }catch(e){
+    status.textContent='Error: '+e.message;
+  }
+  btn.disabled=false; btn.textContent='Convert to PDF';
+});
+</script>
+</body>
+</html>

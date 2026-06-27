@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Speech to Text — Voice Transcription Online | OMIToolKit</title>
+<meta name="description" content="Convert speech to text using your microphone. Live voice transcription in 20+ languages. Free online speech to text — no sign-up, runs in your browser.">
+<link rel="canonical" href="../../tools/speech-to-text/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.mic-btn{width:96px;height:96px;border-radius:50%;border:none;background:var(--color-primary);color:#fff;font-size:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:all .2s;box-shadow:0 4px 20px rgba(99,102,241,.3)}
+.mic-btn:hover{transform:scale(1.05)}
+.mic-btn.listening{background:#EF4444;animation:pulse-mic .8s ease infinite alternate;box-shadow:0 4px 20px rgba(239,68,68,.4)}
+@keyframes pulse-mic{from{transform:scale(1)}to{transform:scale(1.08)}}
+.mic-btn.disabled{background:#94A3B8;cursor:not-allowed;box-shadow:none}
+.mic-status{text-align:center;font-size:14px;font-weight:500;margin-bottom:20px;min-height:24px}
+.mic-status.listening{color:#EF4444}
+.mic-status.ready{color:var(--color-primary)}
+.transcript-box{min-height:220px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:18px;font-size:16px;line-height:1.8;position:relative;margin-bottom:14px}
+.transcript-box .interim{color:#94A3B8;font-style:italic}
+.transcript-box .final{color:var(--color-text)}
+.word-count{font-size:12.5px;color:var(--color-text-muted);text-align:right;margin-top:6px}
+.volume-bars{display:flex;align-items:flex-end;gap:3px;height:32px;justify-content:center;margin-bottom:16px}
+.vol-bar{width:5px;border-radius:3px;background:var(--color-primary);transition:height .1s ease}
+.lang-select{width:auto;min-width:180px}
+.history-item{background:#F4F3FE;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;font-size:14px;cursor:pointer;transition:background .15s;display:flex;justify-content:space-between;gap:8px}
+.history-item:hover{background:#EDE9FE}
+.hi-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hi-copy{padding:3px 10px;border-radius:4px;border:1px solid #C9C5F7;background:#fff;cursor:pointer;font-size:12px;flex-shrink:0;transition:all .15s}
+.hi-copy:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.not-supported{background:#FEF3C7;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:14px;font-size:14px;color:#92400E;text-align:center;margin-bottom:16px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-productivity">Productivity</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-productivity">Productivity</a> / Speech to Text</div>
+<div class="container tool-page-header">
+  <h1>Speech to Text</h1>
+  <p>Speak into your microphone and watch your words appear instantly — transcribed live in your browser.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+
+    <div id="not-supported" class="not-supported" style="display:none">
+      ⚠️ Speech recognition is not supported in this browser. Please use Chrome or Edge on desktop for the best experience.
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+      <div>
+        <label class="field-label">Language</label>
+        <select id="lang-sel" class="field-select lang-select">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="ur-PK">Urdu (Pakistan)</option>
+          <option value="hi-IN">Hindi</option>
+          <option value="ar-SA">Arabic</option>
+          <option value="es-ES">Spanish</option>
+          <option value="fr-FR">French</option>
+          <option value="de-DE">German</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="ja-JP">Japanese</option>
+          <option value="ko-KR">Korean</option>
+          <option value="pt-BR">Portuguese (Brazil)</option>
+          <option value="ru-RU">Russian</option>
+          <option value="tr-TR">Turkish</option>
+          <option value="it-IT">Italian</option>
+          <option value="nl-NL">Dutch</option>
+          <option value="pl-PL">Polish</option>
+          <option value="id-ID">Indonesian</option>
+          <option value="ms-MY">Malay</option>
+          <option value="th-TH">Thai</option>
+        </select>
+      </div>
+      <label class="checkbox-item" style="margin-top:18px"><input type="checkbox" id="continuous"> Continuous mode</label>
+    </div>
+
+    <div class="volume-bars" id="vol-bars">
+      <!-- bars injected by JS -->
+    </div>
+
+    <button class="mic-btn" id="mic-btn">🎤</button>
+    <div class="mic-status ready" id="mic-status">Click the mic to start</div>
+
+    <div class="transcript-box" id="transcript-box">
+      <span class="final" id="final-text"></span><span class="interim" id="interim-text"></span>
+    </div>
+    <div class="word-count" id="word-count">0 words · 0 characters</div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <button class="btn btn-primary" id="copy-btn">Copy transcript</button>
+      <button class="btn btn-outline" id="download-btn">Download .txt</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+
+    <div id="history-section" style="display:none">
+      <div class="field-label" style="margin-bottom:8px">Session history</div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to use speech to text</h2>
+  <p>Click the microphone button and grant microphone permission when the browser asks. Start speaking — your words will appear in real time. The grey italic text shows what the recognizer is currently processing; it turns to solid text when confirmed. Enable "Continuous mode" to keep listening after each pause; otherwise, recognition stops after a brief silence.</p>
+  <h2>Browser support</h2>
+  <p>This tool uses the Web Speech API, which works best in Google Chrome and Microsoft Edge on desktop. It is not supported in Firefox or Safari. On mobile, Chrome for Android supports speech recognition. The quality of transcription depends on your microphone quality and the ambient noise level in your environment.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Volume bars
+const volBars = document.getElementById('vol-bars');
+for(let i=0;i<16;i++){const b=document.createElement('div');b.className='vol-bar';b.style.height='4px';volBars.appendChild(b);}
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(!SpeechRecognition) {
+  document.getElementById('not-supported').style.display='';
+  document.getElementById('mic-btn').classList.add('disabled');
+}
+
+let recognition=null, finalText='', listening=false, animFrame=null;
+const sessionHistory=[];
+
+function animateBars(active){
+  const bars=volBars.querySelectorAll('.vol-bar');
+  if(!active){bars.forEach(b=>b.style.height='4px');return;}
+  bars.forEach(b=>{b.style.height=Math.floor(Math.random()*28+4)+'px';});
+  animFrame=requestAnimationFrame(()=>setTimeout(()=>animateBars(active),80));
+}
+
+function updateWordCount(){
+  const text=finalText.trim();
+  const words=text?text.split(/\s+/).length:0;
+  document.getElementById('word-count').textContent=`${words} word${words!==1?'s':''} · ${text.length} characters`;
+}
+
+function startRecognition(){
+  if(!SpeechRecognition) return;
+  recognition=new SpeechRecognition();
+  recognition.lang=document.getElementById('lang-sel').value;
+  recognition.continuous=document.getElementById('continuous').checked;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=1;
+
+  recognition.onstart=()=>{
+    listening=true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-btn').textContent='⏹';
+    document.getElementById('mic-status').textContent='Listening…';
+    document.getElementById('mic-status').className='mic-status listening';
+    animateBars(true);
+  };
+
+  recognition.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal){finalText+=t+' ';}
+      else interim=t;
+    }
+    document.getElementById('final-text').textContent=finalText;
+    document.getElementById('interim-text').textContent=interim;
+    updateWordCount();
+  };
+
+  recognition.onend=()=>{
+    listening=false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('mic-btn').textContent='🎤';
+    document.getElementById('mic-status').textContent='Click the mic to start';
+    document.getElementById('mic-status').className='mic-status ready';
+    cancelAnimationFrame(animFrame);
+    animateBars(false);
+    // Save to history
+    if(finalText.trim()){
+      sessionHistory.unshift(finalText.trim());
+      if(sessionHistory.length>5) sessionHistory.pop();
+      renderHistory();
+    }
+  };
+
+  recognition.onerror=e=>{
+    if(e.error!=='aborted'){
+      document.getElementById('mic-status').textContent='Error: '+e.error;
+    }
+  };
+
+  recognition.start();
+}
+
+document.getElementById('mic-btn').addEventListener('click',()=>{
+  if(!SpeechRecognition) return;
+  if(listening){recognition.stop();}
+  else startRecognition();
+});
+
+document.getElementById('copy-btn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(finalText.trim()).then(()=>{
+    const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy transcript',1200);
+  });
+});
+
+document.getElementById('download-btn').addEventListener('click',()=>{
+  const blob=new Blob([finalText.trim()],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transcript.txt';a.click();
+});
+
+document.getElementById('clear-btn').addEventListener('click',()=>{
+  finalText='';
+  document.getElementById('final-text').textContent='';
+  document.getElementById('interim-text').textContent='';
+  updateWordCount();
+});
+
+function renderHistory(){
+  if(!sessionHistory.length) return;
+  document.getElementById('history-section').style.display='';
+  document.getElementById('history-list').innerHTML=sessionHistory.map((t,i)=>`
+    <div class="history-item">
+      <span class="hi-text">${t.substring(0,80)}${t.length>80?'…':''}</span>
+      <button class="hi-copy" onclick="navigator.clipboard.writeText(\`${t.replace(/`/g,'\\`')}\`)">Copy</button>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

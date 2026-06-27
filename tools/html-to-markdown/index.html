@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free HTML to Markdown Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert HTML to clean Markdown instantly. Handles headings, links, images, tables, lists, bold and italic. Free online HTML to Markdown converter.">
+<link rel="canonical" href="../../tools/html-to-markdown/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.editor-layout{grid-template-columns:1fr}}
+textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;resize:vertical;min-height:320px}
+.output-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;background:#1E1B2E;color:#A78BFA;border:1px solid #3D3A5C;border-radius:var(--radius-sm);padding:14px;min-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.stat-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / HTML to Markdown</div>
+<div class="container tool-page-header">
+  <h1>HTML to Markdown Converter</h1>
+  <p>Paste any HTML and get clean, readable Markdown instantly — handles all common tags.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:980px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn btn-primary" id="convert-btn">Convert to Markdown</button>
+      <button class="btn btn-outline" id="copy-btn">Copy Markdown</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <label class="checkbox-item" style="align-self:center"><input type="checkbox" id="auto-convert" checked> Auto-convert</label>
+    </div>
+
+    <div class="editor-layout">
+      <div>
+        <div class="field-label" style="margin-bottom:6px">HTML input</div>
+        <textarea id="html-inp" class="field-input code-area" placeholder="Paste your HTML here…
+&#10;&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;This is &lt;strong&gt;bold&lt;/strong&gt; and &lt;em&gt;italic&lt;/em&gt; text.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Item 1&lt;/li&gt;&lt;li&gt;Item 2&lt;/li&gt;&lt;/ul&gt;"></textarea>
+        <div class="stats-row" id="inp-stats"></div>
+      </div>
+      <div>
+        <div class="field-label" style="margin-bottom:6px">Markdown output</div>
+        <div class="output-area" id="md-output">Markdown will appear here…</div>
+        <div class="stats-row" id="out-stats"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What HTML tags are converted?</h2>
+  <p>This converter handles the most common HTML elements: headings (h1–h6), paragraphs, bold and italic text, links, images, unordered and ordered lists, blockquotes, code and pre blocks, horizontal rules, and basic tables. It strips unknown or complex tags while keeping their text content.</p>
+  <h2>Common use cases</h2>
+  <p>Developers converting CMS-exported HTML content to Markdown for use in static site generators like Jekyll, Hugo or Next.js. Writers migrating blog content from WordPress or other HTML-based platforms to Markdown-first tools. Anyone who receives HTML emails or documents and wants to paste the content into a Markdown editor.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function htmlToMarkdown(html) {
+  // Create a DOM parser for clean conversion
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  function processNode(node, indent = '') {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent;
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+    
+    const tag = node.tagName.toLowerCase();
+    const children = () => Array.from(node.childNodes).map(n => processNode(n, indent)).join('');
+    
+    switch(tag) {
+      case 'h1': return `\n# ${children().trim()}\n`;
+      case 'h2': return `\n## ${children().trim()}\n`;
+      case 'h3': return `\n### ${children().trim()}\n`;
+      case 'h4': return `\n#### ${children().trim()}\n`;
+      case 'h5': return `\n##### ${children().trim()}\n`;
+      case 'h6': return `\n###### ${children().trim()}\n`;
+      case 'p':  return `\n${children().trim()}\n`;
+      case 'br': return '\n';
+      case 'hr': return '\n---\n';
+      case 'strong': case 'b': return `**${children()}**`;
+      case 'em': case 'i': return `_${children()}_`;
+      case 'del': case 's': return `~~${children()}~~`;
+      case 'code': return node.parentElement?.tagName.toLowerCase()==='pre' ? children() : `\`${children()}\``;
+      case 'pre': {
+        const codeEl = node.querySelector('code');
+        const lang = codeEl?.className?.match(/language-(\w+)/)?.[1] || '';
+        const content = (codeEl?.textContent || node.textContent).trim();
+        return `\n\`\`\`${lang}\n${content}\n\`\`\`\n`;
+      }
+      case 'blockquote': return '\n' + children().trim().split('\n').map(l => '> ' + l).join('\n') + '\n';
+      case 'a': {
+        const href = node.getAttribute('href') || '';
+        const text = children().trim();
+        return href ? `[${text}](${href})` : text;
+      }
+      case 'img': {
+        const src = node.getAttribute('src') || '';
+        const alt = node.getAttribute('alt') || '';
+        return `![${alt}](${src})`;
+      }
+      case 'ul': {
+        const items = Array.from(node.querySelectorAll(':scope > li')).map(li => {
+          const nested = li.querySelector('ul, ol');
+          const text = Array.from(li.childNodes)
+            .filter(n => n !== nested)
+            .map(n => processNode(n)).join('').trim();
+          const nestedMd = nested ? '\n' + processNode(nested, indent + '  ').split('\n').map(l => '  ' + l).join('\n') : '';
+          return `${indent}- ${text}${nestedMd}`;
+        });
+        return '\n' + items.join('\n') + '\n';
+      }
+      case 'ol': {
+        let num = 1;
+        const items = Array.from(node.querySelectorAll(':scope > li')).map(li => {
+          const nested = li.querySelector('ul, ol');
+          const text = Array.from(li.childNodes)
+            .filter(n => n !== nested)
+            .map(n => processNode(n)).join('').trim();
+          const nestedMd = nested ? '\n' + processNode(nested, indent + '   ').split('\n').map(l => '   ' + l).join('\n') : '';
+          return `${indent}${num++}. ${text}${nestedMd}`;
+        });
+        return '\n' + items.join('\n') + '\n';
+      }
+      case 'li': return children();
+      case 'table': {
+        const rows = Array.from(node.querySelectorAll('tr'));
+        if(!rows.length) return '';
+        const getCells = row => Array.from(row.querySelectorAll('td, th')).map(c => c.textContent.trim());
+        const header = getCells(rows[0]);
+        const separator = header.map(() => '---');
+        const body = rows.slice(1).map(getCells);
+        const toRow = cells => '| ' + cells.join(' | ') + ' |';
+        return '\n' + [toRow(header), toRow(separator), ...body.map(toRow)].join('\n') + '\n';
+      }
+      case 'head': case 'script': case 'style': return '';
+      case 'div': case 'section': case 'article': case 'main': case 'header': case 'footer':
+      case 'span': case 'body': case 'html': case 'nav': case 'aside':
+        return children();
+      default:
+        return children();
+    }
+  }
+
+  let md = processNode(doc.body || doc.documentElement);
+  // Cleanup
+  md = md
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/^[\s\n]+/, '')
+    .replace(/[\s\n]+$/, '');
+  return md;
+}
+
+const inp = document.getElementById('html-inp');
+const out = document.getElementById('md-output');
+
+function convert() {
+  const html = inp.value.trim();
+  if(!html) { out.textContent = 'Markdown will appear here…'; return; }
+  const md = htmlToMarkdown(html);
+  out.textContent = md;
+  document.getElementById('inp-stats').innerHTML = `<span class="stat-chip">${html.length} chars</span>`;
+  document.getElementById('out-stats').innerHTML = `<span class="stat-chip">${md.length} chars</span><span class="stat-chip">${md.split('\n').length} lines</span>`;
+}
+
+inp.addEventListener('input', () => { if(document.getElementById('auto-convert').checked) convert(); });
+document.getElementById('convert-btn').addEventListener('click', convert);
+document.getElementById('copy-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(out.textContent).then(() => {
+    const b = document.getElementById('copy-btn'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy Markdown',1200);
+  });
+});
+document.getElementById('clear-btn').addEventListener('click', () => {
+  inp.value=''; out.textContent='Markdown will appear here…';
+  ['inp-stats','out-stats'].forEach(id=>document.getElementById(id).innerHTML='');
+});
+
+// Demo
+inp.value = `<h1>Welcome to OMIToolKit</h1>
+<p>This is a <strong>free</strong> collection of <em>browser-based</em> tools.</p>
+<h2>Features</h2>
+<ul>
+  <li>No sign-up required</li>
+  <li>Everything runs <strong>locally</strong> in your browser</li>
+  <li>Completely free forever</li>
+</ul>
+<blockquote>Your files never leave your device.</blockquote>
+<p>Visit <a href="https://justhost043.github.io/toolverse-web/">OMIToolKit</a> for more tools.</p>`;
+convert();
+</script>
+</body>
+</html>
