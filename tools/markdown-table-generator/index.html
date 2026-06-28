@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Markdown Table Generator Online | OMIToolKit</title>
+<meta name="description" content="Create Markdown tables visually. Add and remove rows and columns, import CSV, copy as Markdown or HTML. Free online Markdown table generator.">
+<link rel="canonical" href="../../tools/markdown-table-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.table-editor{width:100%;border-collapse:collapse;margin:16px 0}
+.table-editor th,.table-editor td{border:1px solid var(--color-border);padding:0}
+.table-editor th{background:#F4F3FE}
+.cell-input{width:100%;border:none;padding:9px 10px;font-family:var(--font-body);font-size:14px;background:transparent;outline:none;min-width:80px}
+.table-editor th .cell-input{font-weight:600;color:var(--color-primary)}
+.cell-input:focus{background:#F4F3FE}
+.col-actions{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.output-box{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#A78BFA;line-height:1.7;min-height:80px;margin-top:12px;white-space:pre;overflow-x:auto}
+.row-del{width:26px;height:26px;border:none;background:#FEE2E2;color:#E24B4A;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.row-del:hover{background:#E24B4A;color:#fff}
+.align-sel{padding:4px 8px;border-radius:4px;border:1px solid var(--color-border);font-size:12px;background:#fff;cursor:pointer}
+.out-tabs{display:flex;gap:8px;margin-bottom:8px}
+.out-tab{padding:7px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.out-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Markdown Table Generator</div>
+<div class="container tool-page-header">
+  <h1>Markdown Table Generator</h1>
+  <p>Build tables visually and export as Markdown, HTML or CSV — no syntax memorization needed.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:900px">
+
+    <div class="col-actions">
+      <button class="btn btn-outline" id="add-row" style="font-size:13px">+ Add row</button>
+      <button class="btn btn-outline" id="add-col" style="font-size:13px">+ Add column</button>
+      <button class="btn btn-outline" id="import-csv" style="font-size:13px">📋 Import CSV</button>
+      <button class="btn btn-outline" id="clear-table" style="font-size:13px">Clear</button>
+      <input type="file" id="csv-input" accept=".csv,text/csv" style="display:none">
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="table-editor" id="table-editor"></table>
+    </div>
+
+    <div style="margin-top:18px">
+      <div class="out-tabs">
+        <button class="out-tab active" data-fmt="markdown">Markdown</button>
+        <button class="out-tab" data-fmt="html">HTML</button>
+        <button class="out-tab" data-fmt="csv">CSV</button>
+      </div>
+      <div class="output-box" id="output-box"></div>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn btn-primary" id="copy-output">Copy output</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Markdown table syntax</h2>
+  <p>Markdown tables use pipe characters (|) to separate columns and hyphens (---) to create the header separator row. Column alignment is controlled by colons in the separator: <code>:---</code> for left, <code>:---:</code> for center, and <code>---:</code> for right alignment. This generator handles all the formatting automatically — just fill in your data.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let rows = [
+  ['Header 1','Header 2','Header 3'],
+  ['Cell 1','Cell 2','Cell 3'],
+  ['Cell 4','Cell 5','Cell 6'],
+];
+let aligns = ['left','center','right'];
+let outputFmt = 'markdown';
+
+function renderTable() {
+  const table = document.getElementById('table-editor');
+  const cols = rows[0]?.length || 0;
+  // Ensure aligns array matches cols
+  while(aligns.length < cols) aligns.push('left');
+
+  let html = '<thead><tr>';
+  // Align selectors row
+  for(let c=0;c<cols;c++) {
+    html += `<th>
+      <select class="align-sel" data-col="${c}" style="display:block;margin:4px 8px 0">
+        <option value="left" ${aligns[c]==='left'?'selected':''}>Left</option>
+        <option value="center" ${aligns[c]==='center'?'selected':''}>Center</option>
+        <option value="right" ${aligns[c]==='right'?'selected':''}>Right</option>
+      </select>
+      <input class="cell-input" data-row="0" data-col="${c}" value="${(rows[0]?.[c]||'').replace(/"/g,'&quot;')}" placeholder="Header">
+    </th>`;
+  }
+  html += '<th style="width:36px;background:#F4F3FE"></th></tr></thead><tbody>';
+
+  for(let r=1;r<rows.length;r++) {
+    html += '<tr>';
+    for(let c=0;c<cols;c++) {
+      html += `<td><input class="cell-input" data-row="${r}" data-col="${c}" value="${(rows[r]?.[c]||'').replace(/"/g,'&quot;')}" placeholder="Cell"></td>`;
+    }
+    html += `<td style="padding:4px;text-align:center"><button class="row-del" data-row="${r}">×</button></td>`;
+    html += '</tr>';
+  }
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  // Events
+  table.querySelectorAll('.cell-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const r=+inp.dataset.row, c=+inp.dataset.col;
+      if(!rows[r]) rows[r]=[];
+      rows[r][c]=inp.value;
+      generateOutput();
+    });
+    inp.addEventListener('keydown', e => {
+      if(e.key==='Tab') { e.preventDefault(); const next=table.querySelector(`[data-row="${+inp.dataset.row}"][data-col="${+inp.dataset.col+1}"]`)||table.querySelector(`[data-row="${+inp.dataset.row+1}"][data-col="0"]`); next?.focus(); }
+    });
+  });
+  table.querySelectorAll('.align-sel').forEach(sel => {
+    sel.addEventListener('change', () => { aligns[+sel.dataset.col]=sel.value; generateOutput(); });
+  });
+  table.querySelectorAll('.row-del').forEach(btn => {
+    btn.addEventListener('click', () => { rows.splice(+btn.dataset.row,1); renderTable(); generateOutput(); });
+  });
+  generateOutput();
+}
+
+function generateOutput() {
+  const cols = rows[0]?.length||0;
+  if(outputFmt==='markdown') {
+    const alignChar = a => a==='center'?':---:':a==='right'?'---:':':---';
+    const row2md = r => '| ' + (rows[r]||[]).map(c=>(c||'').replace(/\|/g,'\\|')).join(' | ') + ' |';
+    const sep = '| ' + aligns.slice(0,cols).map(alignChar).join(' | ') + ' |';
+    const lines = [row2md(0), sep, ...rows.slice(1).map((_,i)=>row2md(i+1))];
+    document.getElementById('output-box').textContent = lines.join('\n');
+  } else if(outputFmt==='html') {
+    let h='<table>\n  <thead>\n    <tr>\n';
+    (rows[0]||[]).forEach((c,i)=>h+=`      <th align="${aligns[i]||'left'}">${c||''}</th>\n`);
+    h+='    </tr>\n  </thead>\n  <tbody>\n';
+    rows.slice(1).forEach(r=>{h+='    <tr>\n';(r||[]).forEach((c,i)=>h+=`      <td align="${aligns[i]||'left'}">${c||''}</td>\n`);h+='    </tr>\n';});
+    h+='  </tbody>\n</table>';
+    document.getElementById('output-box').textContent = h;
+  } else {
+    const toCsv = r => (r||[]).map(c=>/[",\n]/.test(c||'')?`"${(c||'').replace(/"/g,'""')}"`:c||'').join(',');
+    document.getElementById('output-box').textContent = rows.map(toCsv).join('\n');
+  }
+}
+
+document.getElementById('add-row').addEventListener('click',()=>{
+  rows.push(new Array(rows[0]?.length||3).fill(''));
+  renderTable();
+});
+document.getElementById('add-col').addEventListener('click',()=>{
+  rows.forEach(r=>r.push(''));
+  aligns.push('left');
+  renderTable();
+});
+document.getElementById('clear-table').addEventListener('click',()=>{
+  rows=[['Header 1','Header 2','Header 3'],['','',''],['','','']];
+  aligns=['left','center','right'];
+  renderTable();
+});
+document.querySelectorAll('.out-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.out-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); outputFmt=t.dataset.fmt; generateOutput();
+}));
+document.getElementById('copy-output').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('output-box').textContent).then(()=>{
+    const b=document.getElementById('copy-output');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);
+  });
+});
+
+// CSV import
+document.getElementById('import-csv').addEventListener('click',()=>document.getElementById('csv-input').click());
+document.getElementById('csv-input').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const lines=ev.target.result.split('\n').filter(l=>l.trim());
+    rows=lines.map(l=>l.split(',').map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"')));
+    aligns=new Array(rows[0]?.length||1).fill('left');
+    renderTable();
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+
+renderTable();
+</script>
+</body>
+</html>

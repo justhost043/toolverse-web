@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free CSS Flexbox Generator Online | OMIToolKit</title>
+<meta name="description" content="Generate CSS Flexbox layouts visually. Adjust all flex properties with live preview and instant CSS code copy. Free online Flexbox generator.">
+<link rel="canonical" href="../../tools/css-flexbox-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.flex-preview{background:#1E1B2E;border-radius:var(--radius-md);min-height:240px;padding:16px;margin:16px 0;display:flex;transition:all .2s;flex-wrap:wrap;gap:8px;position:relative;border:1px solid #3D3A5C}
+.flex-item{background:linear-gradient(135deg,#6366F1,#A855F7);border-radius:8px;color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;min-width:60px;min-height:60px;padding:12px;transition:all .2s;cursor:pointer;user-select:none}
+.flex-item.selected{outline:3px solid #FBBF24;outline-offset:2px}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.ctrl-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px}
+.ctrl-box label{display:block;font-size:12px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.ctrl-select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--color-border);font-size:13.5px;font-family:var(--font-body)}
+.ctrl-range{width:100%;accent-color:var(--color-primary)}
+.ctrl-val{font-family:var(--font-mono);font-size:12px;color:var(--color-primary);font-weight:500;float:right}
+.css-out{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#86EFAC;line-height:1.8;position:relative}
+.copy-css{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:5px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;transition:all .15s}
+.copy-css:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.item-section{background:#F4F3FE;border-radius:var(--radius-sm);padding:14px;margin-top:14px;border:1px solid #C9C5F7}
+.item-section-title{font-size:13px;font-weight:600;color:var(--color-primary);margin-bottom:12px}
+.items-count-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Flexbox Generator</div>
+<div class="container tool-page-header">
+  <h1>CSS Flexbox Generator</h1>
+  <p>Build Flexbox layouts visually — adjust properties with live preview and copy the CSS instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:860px">
+
+    <div class="controls-grid">
+      <div class="ctrl-box"><label>flex-direction</label><select class="ctrl-select" id="c-direction"><option>row</option><option>row-reverse</option><option>column</option><option>column-reverse</option></select></div>
+      <div class="ctrl-box"><label>flex-wrap</label><select class="ctrl-select" id="c-wrap"><option>nowrap</option><option>wrap</option><option>wrap-reverse</option></select></div>
+      <div class="ctrl-box"><label>justify-content</label><select class="ctrl-select" id="c-justify"><option>flex-start</option><option>flex-end</option><option>center</option><option>space-between</option><option>space-around</option><option>space-evenly</option></select></div>
+      <div class="ctrl-box"><label>align-items</label><select class="ctrl-select" id="c-align-items"><option>stretch</option><option>flex-start</option><option>flex-end</option><option>center</option><option>baseline</option></select></div>
+      <div class="ctrl-box"><label>align-content</label><select class="ctrl-select" id="c-align-content"><option>normal</option><option>flex-start</option><option>flex-end</option><option>center</option><option>space-between</option><option>space-around</option><option>stretch</option></select></div>
+      <div class="ctrl-box">
+        <label>gap <span class="ctrl-val" id="gap-val">8px</span></label>
+        <input type="range" class="ctrl-range" id="c-gap" min="0" max="40" value="8">
+      </div>
+    </div>
+
+    <div class="items-count-row">
+      <label style="font-size:13.5px;font-weight:500">Items:</label>
+      <input type="range" id="item-count" min="1" max="8" value="4" style="width:120px;accent-color:var(--color-primary)">
+      <span id="item-count-val" style="font-family:var(--font-mono);font-size:14px;color:var(--color-primary);font-weight:500">4</span>
+      <span style="font-size:13px;color:var(--color-text-muted);margin-left:8px">(click an item to adjust its properties)</span>
+    </div>
+
+    <div class="flex-preview" id="flex-preview"></div>
+
+    <div class="item-section" id="item-section">
+      <div class="item-section-title">Selected Item Properties</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+        <div class="ctrl-box" style="background:#fff"><label>flex-grow <span class="ctrl-val" id="fg-val">0</span></label><input type="range" class="ctrl-range" id="i-grow" min="0" max="5" value="0" step="1"></div>
+        <div class="ctrl-box" style="background:#fff"><label>flex-shrink <span class="ctrl-val" id="fs-val">1</span></label><input type="range" class="ctrl-range" id="i-shrink" min="0" max="5" value="1" step="1"></div>
+        <div class="ctrl-box" style="background:#fff"><label>align-self</label><select class="ctrl-select" id="i-align-self"><option>auto</option><option>flex-start</option><option>flex-end</option><option>center</option><option>stretch</option><option>baseline</option></select></div>
+        <div class="ctrl-box" style="background:#fff"><label>order <span class="ctrl-val" id="io-val">0</span></label><input type="range" class="ctrl-range" id="i-order" min="-3" max="6" value="0" step="1"></div>
+      </div>
+    </div>
+
+    <div class="css-out" style="margin-top:16px">
+      <button class="copy-css" id="copy-css">Copy CSS</button>
+      <div id="css-code"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>CSS Flexbox quick reference</h2>
+  <p><strong>flex-direction</strong> sets the main axis — row (horizontal) or column (vertical). <strong>justify-content</strong> aligns items along the main axis. <strong>align-items</strong> aligns items along the cross axis. <strong>flex-wrap</strong> controls whether items wrap to new lines. <strong>gap</strong> adds space between items without affecting outer margins. On individual items, <strong>flex-grow</strong> lets an item expand to fill available space, <strong>flex-shrink</strong> controls how it shrinks, and <strong>align-self</strong> overrides the container's align-items for that one item.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let itemCount=4, selectedItem=0;
+let itemProps = Array.from({length:8},()=>({grow:0,shrink:1,alignSelf:'auto',order:0}));
+
+function renderPreview(){
+  const preview=document.getElementById('flex-preview');
+  preview.style.flexDirection=document.getElementById('c-direction').value;
+  preview.style.flexWrap=document.getElementById('c-wrap').value;
+  preview.style.justifyContent=document.getElementById('c-justify').value;
+  preview.style.alignItems=document.getElementById('c-align-items').value;
+  preview.style.alignContent=document.getElementById('c-align-content').value;
+  preview.style.gap=document.getElementById('c-gap').value+'px';
+  preview.innerHTML='';
+  for(let i=0;i<itemCount;i++){
+    const div=document.createElement('div');
+    div.className='flex-item'+(i===selectedItem?' selected':'');
+    div.textContent=i+1;
+    const p=itemProps[i];
+    div.style.flexGrow=p.grow;
+    div.style.flexShrink=p.shrink;
+    div.style.alignSelf=p.alignSelf;
+    div.style.order=p.order;
+    div.addEventListener('click',()=>{selectedItem=i;updateItemControls();renderPreview();generateCSS();});
+    preview.appendChild(div);
+  }
+  generateCSS();
+}
+
+function updateItemControls(){
+  const p=itemProps[selectedItem];
+  document.getElementById('i-grow').value=p.grow;
+  document.getElementById('fg-val').textContent=p.grow;
+  document.getElementById('i-shrink').value=p.shrink;
+  document.getElementById('fs-val').textContent=p.shrink;
+  document.getElementById('i-align-self').value=p.alignSelf;
+  document.getElementById('i-order').value=p.order;
+  document.getElementById('io-val').textContent=p.order;
+}
+
+function generateCSS(){
+  const d=document.getElementById('c-direction').value;
+  const w=document.getElementById('c-wrap').value;
+  const j=document.getElementById('c-justify').value;
+  const ai=document.getElementById('c-align-items').value;
+  const ac=document.getElementById('c-align-content').value;
+  const g=document.getElementById('c-gap').value;
+  let css=`.container {\n  display: flex;\n  flex-direction: ${d};\n  flex-wrap: ${w};\n  justify-content: ${j};\n  align-items: ${ai};`;
+  if(ac!=='normal') css+=`\n  align-content: ${ac};`;
+  if(g!=='0') css+=`\n  gap: ${g}px;`;
+  css+=`\n}`;
+  // Item overrides
+  for(let i=0;i<itemCount;i++){
+    const p=itemProps[i];
+    const overrides=[];
+    if(p.grow!==0) overrides.push(`flex-grow: ${p.grow}`);
+    if(p.shrink!==1) overrides.push(`flex-shrink: ${p.shrink}`);
+    if(p.alignSelf!=='auto') overrides.push(`align-self: ${p.alignSelf}`);
+    if(p.order!==0) overrides.push(`order: ${p.order}`);
+    if(overrides.length) css+=`\n\n.item-${i+1} {\n  ${overrides.join(';\n  ')};\n}`;
+  }
+  document.getElementById('css-code').textContent=css;
+}
+
+// Container controls
+['c-direction','c-wrap','c-justify','c-align-items','c-align-content'].forEach(id=>
+  document.getElementById(id).addEventListener('change',renderPreview));
+document.getElementById('c-gap').addEventListener('input',e=>{
+  document.getElementById('gap-val').textContent=e.target.value+'px';renderPreview();});
+document.getElementById('item-count').addEventListener('input',e=>{
+  itemCount=+e.target.value;document.getElementById('item-count-val').textContent=itemCount;
+  if(selectedItem>=itemCount)selectedItem=itemCount-1;renderPreview();updateItemControls();});
+
+// Item controls
+document.getElementById('i-grow').addEventListener('input',e=>{itemProps[selectedItem].grow=+e.target.value;document.getElementById('fg-val').textContent=e.target.value;renderPreview();});
+document.getElementById('i-shrink').addEventListener('input',e=>{itemProps[selectedItem].shrink=+e.target.value;document.getElementById('fs-val').textContent=e.target.value;renderPreview();});
+document.getElementById('i-align-self').addEventListener('change',e=>{itemProps[selectedItem].alignSelf=e.target.value;renderPreview();});
+document.getElementById('i-order').addEventListener('input',e=>{itemProps[selectedItem].order=+e.target.value;document.getElementById('io-val').textContent=e.target.value;renderPreview();});
+
+document.getElementById('copy-css').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('css-code').textContent).then(()=>{
+    const b=document.getElementById('copy-css');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy CSS',1200);});});
+
+renderPreview();updateItemControls();
+</script>
+</body>
+</html>

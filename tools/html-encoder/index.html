@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free HTML Entity Encoder & Decoder Online | OMIToolKit</title>
+<meta name="description" content="Encode special characters to HTML entities and decode HTML entities back to characters. Supports named and numeric entities. Free online HTML encoder.">
+<link rel="canonical" href="../../tools/html-encoder/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.dir-toggle{display:flex;background:#F4F3FE;border-radius:999px;padding:3px;width:fit-content;margin-bottom:20px}
+.dir-btn{padding:9px 22px;border-radius:999px;border:none;background:transparent;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
+.dir-btn.active{background:var(--color-primary);color:#fff}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.layout{grid-template-columns:1fr}}
+textarea.code{font-family:'JetBrains Mono',monospace;font-size:13.5px;resize:vertical;min-height:200px}
+.entity-ref{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:14px}
+.entity-item{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer;transition:all .15s}
+.entity-item:hover{background:#F4F3FE;border-color:#C9C5F7}
+.entity-char{font-size:18px;font-weight:600}
+.entity-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--color-primary)}
+.options-row{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / HTML Encoder</div>
+<div class="container tool-page-header">
+  <h1>HTML Entity Encoder &amp; Decoder</h1>
+  <p>Encode special characters to HTML entities or decode them back — instantly, in your browser.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:800px">
+    <div class="dir-toggle">
+      <button class="dir-btn active" id="btn-encode">Encode → Entities</button>
+      <button class="dir-btn" id="btn-decode">Decode ← Entities</button>
+    </div>
+
+    <div class="options-row">
+      <label class="checkbox-item"><input type="checkbox" id="opt-named" checked> Named entities (&amp;amp;)</label>
+      <label class="checkbox-item"><input type="checkbox" id="opt-all"> Encode all non-ASCII</label>
+    </div>
+
+    <div class="layout">
+      <div><label class="field-label" id="inp-label">Input text</label>
+        <textarea id="inp" class="field-input code" placeholder="Type or paste text with special characters…"><h1>Hello & "World"</h1>
+<p>© 2024 OMIToolKit — All rights reserved.</p></textarea>
+      </div>
+      <div><label class="field-label" id="out-label">HTML entities output</label>
+        <textarea id="out" class="field-input code" readonly style="background:#F9F9F9"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="convert-btn">Convert</button>
+      <button class="btn btn-outline" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+
+    <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--color-border)">
+      <div class="field-label" style="margin-bottom:10px">Common HTML entities <span style="font-size:12px;font-weight:400;color:var(--color-text-muted)">(click to copy)</span></div>
+      <div class="entity-ref" id="entity-ref"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>What are HTML entities?</h2>
+  <p>HTML entities are special codes used to represent characters that have reserved meanings in HTML or that can't be typed directly. The five characters with special HTML meaning are <code>&lt;</code> (less-than, start of a tag), <code>&gt;</code> (greater-than, end of a tag), <code>&amp;</code> (ampersand, start of an entity), <code>"</code> (double quote, used in attributes), and <code>'</code> (single quote). These must be encoded as <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;amp;</code>, <code>&amp;quot;</code>, and <code>&amp;apos;</code> respectively when appearing as literal text content in HTML.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const NAMED = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;','©':'&copy;','®':'&reg;','™':'&trade;','€':'&euro;','£':'&pound;','¥':'&yen;','°':'&deg;','±':'&plusmn;','×':'&times;','÷':'&divide;','½':'&frac12;','¼':'&frac14;','¾':'&frac34;','µ':'&micro;','¶':'&para;','§':'&sect;','¡':'&iexcl;','¿':'&iquest;','«':'&laquo;','»':'&raquo;','–':'&ndash;','—':'&mdash;','…':'&hellip;','\u00a0':'&nbsp;'};
+const NAMED_REV = Object.fromEntries(Object.entries(NAMED).map(([k,v])=>[v,k]));
+
+const COMMON = [
+  ['&','&amp;'],['<','&lt;'],['>','&gt;'],['"','&quot;'],["'",'&apos;'],
+  ['©','&copy;'],['®','&reg;'],['™','&trade;'],['€','&euro;'],['£','&pound;'],
+  ['°','&deg;'],['×','&times;'],['÷','&divide;'],['½','&frac12;'],['…','&hellip;'],
+  ['–','&ndash;'],['—','&mdash;'],['\u00a0','&nbsp;'],['µ','&micro;'],['¶','&para;'],
+];
+
+let isEncode = true;
+
+function encode(text) {
+  const named = document.getElementById('opt-named').checked;
+  const allNonAscii = document.getElementById('opt-all').checked;
+  return [...text].map(c => {
+    if(named && NAMED[c]) return NAMED[c];
+    const code = c.charCodeAt(0);
+    if(allNonAscii && code > 127) return `&#${code};`;
+    if(!named && ['&','<','>','"',"'"].includes(c)) return `&#${code};`;
+    return c;
+  }).join('');
+}
+
+function decode(text) {
+  return text
+    .replace(/&[a-zA-Z]+;/g, m => NAMED_REV[m] || m)
+    .replace(/&#(\d+);/g, (_,n) => String.fromCharCode(+n))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_,h) => String.fromCharCode(parseInt(h,16)));
+}
+
+function convert() {
+  const input = document.getElementById('inp').value;
+  document.getElementById('out').value = isEncode ? encode(input) : decode(input);
+}
+
+document.getElementById('btn-encode').addEventListener('click',()=>{
+  isEncode=true;
+  document.getElementById('btn-encode').classList.add('active');
+  document.getElementById('btn-decode').classList.remove('active');
+  document.getElementById('inp-label').textContent='Input text';
+  document.getElementById('out-label').textContent='HTML entities output';
+  convert();
+});
+document.getElementById('btn-decode').addEventListener('click',()=>{
+  isEncode=false;
+  document.getElementById('btn-decode').classList.add('active');
+  document.getElementById('btn-encode').classList.remove('active');
+  document.getElementById('inp-label').textContent='HTML entities input';
+  document.getElementById('out-label').textContent='Decoded text output';
+  convert();
+});
+
+document.getElementById('convert-btn').addEventListener('click',convert);
+document.getElementById('inp').addEventListener('input',convert);
+['opt-named','opt-all'].forEach(id=>document.getElementById(id).addEventListener('change',convert));
+
+document.getElementById('copy-btn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{
+    const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);
+  });
+});
+document.getElementById('swap-btn').addEventListener('click',()=>{
+  const t=document.getElementById('inp').value;
+  document.getElementById('inp').value=document.getElementById('out').value;
+  document.getElementById('out').value=t;
+  convert();
+});
+document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';});
+
+// Entity reference grid
+const ref=document.getElementById('entity-ref');
+COMMON.forEach(([char,entity])=>{
+  const div=document.createElement('div');
+  div.className='entity-item';
+  div.innerHTML=`<span class="entity-char">${char==' '?'&nbsp;':char}</span><span class="entity-code">${entity}</span>`;
+  div.addEventListener('click',()=>navigator.clipboard.writeText(entity));
+  ref.appendChild(div);
+});
+
+convert();
+</script>
+</body>
+</html>
