@@ -69,5 +69,13 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/html-encoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/css-flexbox-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/text-repeater/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/color-contrast-checker/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/json-to-csv/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/css-grid-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/jwt-decoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/css-clamp-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/http-status-codes/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/text-cleaner/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/svg-to-png/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/about/</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
 </urlset>

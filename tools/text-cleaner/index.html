@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Text Cleaner Online — Remove Extra Spaces & Format Text | OMIToolKit</title>
+<meta name="description" content="Clean messy text instantly — remove extra spaces, line breaks, duplicate lines, special characters. Free online text cleaner and formatter.">
+<link rel="canonical" href="../../tools/text-cleaner/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:16px 0}
+.opt-card{background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
+.opt-card:hover{border-color:var(--color-primary)}
+.opt-card.active{background:#F4F3FE;border-color:var(--color-primary)}
+.opt-card input{width:16px;height:16px;accent-color:var(--color-primary)}
+.opt-card .opt-label{font-size:13.5px;font-weight:500}
+textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6;resize:vertical;min-height:200px}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.stat-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text Tools</a> / Text Cleaner</div>
+<div class="container tool-page-header">
+  <h1>Text Cleaner</h1>
+  <p>Clean up messy text instantly — remove extra spaces, duplicate lines, and unwanted characters.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:780px">
+    <div class="field-row">
+      <label class="field-label">Input text</label>
+      <textarea id="inp" class="field-input code-area" placeholder="Paste your messy text here…"></textarea>
+      <div class="stats-row" id="inp-stats"></div>
+    </div>
+
+    <div class="field-label" style="margin-top:6px">Cleaning options</div>
+    <div class="options-grid" id="options-grid">
+      <label class="opt-card active"><input type="checkbox" id="opt-trim" checked><span class="opt-label">Trim leading/trailing spaces</span></label>
+      <label class="opt-card active"><input type="checkbox" id="opt-multispace" checked><span class="opt-label">Collapse multiple spaces</span></label>
+      <label class="opt-card active"><input type="checkbox" id="opt-multiline" checked><span class="opt-label">Collapse multiple line breaks</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-emptylines"><span class="opt-label">Remove all empty lines</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-duplines"><span class="opt-label">Remove duplicate lines</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-tabs"><span class="opt-label">Convert tabs to spaces</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-special"><span class="opt-label">Remove special characters</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-html"><span class="opt-label">Strip HTML tags</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-urls"><span class="opt-label">Remove URLs</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-emoji"><span class="opt-label">Remove emojis</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-numbers"><span class="opt-label">Remove numbers</span></label>
+      <label class="opt-card"><input type="checkbox" id="opt-punctuation"><span class="opt-label">Remove punctuation</span></label>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Cleaned output</label>
+      <textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea>
+      <div class="stats-row" id="out-stats"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="clean-btn">Clean Text</button>
+      <button class="btn btn-outline" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why clean text before using it?</h2>
+  <p>Text copied from PDFs, web pages, or documents often carries hidden formatting issues — multiple consecutive spaces, inconsistent line breaks, stray HTML tags, or invisible characters. These issues can break code that processes the text, cause display problems, or make the content look unprofessional when pasted elsewhere. A quick cleaning pass fixes these issues automatically.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.querySelectorAll('.opt-card input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.opt-card').classList.toggle('active', cb.checked);
+  });
+});
+
+function clean() {
+  let text = document.getElementById('inp').value;
+  document.getElementById('inp-stats').innerHTML = `<span class="stat-chip">${text.length} chars</span>`;
+
+  if (document.getElementById('opt-html').checked) {
+    text = text.replace(/<[^>]+>/g, '');
+  }
+  if (document.getElementById('opt-urls').checked) {
+    text = text.replace(/https?:\/\/[^\s]+/g, '');
+  }
+  if (document.getElementById('opt-emoji').checked) {
+    text = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '');
+  }
+  if (document.getElementById('opt-numbers').checked) {
+    text = text.replace(/[0-9]/g, '');
+  }
+  if (document.getElementById('opt-punctuation').checked) {
+    text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()'"?<>]/g, '');
+  }
+  if (document.getElementById('opt-special').checked) {
+    text = text.replace(/[^\w\s.,!?'-]/g, '');
+  }
+  if (document.getElementById('opt-tabs').checked) {
+    text = text.replace(/\t/g, '    ');
+  }
+  if (document.getElementById('opt-trim').checked) {
+    text = text.split('\n').map(l => l.trim()).join('\n').trim();
+  }
+  if (document.getElementById('opt-multispace').checked) {
+    text = text.replace(/[ \t]+/g, ' ');
+  }
+  if (document.getElementById('opt-emptylines').checked) {
+    text = text.split('\n').filter(l => l.trim()).join('\n');
+  } else if (document.getElementById('opt-multiline').checked) {
+    text = text.replace(/\n{3,}/g, '\n\n');
+  }
+  if (document.getElementById('opt-duplines').checked) {
+    const seen = new Set();
+    text = text.split('\n').filter(l => {
+      const trimmed = l.trim();
+      if (!trimmed) return true;
+      if (seen.has(trimmed)) return false;
+      seen.add(trimmed); return true;
+    }).join('\n');
+  }
+
+  document.getElementById('out').value = text;
+  document.getElementById('out-stats').innerHTML =
+    `<span class="stat-chip">${text.length} chars</span><span class="stat-chip">Saved ${(document.getElementById('inp').value.length - text.length).toLocaleString()} chars</span>`;
+}
+
+document.getElementById('clean-btn').addEventListener('click', clean);
+document.getElementById('inp').addEventListener('input', clean);
+document.querySelectorAll('.opt-card input').forEach(cb => cb.addEventListener('change', clean));
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('out').value).then(() => {
+    const b = document.getElementById('copy-btn'); b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy output', 1200);
+  });
+});
+document.getElementById('clear-btn').addEventListener('click', () => {
+  document.getElementById('inp').value = ''; document.getElementById('out').value = '';
+  ['inp-stats','out-stats'].forEach(id => document.getElementById(id).innerHTML = '');
+});
+
+// Demo
+document.getElementById('inp').value = `This   text   has    extra   spaces.
+
+
+And too many blank lines.
+
+This line is duplicated.
+This line is duplicated.
+Visit https://example.com for more info! 😊`;
+clean();
+</script>
+</body>
+</html>

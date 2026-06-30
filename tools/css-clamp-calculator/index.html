@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free CSS Clamp() Calculator — Fluid Typography Generator | OMIToolKit</title>
+<meta name="description" content="Generate CSS clamp() values for fluid, responsive typography. Set min/max font sizes and viewport range with live preview. Free online clamp calculator.">
+<link rel="canonical" href="../../tools/css-clamp-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.preview-stage{background:#1E1B2E;border-radius:var(--radius-lg);padding:32px;margin:16px 0;overflow:hidden;position:relative}
+.preview-text{color:#fff;font-weight:600;text-align:center;transition:font-size .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viewport-label{position:absolute;top:12px;left:16px;font-size:11px;color:#6B6B8A;font-family:'JetBrains Mono',monospace}
+.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.ctrl-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px}
+.ctrl-box label{display:block;font-size:12.5px;font-weight:600;color:var(--color-text-muted);margin-bottom:8px}
+.unit-row{display:flex;gap:8px;align-items:center}
+.unit-row input{flex:1}
+.unit-sel{width:60px;padding:9px 6px;border-radius:6px;border:1px solid var(--color-border);font-size:13px}
+.css-out{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#86EFAC;position:relative;margin:14px 0;word-break:break-all}
+.copy-css{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:5px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;transition:all .15s}
+.copy-css:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.range-row{display:flex;align-items:center;gap:12px}
+.range-row input[type=range]{flex:1;accent-color:var(--color-primary)}
+.viewport-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-primary);font-weight:500;min-width:50px;text-align:right}
+.scale-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+.scale-table th{padding:8px 12px;background:#F4F3FE;text-align:left;font-weight:500}
+.scale-table td{padding:7px 12px;border-bottom:1px solid var(--color-border);font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Clamp Calculator</div>
+<div class="container tool-page-header">
+  <h1>CSS Clamp() Calculator</h1>
+  <p>Generate fluid, responsive font sizes using CSS clamp() — scales smoothly between screen sizes.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:680px">
+
+    <div class="controls-grid">
+      <div class="ctrl-box">
+        <label>Minimum font size</label>
+        <div class="unit-row">
+          <input type="number" id="min-size" class="field-input" value="16" min="1">
+          <select id="min-unit" class="unit-sel"><option>px</option><option>rem</option></select>
+        </div>
+      </div>
+      <div class="ctrl-box">
+        <label>Maximum font size</label>
+        <div class="unit-row">
+          <input type="number" id="max-size" class="field-input" value="48" min="1">
+          <select id="max-unit" class="unit-sel"><option>px</option><option>rem</option></select>
+        </div>
+      </div>
+      <div class="ctrl-box">
+        <label>Min viewport width</label>
+        <div class="unit-row">
+          <input type="number" id="min-vw" class="field-input" value="375" min="100">
+          <span style="font-size:13px;color:var(--color-text-muted)">px</span>
+        </div>
+      </div>
+      <div class="ctrl-box">
+        <label>Max viewport width</label>
+        <div class="unit-row">
+          <input type="number" id="max-vw" class="field-input" value="1440" min="100">
+          <span style="font-size:13px;color:var(--color-text-muted)">px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-stage" id="preview-stage" style="resize:horizontal;overflow:auto;min-width:300px;max-width:100%">
+      <div class="viewport-label" id="viewport-label">Drag the bottom-right corner to resize ↘</div>
+      <div class="preview-text" id="preview-text">The quick brown fox</div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Or simulate viewport width — <span id="sim-val">800</span>px</label>
+      <div class="range-row">
+        <input type="range" id="sim-vw" min="320" max="1920" value="800">
+      </div>
+    </div>
+
+    <div class="css-out">
+      <button class="copy-css" id="copy-css">Copy</button>
+      <span id="clamp-output"></span>
+    </div>
+
+    <div class="field-label" style="margin-top:18px;margin-bottom:8px">Common type scale (using this clamp)</div>
+    <table class="scale-table" id="scale-table"></table>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How CSS clamp() works</h2>
+  <p>The <code>clamp(min, preferred, max)</code> function takes three values: a minimum, a preferred (usually viewport-relative), and a maximum. The browser uses the preferred value unless it would go below the minimum or above the maximum — in which case it clamps to that boundary. This creates font sizes (or any property) that scale smoothly with the viewport width, eliminating the need for multiple media query breakpoints just for typography.</p>
+  <h2>Why use fluid typography?</h2>
+  <p>Traditional responsive design jumps font sizes at fixed breakpoints (e.g., 16px on mobile, 24px on desktop), creating a sudden jump. Fluid typography with clamp() scales gradually and continuously between the minimum and maximum viewport widths, giving every screen size an appropriately scaled font — not just the breakpoints you happened to define.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function calcPreferred(minSize, maxSize, minVw, maxVw) {
+  const slope = (maxSize - minSize) / (maxVw - minVw);
+  const intersection = -minVw * slope + minSize;
+  return { slope: slope*100, intersection };
+}
+
+function update() {
+  const minSize = parseFloat(document.getElementById('min-size').value) || 16;
+  const maxSize = parseFloat(document.getElementById('max-size').value) || 48;
+  const minUnit = document.getElementById('min-unit').value;
+  const maxUnit = document.getElementById('max-unit').value;
+  const minVw = parseFloat(document.getElementById('min-vw').value) || 375;
+  const maxVw = parseFloat(document.getElementById('max-vw').value) || 1440;
+
+  const { slope, intersection } = calcPreferred(minSize, maxSize, minVw, maxVw);
+  const clampStr = `clamp(${minSize}${minUnit}, ${intersection.toFixed(3)}${minUnit} + ${slope.toFixed(3)}vw, ${maxSize}${maxUnit})`;
+  document.getElementById('clamp-output').textContent = `font-size: ${clampStr};`;
+
+  // Simulate at given viewport
+  const simVw = parseInt(document.getElementById('sim-vw').value);
+  let preview;
+  if (simVw <= minVw) preview = minSize;
+  else if (simVw >= maxVw) preview = maxSize;
+  else preview = minSize + (maxSize - minSize) * (simVw - minVw) / (maxVw - minVw);
+  document.getElementById('preview-text').style.fontSize = preview + (minUnit==='rem'?'rem':'px');
+  document.getElementById('viewport-label').textContent = `Simulated at ${simVw}px viewport → ${preview.toFixed(1)}${minUnit}`;
+
+  // Type scale table
+  const scales = [
+    {name:'Caption', mult:0.75}, {name:'Body', mult:1}, {name:'H3', mult:1.5},
+    {name:'H2', mult:2}, {name:'H1', mult:2.5},
+  ];
+  document.getElementById('scale-table').innerHTML = '<tr><th>Element</th><th>Min</th><th>Max</th><th>clamp()</th></tr>' +
+    scales.map(s => {
+      const sMin = (minSize*s.mult).toFixed(1), sMax = (maxSize*s.mult).toFixed(1);
+      const sCalc = calcPreferred(minSize*s.mult, maxSize*s.mult, minVw, maxVw);
+      return `<tr><td>${s.name}</td><td>${sMin}${minUnit}</td><td>${sMax}${maxUnit}</td><td>clamp(${sMin}${minUnit}, ${sCalc.intersection.toFixed(2)}${minUnit} + ${sCalc.slope.toFixed(2)}vw, ${sMax}${maxUnit})</td></tr>`;
+    }).join('');
+}
+
+['min-size','max-size','min-unit','max-unit','min-vw','max-vw'].forEach(id =>
+  document.getElementById(id).addEventListener('input', update));
+document.getElementById('sim-vw').addEventListener('input', e => {
+  document.getElementById('sim-val').textContent = e.target.value;
+  update();
+});
+
+document.getElementById('copy-css').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('clamp-output').textContent).then(() => {
+    const b = document.getElementById('copy-css'); b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy', 1200);
+  });
+});
+
+update();
+</script>
+</body>
+</html>

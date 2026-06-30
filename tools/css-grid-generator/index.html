@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free CSS Grid Generator Online | OMIToolKit</title>
+<meta name="description" content="Generate CSS Grid layouts visually. Set columns, rows, gaps and alignment with live preview and instant CSS code copy. Free online CSS Grid generator.">
+<link rel="canonical" href="../../tools/css-grid-generator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.grid-preview{background:#1E1B2E;border-radius:var(--radius-md);padding:16px;min-height:260px;margin:16px 0;border:1px solid #3D3A5C;position:relative}
+.grid-container{width:100%;min-height:228px;display:grid;gap:8px}
+.grid-item{background:linear-gradient(135deg,rgba(99,102,241,.6),rgba(168,85,247,.6));border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:13px;min-height:48px;border:1px solid rgba(255,255,255,.1)}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.ctrl-box{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px}
+.ctrl-box label{display:block;font-size:12px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.ctrl-range{width:100%;accent-color:var(--color-primary);margin-top:4px}
+.ctrl-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--color-primary);font-weight:500;float:right}
+.tracks-input{width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--color-border);font-size:13px;font-family:'JetBrains Mono',monospace}
+.css-out{background:#1E1B2E;border-radius:var(--radius-sm);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#86EFAC;line-height:1.8;position:relative;margin-top:14px;white-space:pre-wrap}
+.copy-css{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:5px;border:1px solid #3D3A5C;background:transparent;color:#6B6B8A;cursor:pointer;font-size:12px;transition:all .15s}
+.copy-css:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.template-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tmpl-btn{padding:8px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.tmpl-btn:hover{border-color:var(--color-primary);color:var(--color-primary);background:#F4F3FE}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / CSS Grid Generator</div>
+<div class="container tool-page-header">
+  <h1>CSS Grid Generator</h1>
+  <p>Build CSS Grid layouts visually with live preview — copy the code instantly.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:860px">
+
+    <div class="field-label" style="margin-bottom:8px">Quick templates</div>
+    <div class="template-grid">
+      <button class="tmpl-btn" data-cols="1fr 1fr" data-rows="auto" data-items="4">2 Columns</button>
+      <button class="tmpl-btn" data-cols="1fr 1fr 1fr" data-rows="auto" data-items="6">3 Columns</button>
+      <button class="tmpl-btn" data-cols="repeat(4,1fr)" data-rows="auto" data-items="8">4 Columns</button>
+      <button class="tmpl-btn" data-cols="1fr 2fr" data-rows="auto" data-items="4">Sidebar Layout</button>
+      <button class="tmpl-btn" data-cols="200px 1fr" data-rows="60px 1fr 40px" data-items="6">App Layout</button>
+      <button class="tmpl-btn" data-cols="repeat(auto-fill,minmax(200px,1fr))" data-rows="auto" data-items="6">Auto-fill</button>
+    </div>
+
+    <div class="controls-grid">
+      <div class="ctrl-box">
+        <label>Columns <span class="ctrl-val" id="cols-val">3</span></label>
+        <input type="range" class="ctrl-range" id="c-cols" min="1" max="12" value="3">
+        <input type="text" class="tracks-input" id="col-tracks" value="1fr 1fr 1fr" placeholder="e.g. 1fr 2fr 1fr" style="margin-top:8px">
+      </div>
+      <div class="ctrl-box">
+        <label>Rows <span class="ctrl-val" id="rows-val">auto</span></label>
+        <input type="range" class="ctrl-range" id="c-rows" min="1" max="8" value="2">
+        <input type="text" class="tracks-input" id="row-tracks" value="auto auto" placeholder="e.g. 100px 1fr" style="margin-top:8px">
+      </div>
+      <div class="ctrl-box">
+        <label>Column gap <span class="ctrl-val" id="cgap-val">16px</span></label>
+        <input type="range" class="ctrl-range" id="c-cgap" min="0" max="48" value="16">
+      </div>
+      <div class="ctrl-box">
+        <label>Row gap <span class="ctrl-val" id="rgap-val">16px</span></label>
+        <input type="range" class="ctrl-range" id="c-rgap" min="0" max="48" value="16">
+      </div>
+      <div class="ctrl-box">
+        <label>Justify items</label>
+        <select class="tracks-input" id="c-justify">
+          <option value="stretch">stretch</option>
+          <option value="start">start</option>
+          <option value="end">end</option>
+          <option value="center">center</option>
+        </select>
+      </div>
+      <div class="ctrl-box">
+        <label>Align items</label>
+        <select class="tracks-input" id="c-align">
+          <option value="stretch">stretch</option>
+          <option value="start">start</option>
+          <option value="end">end</option>
+          <option value="center">center</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-preview">
+      <div class="grid-container" id="grid-container"></div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label">Items count — <span id="items-val">6</span></label>
+      <input type="range" id="c-items" min="1" max="24" value="6" style="width:100%;accent-color:var(--color-primary)">
+    </div>
+
+    <div class="css-out">
+      <button class="copy-css" id="copy-css">Copy CSS</button>
+      <div id="css-code"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>CSS Grid vs Flexbox</h2>
+  <p>CSS Grid is designed for two-dimensional layouts (rows AND columns simultaneously), while Flexbox is best for one-dimensional layouts (either rows OR columns). Use Grid when you need to control both dimensions — page layouts, image galleries, dashboards. Use Flexbox for navigation bars, card rows, or any layout where you control items along a single axis. Modern CSS often uses both together: Grid for the overall page layout, Flexbox for components within each grid area.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function renderPreview() {
+  const colTracks = document.getElementById('col-tracks').value || '1fr 1fr 1fr';
+  const rowTracks = document.getElementById('row-tracks').value || 'auto';
+  const cgap = document.getElementById('c-cgap').value;
+  const rgap = document.getElementById('c-rgap').value;
+  const justify = document.getElementById('c-justify').value;
+  const align = document.getElementById('c-align').value;
+  const items = +document.getElementById('c-items').value;
+
+  const container = document.getElementById('grid-container');
+  container.style.gridTemplateColumns = colTracks;
+  container.style.gridTemplateRows = rowTracks;
+  container.style.columnGap = cgap + 'px';
+  container.style.rowGap = rgap + 'px';
+  container.style.justifyItems = justify;
+  container.style.alignItems = align;
+
+  container.innerHTML = Array.from({length: items}, (_, i) =>
+    `<div class="grid-item">${i + 1}</div>`).join('');
+
+  const css = `.container {\n  display: grid;\n  grid-template-columns: ${colTracks};\n  grid-template-rows: ${rowTracks};\n  column-gap: ${cgap}px;\n  row-gap: ${rgap}px;` +
+    (justify !== 'stretch' ? `\n  justify-items: ${justify};` : '') +
+    (align !== 'stretch' ? `\n  align-items: ${align};` : '') +
+    `\n}`;
+  document.getElementById('css-code').textContent = css;
+}
+
+// Sync column slider with track input
+document.getElementById('c-cols').addEventListener('input', e => {
+  const n = +e.target.value;
+  document.getElementById('cols-val').textContent = n;
+  document.getElementById('col-tracks').value = `repeat(${n}, 1fr)`;
+  renderPreview();
+});
+document.getElementById('c-rows').addEventListener('input', e => {
+  const n = +e.target.value;
+  document.getElementById('rows-val').textContent = n > 1 ? n : 'auto';
+  document.getElementById('row-tracks').value = Array(n).fill('auto').join(' ');
+  renderPreview();
+});
+document.getElementById('c-cgap').addEventListener('input', e => { document.getElementById('cgap-val').textContent = e.target.value + 'px'; renderPreview(); });
+document.getElementById('c-rgap').addEventListener('input', e => { document.getElementById('rgap-val').textContent = e.target.value + 'px'; renderPreview(); });
+document.getElementById('c-items').addEventListener('input', e => { document.getElementById('items-val').textContent = e.target.value; renderPreview(); });
+['col-tracks','row-tracks','c-justify','c-align'].forEach(id => document.getElementById(id).addEventListener('change', renderPreview));
+['col-tracks','row-tracks'].forEach(id => document.getElementById(id).addEventListener('input', renderPreview));
+
+document.querySelectorAll('.tmpl-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('col-tracks').value = btn.dataset.cols;
+    document.getElementById('row-tracks').value = btn.dataset.rows;
+    document.getElementById('c-items').value = btn.dataset.items;
+    document.getElementById('items-val').textContent = btn.dataset.items;
+    renderPreview();
+  });
+});
+
+document.getElementById('copy-css').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('css-code').textContent).then(() => {
+    const b = document.getElementById('copy-css'); b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy CSS', 1200);
+  });
+});
+
+renderPreview();
+</script>
+</body>
+</html>

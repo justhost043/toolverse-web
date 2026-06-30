@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free SVG to PNG Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert SVG to PNG or JPG online for free. Upload a file or paste SVG code. Choose custom resolution and background color. Runs in your browser.">
+<link rel="canonical" href="../../tools/svg-to-png/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:36px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.mode-tabs{display:flex;gap:8px;margin-bottom:14px}
+.m-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.m-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+textarea.svg-code{font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;min-height:160px}
+.preview-box{background:repeating-conic-gradient(#E7E5EE 0% 25%,#EFECFA 0% 50%) 0 0/20px 20px;border-radius:var(--radius-md);border:1px solid var(--color-border);min-height:200px;display:flex;align-items:center;justify-content:center;margin:16px 0;padding:20px}
+.preview-box img,.preview-box svg{max-width:100%;max-height:280px}
+.options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / SVG to PNG</div>
+<div class="container tool-page-header">
+  <h1>SVG to PNG Converter</h1>
+  <p>Convert SVG to PNG or JPG — upload a file or paste code, choose resolution and background.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:700px">
+    <div class="mode-tabs">
+      <button class="m-tab active" data-m="upload">Upload SVG file</button>
+      <button class="m-tab" data-m="paste">Paste SVG code</button>
+    </div>
+
+    <div id="panel-upload">
+      <div class="drop-zone" id="drop-zone">
+        <div style="font-size:32px;margin-bottom:10px">🖼️</div>
+        <div style="font-size:15px;font-weight:500;color:var(--color-text)">Drop an SVG file here or click to select</div>
+        <input type="file" id="file-input" accept=".svg,image/svg+xml" style="display:none">
+      </div>
+    </div>
+
+    <div id="panel-paste" style="display:none">
+      <textarea id="svg-code" class="field-input svg-code" placeholder='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40" fill="#6366F1"/>
+</svg>'></textarea>
+      <button class="btn btn-primary" id="render-paste" style="margin-top:10px">Render SVG</button>
+    </div>
+
+    <div class="preview-box" id="preview-box">
+      <span style="color:var(--color-text-muted);font-size:13.5px">SVG preview will appear here</span>
+    </div>
+
+    <div class="options-grid">
+      <div class="field-row"><label class="field-label">Width (px)</label><input type="number" id="out-w" class="field-input" value="512" min="16" max="8000"></div>
+      <div class="field-row"><label class="field-label">Height (px)</label><input type="number" id="out-h" class="field-input" value="512" min="16" max="8000"></div>
+      <div class="field-row"><label class="field-label">Format</label>
+        <select id="out-fmt" class="field-select"><option value="png">PNG (transparent)</option><option value="jpg">JPG (white bg)</option></select>
+      </div>
+      <div class="field-row" id="bg-row" style="display:none"><label class="field-label">Background color</label><input type="color" id="bg-color" value="#ffffff" style="width:100%;height:42px;border-radius:8px;border:1px solid var(--color-border);cursor:pointer"></div>
+    </div>
+
+    <button class="btn btn-primary" id="download-btn" style="width:100%;justify-content:center;padding:13px" disabled>⬇ Download Image</button>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>Why convert SVG to PNG?</h2>
+  <p>SVG (Scalable Vector Graphics) is ideal for icons and logos that need to scale without losing quality, but many platforms — social media, certain CMS systems, older email clients — don't support SVG and require raster formats like PNG or JPG. Converting gives you a fixed-resolution image while keeping full control over the output size.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let currentSvgString = null;
+
+document.querySelectorAll('.m-tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.m-tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-upload').style.display = t.dataset.m === 'upload' ? '' : 'none';
+  document.getElementById('panel-paste').style.display = t.dataset.m === 'paste' ? '' : 'none';
+}));
+
+const dropZone = document.getElementById('drop-zone'), fileInput = document.getElementById('file-input');
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if(fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => { renderSvg(e.target.result); };
+  reader.readAsText(file);
+}
+
+document.getElementById('render-paste').addEventListener('click', () => {
+  renderSvg(document.getElementById('svg-code').value);
+});
+
+function renderSvg(svgStr) {
+  if (!svgStr.includes('<svg')) { alert('No valid SVG found.'); return; }
+  currentSvgString = svgStr;
+  document.getElementById('preview-box').innerHTML = svgStr;
+
+  // Try to extract dimensions
+  const widthMatch = svgStr.match(/width=["']?(\d+)/);
+  const heightMatch = svgStr.match(/height=["']?(\d+)/);
+  const viewBoxMatch = svgStr.match(/viewBox=["']([^"']+)["']/);
+  if (widthMatch) document.getElementById('out-w').value = widthMatch[1];
+  if (heightMatch) document.getElementById('out-h').value = heightMatch[1];
+  else if (viewBoxMatch) {
+    const parts = viewBoxMatch[1].split(/\s+/);
+    if (parts.length === 4) { document.getElementById('out-w').value = Math.round(parts[2]); document.getElementById('out-h').value = Math.round(parts[3]); }
+  }
+  document.getElementById('download-btn').disabled = false;
+}
+
+document.getElementById('out-fmt').addEventListener('change', e => {
+  document.getElementById('bg-row').style.display = e.target.value === 'jpg' ? '' : 'none';
+});
+
+document.getElementById('download-btn').addEventListener('click', () => {
+  if (!currentSvgString) return;
+  const w = parseInt(document.getElementById('out-w').value) || 512;
+  const h = parseInt(document.getElementById('out-h').value) || 512;
+  const fmt = document.getElementById('out-fmt').value;
+  const bg = document.getElementById('bg-color').value;
+
+  const svgBlob = new Blob([currentSvgString], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (fmt === 'jpg') { ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h); }
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+
+    const mime = fmt === 'jpg' ? 'image/jpeg' : 'image/png';
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `converted.${fmt}`;
+      a.click();
+    }, mime, 0.95);
+  };
+  img.onerror = () => alert('Could not render this SVG. Make sure it is valid.');
+  img.src = url;
+});
+
+// Demo
+const demoSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs><circle cx="50" cy="50" r="45" fill="url(#g)"/><text x="50" y="58" font-size="32" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">O</text></svg>';
+document.getElementById('svg-code').value = demoSvg;
+</script>
+</body>
+</html>
