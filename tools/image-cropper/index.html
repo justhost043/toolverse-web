@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Image Cropper Online — Crop Images Instantly | OMIToolKit</title>
+<meta name="description" content="Crop images online for free. Drag to select crop area, use preset ratios like 1:1, 16:9, 4:3 or set custom dimensions. Download cropped image instantly.">
+<link rel="canonical" href="../../tools/image-cropper/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Cropper","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Crop images online with drag selection, aspect ratio presets and custom dimensions."}</script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.canvas-stage{position:relative;display:inline-block;max-width:100%;cursor:crosshair;user-select:none}
+.canvas-stage canvas{display:block;max-width:100%}
+.crop-overlay{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.5);pointer-events:none}
+.ratio-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.ratio-btn{padding:7px 14px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-mono);transition:all .15s}
+.ratio-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.crop-info{font-family:var(--font-mono);font-size:13px;color:var(--color-text-muted);margin:10px 0}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container inner">
+    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+  </div>
+</header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Image Cropper</div>
+<div class="container tool-page-header">
+  <h1>Image Cropper</h1>
+  <p>Drag to select your crop area — choose preset ratios or draw a custom selection.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:760px">
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:36px;margin-bottom:10px">✂️</div>
+      <div style="font-size:15px;font-weight:500;color:var(--color-text)">Drop an image here or click to select</div>
+      <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP, GIF</div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+
+    <div id="editor-section" style="display:none;margin-top:16px">
+      <div class="field-label" style="margin-bottom:8px">Aspect ratio</div>
+      <div class="ratio-btns">
+        <button class="ratio-btn active" data-r="free">Free</button>
+        <button class="ratio-btn" data-r="1:1">1:1</button>
+        <button class="ratio-btn" data-r="4:3">4:3</button>
+        <button class="ratio-btn" data-r="16:9">16:9</button>
+        <button class="ratio-btn" data-r="3:2">3:2</button>
+        <button class="ratio-btn" data-r="2:3">2:3 Portrait</button>
+        <button class="ratio-btn" data-r="9:16">9:16 Story</button>
+      </div>
+
+      <div style="overflow-x:auto;text-align:center">
+        <div class="canvas-stage" id="canvas-stage">
+          <canvas id="img-canvas"></canvas>
+          <div class="crop-overlay" id="crop-overlay" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="crop-info" id="crop-info">Click and drag on the image to select crop area</div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-primary" id="crop-btn" disabled>✂️ Crop & Download</button>
+        <button class="btn btn-outline" id="reset-selection">Reset selection</button>
+        <button class="btn btn-outline" id="new-image">New image</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot — below tool</div>
+<article class="article container">
+  <h2>How to crop an image</h2>
+  <p>Drop or select your image. Then click and drag on the image to draw your crop selection — a darkened overlay shows the area that will be removed. Choose a preset aspect ratio to lock the selection to a specific proportion, or leave it on "Free" to draw any rectangle. Click "Crop & Download" to save the cropped image at its original resolution.</p>
+  <h2>Aspect ratio presets explained</h2>
+  <p>1:1 is a square — perfect for Instagram posts and profile pictures. 16:9 is widescreen — ideal for YouTube thumbnails, presentations and desktop wallpapers. 4:3 is the classic photo format. 9:16 is vertical — for Instagram Stories, TikTok and Reels. 2:3 portrait is the standard photo print ratio (4×6 inch prints).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const canvas = document.getElementById('img-canvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('crop-overlay');
+const stage = document.getElementById('canvas-stage');
+
+let imgEl = null, imgW = 0, imgH = 0;
+let dragging = false, startX = 0, startY = 0;
+let cropX = 0, cropY = 0, cropW = 0, cropH = 0;
+let aspectRatio = null; // null = free
+
+const MAX_DISPLAY = 680;
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if(e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if(fileInput.files[0]) loadImage(fileInput.files[0]); });
+
+function loadImage(file) {
+  const url = URL.createObjectURL(file);
+  imgEl = new Image();
+  imgEl.onload = () => {
+    imgW = imgEl.naturalWidth; imgH = imgEl.naturalHeight;
+    const scale = Math.min(1, MAX_DISPLAY / Math.max(imgW, imgH));
+    canvas.width = Math.round(imgW * scale);
+    canvas.height = Math.round(imgH * scale);
+    ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+    document.getElementById('editor-section').style.display = '';
+    document.getElementById('crop-btn').disabled = true;
+    overlay.style.display = 'none';
+    URL.revokeObjectURL(url);
+  };
+  imgEl.src = url;
+}
+
+// Ratio buttons
+document.querySelectorAll('.ratio-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const r = btn.dataset.r;
+    if (r === 'free') { aspectRatio = null; }
+    else { const [w,h] = r.split(':').map(Number); aspectRatio = w/h; }
+    overlay.style.display = 'none';
+    document.getElementById('crop-btn').disabled = true;
+    document.getElementById('crop-info').textContent = 'Click and drag to select crop area';
+  });
+});
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: Math.max(0, Math.min(canvas.width, (clientX - rect.left) * scaleX)),
+    y: Math.max(0, Math.min(canvas.height, (clientY - rect.top) * scaleY))
+  };
+}
+
+canvas.addEventListener('mousedown', e => {
+  const p = getPos(e);
+  startX = p.x; startY = p.y;
+  dragging = true;
+});
+canvas.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const p = getPos(e);
+  let w = p.x - startX, h = p.y - startY;
+  if (aspectRatio) {
+    const sign = Math.sign(w) || 1;
+    h = Math.abs(w) / aspectRatio * Math.sign(h || 1);
+    w = sign * Math.abs(w);
+  }
+  cropX = w < 0 ? startX + w : startX;
+  cropY = h < 0 ? startY + h : startY;
+  cropW = Math.abs(w); cropH = Math.abs(h);
+  updateOverlay();
+});
+canvas.addEventListener('mouseup', finishDrag);
+canvas.addEventListener('mouseleave', finishDrag);
+
+function finishDrag() {
+  if (!dragging) return;
+  dragging = false;
+  if (cropW > 5 && cropH > 5) {
+    document.getElementById('crop-btn').disabled = false;
+    const scale = imgW / canvas.width;
+    const rx = Math.round(cropX * scale), ry = Math.round(cropY * scale);
+    const rw = Math.round(cropW * scale), rh = Math.round(cropH * scale);
+    document.getElementById('crop-info').textContent = `Selection: ${rw} × ${rh}px at (${rx}, ${ry})`;
+  }
+}
+
+function updateOverlay() {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width / canvas.width;
+  const scaleY = rect.height / canvas.height;
+  overlay.style.display = '';
+  overlay.style.left = (cropX * scaleX) + 'px';
+  overlay.style.top = (cropY * scaleY) + 'px';
+  overlay.style.width = (cropW * scaleX) + 'px';
+  overlay.style.height = (cropH * scaleY) + 'px';
+}
+
+document.getElementById('crop-btn').addEventListener('click', () => {
+  const scale = imgW / canvas.width;
+  const rx = Math.round(cropX * scale), ry = Math.round(cropY * scale);
+  const rw = Math.round(cropW * scale), rh = Math.round(cropH * scale);
+  const out = document.createElement('canvas');
+  out.width = rw; out.height = rh;
+  out.getContext('2d').drawImage(imgEl, rx, ry, rw, rh, 0, 0, rw, rh);
+  out.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cropped-${rw}x${rh}.png`;
+    a.click();
+  }, 'image/png');
+});
+
+document.getElementById('reset-selection').addEventListener('click', () => {
+  overlay.style.display = 'none';
+  document.getElementById('crop-btn').disabled = true;
+  document.getElementById('crop-info').textContent = 'Click and drag to select crop area';
+});
+document.getElementById('new-image').addEventListener('click', () => {
+  document.getElementById('editor-section').style.display = 'none';
+  fileInput.value = ''; imgEl = null;
+});
+</script>
+</body>
+</html>

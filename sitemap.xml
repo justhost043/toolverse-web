@@ -77,5 +77,7 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/http-status-codes/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/text-cleaner/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/svg-to-png/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/word-frequency-counter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/image-cropper/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/about/</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
 </urlset>
