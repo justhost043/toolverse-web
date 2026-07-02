@@ -10,17 +10,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<style>textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:140px}</style>
+<style>textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:140px}
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
+
+.chip{display:inline-block;font-size:12px;background:#F4F3FE;color:var(--color-primary);padding:3px 10px;border-radius:999px;font-weight:500;margin:2px}
+#url-stats{margin-top:8px;min-height:20px}
+</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Url Encoder","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Encode and decode URLs online instantly. Supports full URL and component encoding. Free browser-based URL encoder — nothing is uploaded."}</script>
 </head>
 <body>
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / URL Encoder</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / URL Encoder</div>
 <div class="container tool-page-header">
   <h1>URL Encoder &amp; Decoder</h1>
   <p>Encode special characters in URLs or decode encoded URLs back to plain text.</p>
@@ -39,7 +48,8 @@
     </div>
     <div class="field-row"><label class="field-label">Input</label><textarea id="inp" class="field-input code-area" placeholder="Paste text or URL here…"></textarea></div>
     <div class="field-row"><label class="field-label">Output</label><textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea></div>
-    <div style="display:flex;gap:10px">
+    <div id="url-stats"></div>
+    <div style="display:flex;gap:10px;margin-top:10px">
       <button class="btn btn-primary" id="copy-btn">Copy output</button>
       <button class="btn btn-outline" id="clear-btn">Clear</button>
     </div>
@@ -65,9 +75,19 @@ function convert(){
     else if(mode==='encode-full') res=encodeURI(v);
     else res=decodeURI(v);
     document.getElementById('out').value=res;
+    showStats(v,res);
   } catch(e){document.getElementById('out').value='Error: '+e.message;}
 }
 document.getElementById('convert-btn').addEventListener('click',convert);
+
+// Show stats
+function showStats(input, output) {
+  const stats = document.getElementById('url-stats');
+  if (!input) { stats.textContent = ''; return; }
+  const pct = input.length ? Math.round((output.length/input.length-1)*100) : 0;
+  stats.innerHTML = `<span class="chip">${input.length} chars input</span><span class="chip">${output.length} chars output</span>${pct>0?`<span class="chip">+${pct}% size</span>`:''}`;
+}
+
 document.getElementById('inp').addEventListener('input',convert);
 document.getElementById('swap-btn').addEventListener('click',()=>{const t=document.getElementById('inp').value;document.getElementById('inp').value=document.getElementById('out').value;document.getElementById('out').value=t;});
 document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});

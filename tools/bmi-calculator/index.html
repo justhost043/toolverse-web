@@ -25,6 +25,12 @@
 .cat-table th{text-align:left;padding:9px 12px;background:#F4F3FE;font-weight:500}
 .cat-table td{padding:9px 12px;border-bottom:1px solid var(--color-border)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Bmi Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate your BMI (Body Mass Index) instantly. Metric and imperial units. Shows health category and ideal weight range. Free online BMI calculator."}</script>
 </head>
@@ -32,10 +38,10 @@
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / BMI Calculator</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Calculators</a> / BMI Calculator</div>
 <div class="container tool-page-header">
   <h1>BMI Calculator</h1>
   <p>Calculate your Body Mass Index and see your health category with ideal weight range.</p>

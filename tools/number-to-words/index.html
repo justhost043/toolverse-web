@@ -17,6 +17,12 @@
 .mode-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .mode-btn{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
 .mode-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Number To Words","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert numbers to words instantly. Write 1234 as 'one thousand two hundred thirty-four'. Supports currency and ordinals. Free online number to words converter."}</script>
 </head>
@@ -24,10 +30,10 @@
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Number to Words</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Calculators</a> / Number to Words</div>
 <div class="container tool-page-header">
   <h1>Number to Words Converter</h1>
   <p>Convert any number into written English words instantly.</p>

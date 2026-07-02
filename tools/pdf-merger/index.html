@@ -28,16 +28,22 @@
 .status-bar.error{color:#E24B4A}
 .progress-wrap{height:6px;background:var(--color-border);border-radius:4px;margin-top:10px;display:none}
 .progress-fill{height:100%;background:var(--color-primary);border-radius:4px;width:0%;transition:width .3s}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 </head>
 <body>
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / PDF Merger</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">PDF</a> / PDF Merger</div>
 <div class="container tool-page-header">
   <h1>PDF Merger</h1>
   <p>Combine multiple PDF files into one. Drag to reorder — nothing leaves your browser.</p>

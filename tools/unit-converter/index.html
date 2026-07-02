@@ -21,16 +21,22 @@
 .result-display{background:#F4F3FE;border-radius:var(--radius-sm);padding:18px;text-align:center;margin-top:18px}
 .result-num{font-size:26px;font-weight:600;color:var(--color-primary)}
 .result-unit{font-size:14px;color:var(--color-text-muted);margin-top:4px}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 </head>
 <body>
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Unit Converter</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Calculators</a> / Unit Converter</div>
 <div class="container tool-page-header">
   <h1>Unit Converter</h1>
   <p>Convert between any units instantly — length, weight, temperature, area, speed and volume.</p>

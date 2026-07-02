@@ -27,6 +27,12 @@ mark.g1{background:#B45309}mark.g2{background:#0E7490}mark.g3{background:#065F46
 .tab-row{display:flex;gap:8px;margin-bottom:14px}
 .tab-btn{padding:7px 16px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
 .tab-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Regex Tester","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Test regular expressions online with live match highlighting. See capture groups, match count, and test replacements. Free browser-based regex tester."}</script>
 </head>
@@ -34,10 +40,10 @@ mark.g1{background:#B45309}mark.g2{background:#0E7490}mark.g3{background:#065F46
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Regex Tester</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / Regex Tester</div>
 <div class="container tool-page-header">
   <h1>Regex Tester</h1>
   <p>Test regular expressions live — see matches highlighted, groups listed, and try replacements.</p>

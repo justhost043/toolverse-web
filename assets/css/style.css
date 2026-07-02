@@ -513,3 +513,54 @@ img, svg { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- Enhanced Mobile Responsiveness ---------- */
+@media (max-width: 480px) {
+  .container { padding: 0 14px; }
+  .tool-panel { padding: 16px; border-radius: 12px; }
+  .tool-page-header h1 { font-size: clamp(22px, 6vw, 32px); }
+  .tool-page-header { padding: 20px 0 10px; }
+  .field-input, .field-select { font-size: 16px; } /* prevent iOS zoom */
+  .btn { padding: 10px 18px; font-size: 13.5px; }
+  .site-header .inner { padding: 0 14px; }
+  .breadcrumb { font-size: 12px; }
+  .ad-slot { margin: 16px 0; }
+  .article { margin-top: 32px; }
+  .article h2 { font-size: 18px; }
+  .site-footer { padding: 28px 0; margin-top: 40px; }
+}
+
+/* ---------- Tool-specific mobile helpers ---------- */
+@media (max-width: 600px) {
+  .grid-2col, .two-col, .split-panel {
+    grid-template-columns: 1fr !important;
+  }
+  .stat-grid-3 { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ---------- Focus styles for accessibility ---------- */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Print styles ---------- */
+@media print {
+  .site-header, .site-footer, .ad-slot, .breadcrumb { display: none; }
+  .tool-panel { box-shadow: none; border: 1px solid #ccc; }
+}
+
+/* ---------- Tool badge ---------- */
+.tool-new {
+  font-size: 10px;
+  font-weight: 700;
+  background: #10B981;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  vertical-align: middle;
+}

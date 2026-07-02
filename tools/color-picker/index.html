@@ -28,16 +28,22 @@ input[type="color"]{width:56px;height:56px;border:1px solid var(--color-border);
 .palette-swatch:hover{transform:scale(1.06)}
 .palette-swatch .swatch-hex{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:500;color:rgba(0,0,0,.6);background:rgba(255,255,255,.7);border-radius:0 0 var(--radius-sm) var(--radius-sm)}
 .section-sep{margin:22px 0 14px;font-size:13.5px;font-weight:500;color:var(--color-text-muted);border-bottom:1px solid var(--color-border);padding-bottom:10px}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 </head>
 <body>
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Color Picker</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / Color Picker</div>
 <div class="container tool-page-header">
   <h1>Color Picker &amp; Converter</h1>
   <p>Pick a color, convert between HEX, RGB, HSL and CMYK, and generate complementary palettes.</p>

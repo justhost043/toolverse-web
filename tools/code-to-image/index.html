@@ -23,6 +23,12 @@
 .theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
 .theme-swatch{padding:10px;border-radius:var(--radius-sm);cursor:pointer;border:2px solid transparent;font-size:12px;font-weight:500;font-family:'JetBrains Mono',monospace;transition:all .15s;text-align:center}
 .theme-swatch.active{border-color:var(--color-primary)}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Code To Image","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert code snippets to beautiful images with syntax highlighting. Multiple themes and languages. Download as PNG. Free online code screenshot generator."}</script>
 </head>

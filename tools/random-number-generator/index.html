@@ -25,6 +25,12 @@
 .mode-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .mode-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
 .mode-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Random Number Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate random numbers in any range. Pick multiple numbers, ensure uniqueness, or roll virtual dice. Free online random number generator."}</script>
 </head>
@@ -32,10 +38,10 @@
 <header class="site-header">
   <div class="container inner">
     <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#tools">All tools</a><a href="../../#categories">Categories</a><a href="../../about/">About</a></nav>
+    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-calculator">Calculators</a><a href="../../about/">About</a></nav>
   </div>
 </header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#tools">Tools</a> / Random Number Generator</div>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Calculators</a> / Random Number Generator</div>
 <div class="container tool-page-header">
   <h1>Random Number Generator</h1>
   <p>Generate truly random numbers in any range — single, multiple, or roll virtual dice.</p>

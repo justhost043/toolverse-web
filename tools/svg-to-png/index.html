@@ -20,6 +20,12 @@ textarea.svg-code{font-family:'JetBrains Mono',monospace;font-size:12.5px;resize
 .preview-box{background:repeating-conic-gradient(#E7E5EE 0% 25%,#EFECFA 0% 50%) 0 0/20px 20px;border-radius:var(--radius-md);border:1px solid var(--color-border);min-height:200px;display:flex;align-items:center;justify-content:center;margin:16px 0;padding:20px}
 .preview-box img,.preview-box svg{max-width:100%;max-height:280px}
 .options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .site-header .inner{padding:0 16px}
+  .container{padding:0 16px}
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Svg To Png","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert SVG to PNG or JPG online for free. Upload a file or paste SVG code. Choose custom resolution and background color. Runs in your browser."}</script>
 </head>
