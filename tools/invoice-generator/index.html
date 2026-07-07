@@ -195,6 +195,8 @@ document.getElementById('pdf-btn').addEventListener('click',generatePDF);
 document.getElementById('preview-btn').addEventListener('click',()=>{window.open('','_blank').document.write(generateHTML());});
 
 function generatePDF(){
+  const clientName = document.getElementById('client-name') ? document.getElementById('client-name').value.trim() : '';
+  if (!clientName) { alert('Please enter a client name before generating.'); return; }
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
   const c=getCurrency();

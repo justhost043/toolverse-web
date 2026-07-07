@@ -13,6 +13,14 @@
 <style>
 .dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
 .dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+
+@media(max-width:600px){
+  .tool-panel{padding:16px}
+  .container{padding:0 14px}
+  .field-input,.field-select{font-size:16px}
+  .btn{padding:10px 16px;font-size:13.5px}
+  .site-header .inner{padding:0 14px}
+}
 </style>
 </head>
 <body>
@@ -57,7 +65,7 @@ document.getElementById("apply-btn").addEventListener("click",async()=>{
     const pdf=await PDFDocument.load(pdfB);
     const font=await pdf.embedFont(StandardFonts.HelveticaBold);
     const pages=pdf.getPages();
-    const text=document.getElementById("wm-text").value||"CONFIDENTIAL";
+    const text=document.getElementById("wm-text").value.trim()||"CONFIDENTIAL";
     const op=parseInt(document.getElementById("wm-op").value)/100;
     const sz=parseInt(document.getElementById("wm-sz").value);
     const hex=document.getElementById("wm-col").value;

@@ -133,7 +133,7 @@ function runDiff() {
 
 document.getElementById('diff-btn').addEventListener('click', runDiff);
 document.getElementById('swap-btn').addEventListener('click', () => {
-  const t = document.getElementById('text-a').value;
+  const t = document.getElementById('text-a').value.trim();
   document.getElementById('text-a').value = document.getElementById('text-b').value;
   document.getElementById('text-b').value = t;
 });

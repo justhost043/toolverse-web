@@ -78,7 +78,7 @@ function redraw(){
   const MAX=680;const scale=Math.min(1,MAX/Math.max(imgEl.naturalWidth,imgEl.naturalHeight));
   canvas.width=imgEl.naturalWidth*scale;canvas.height=imgEl.naturalHeight*scale;
   ctx.drawImage(imgEl,0,0,canvas.width,canvas.height);
-  const text=document.getElementById('wm-text').value||'Watermark';
+  const text=document.getElementById('wm-text').value.trim()||'Watermark';
   const fs=parseInt(document.getElementById('font-size').value)*scale;
   const op=parseInt(document.getElementById('opacity').value)/100;
   const color=document.getElementById('wm-color').value;

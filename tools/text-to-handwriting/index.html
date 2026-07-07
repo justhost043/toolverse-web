@@ -190,7 +190,7 @@ function addNaturalVariation(text) {
 function render() {
   const content = document.getElementById('paper-content');
   const fontSize = parseInt(document.getElementById('font-size').value);
-  const text = document.getElementById('inp').value;
+  const text = document.getElementById('inp').value.trim();
   const margin = document.getElementById('opt-margin').checked;
   document.getElementById('red-margin').style.display = margin ? '' : 'none';
 

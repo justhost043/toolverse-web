@@ -123,7 +123,7 @@ function getSeparator() {
 }
 
 function generate() {
-  const text = document.getElementById('inp').value;
+  const text = document.getElementById('inp').value.trim();
   const count = Math.min(10000, Math.max(1, +countNum.value || 1));
   if (!text) { document.getElementById('out').value = ''; return; }
   const separator = getSeparator();

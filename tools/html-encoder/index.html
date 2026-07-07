@@ -114,7 +114,7 @@ function decode(text) {
 }
 
 function convert() {
-  const input = document.getElementById('inp').value;
+  const input = document.getElementById('inp').value.trim();
   document.getElementById('out').value = isEncode ? encode(input) : decode(input);
 }
 

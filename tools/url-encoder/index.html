@@ -67,7 +67,7 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 function convert(){
   const mode=document.getElementById('mode-sel').value;
-  const v=document.getElementById('inp').value;
+  const v=document.getElementById('inp').value.trim();
   try{
     let res;
     if(mode==='encode-component') res=encodeURIComponent(v);
