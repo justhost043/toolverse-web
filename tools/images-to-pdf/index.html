@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Images to PDF Online | OMIToolKit</title>
+<meta name="description" content="Combine multiple images (JPG, PNG) into a single PDF. Reorder before converting. Free, browser-based — no upload required.">
+<link rel="canonical" href="../../tools/images-to-pdf/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Images to PDF","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / Images to PDF</div>
+<div class="container tool-page-header"><h1>Images to PDF</h1><p>Combine multiple images (JPG, PNG) into a single PDF. Reorder before converting.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:700px">
+<div class="dz" id="dz"><div style="font-size:36px;margin-bottom:10px">🖼️</div><div style="font-size:15px;font-weight:600">Drop images here or click to select</div><div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">JPG, PNG — multiple files supported</div><input type="file" id="fi" accept="image/*" multiple style="display:none"></div>
+<div id="editor" style="display:none">
+<div class="field-label" style="margin:14px 0 8px">Images to convert</div>
+<div id="file-list"></div>
+<button class="btn btn-primary" id="convert-btn" style="width:100%;justify-content:center;padding:13px;margin-top:14px">📄 Convert to PDF</button>
+<div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>About Images to PDF</h2><p>Combine multiple images (JPG, PNG) into a single PDF. Reorder before converting. All processing happens in your browser — your files are never uploaded to any server.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();const {PDFDocument}=PDFLib;
+let files=[];
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");addFiles([...e.dataTransfer.files])});
+fi.addEventListener("change",()=>addFiles([...fi.files]));
+function addFiles(newFiles){
+  files=[...files,...newFiles.filter(f=>f.type.startsWith("image/"))];
+  renderList();
+}
+function renderList(){
+  const list=document.getElementById("file-list");
+  if(!files.length){list.innerHTML="";document.getElementById("editor").style.display="none";return;}
+  document.getElementById("editor").style.display="";
+  list.innerHTML=files.map((f,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:8px;margin:4px 0">
+    <span style="font-size:20px">🖼️</span>
+    <span style="flex:1;font-size:13.5px">${f.name}</span>
+    <span style="font-size:12px;color:var(--color-text-muted)">${(f.size/1024).toFixed(0)}KB</span>
+    <button onclick="files.splice(${i},1);renderList()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px;padding:0 4px">×</button>
+  </div>`).join("");
+}
+document.getElementById("convert-btn").addEventListener("click",async()=>{
+  if(!files.length)return;
+  document.getElementById("status").textContent="Converting…";
+  document.getElementById("convert-btn").disabled=true;
+  try{
+    const pdf=await PDFDocument.create();
+    for(const file of files){
+      const buf=await file.arrayBuffer();
+      let img;
+      if(file.type==="image/jpeg"||file.type==="image/jpg")img=await pdf.embedJpg(buf);
+      else{const c=document.createElement("canvas");const im=new Image();await new Promise(r=>{im.onload=r;im.src=URL.createObjectURL(file)});c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext("2d").drawImage(im,0,0);const jpgData=await fetch(c.toDataURL("image/jpeg",0.92)).then(r=>r.arrayBuffer());img=await pdf.embedJpg(jpgData);}
+      const page=pdf.addPage([img.width,img.height]);
+      page.drawImage(img,{x:0,y:0,width:img.width,height:img.height});
+    }
+    const out=await pdf.save();
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([out],{type:"application/pdf"}));a.download="images.pdf";a.click();
+    document.getElementById("status").textContent="✅ Done! "+files.length+" images converted.";
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("convert-btn").disabled=false;
+});</script>
+</body></html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Flip Image Online — Rotate Images 90°, 180°, 270° | OMIToolKit</title>
+<meta name="description" content="Rotate images online for free. Rotate left, right, 180° or any custom angle. Flip horizontally and vertically. Download instantly. No upload required.">
+<link rel="canonical" href="../../tools/flip-image/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Flip Image","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Rotate and flip images online instantly — 90°, 180°, 270° or custom angle."}</script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.rotate-btns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.rot-btn{padding:10px 18px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:#fff;font-size:22px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500}
+.rot-btn:hover{border-color:var(--color-primary);background:#F4F3FE;color:var(--color-primary)}
+.preview-wrap{background:repeating-conic-gradient(#E7E5EE 0% 25%,#F9F9F9 0% 50%) 0 0/16px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);min-height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:16px;margin:16px 0}
+.preview-wrap img{max-width:100%;max-height:300px;object-fit:contain;transition:transform .2s}
+.custom-row{display:flex;gap:12px;align-items:center;margin:10px 0}
+@media(max-width:600px){.rotate-btns{gap:8px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Flip Image</div>
+<div class="container tool-page-header">
+<h1>Flip Image</h1>
+<p>Flip any image horizontally or vertically in one click. Mirror, reverse, or create symmetrical effects instantly.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:680px">
+  <div class="drop-zone" id="dz">
+    <div style="font-size:36px;margin-bottom:10px">🔄</div>
+    <div style="font-size:15px;font-weight:600">Drop an image here or click to select</div>
+    <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">JPG, PNG, WebP, GIF</div>
+    <input type="file" id="fi" accept="image/*" style="display:none">
+  </div>
+  <div id="editor" style="display:none">
+    <div class="rotate-btns">
+      <button class="rot-btn" id="r-left">↺ Rotate 90° Left</button>
+      <button class="rot-btn" id="r-right">↻ Rotate 90° Right</button>
+      <button class="rot-btn" id="r-180">🔃 Rotate 180°</button>
+      <button class="rot-btn" id="f-h">↔ Flip Horizontal</button>
+      <button class="rot-btn" id="f-v">↕ Flip Vertical</button>
+      <button class="rot-btn" id="r-reset">✕ Reset</button>
+    </div>
+    <div class="custom-row">
+      <label class="field-label" style="margin:0;white-space:nowrap">Custom angle:</label>
+      <input type="number" id="custom-angle" class="field-input" style="width:100px" value="0" min="-360" max="360">
+      <span style="font-size:13px">deg</span>
+      <button class="btn btn-outline" id="apply-custom">Apply</button>
+    </div>
+    <div class="preview-wrap"><canvas id="canvas" style="max-width:100%;max-height:300px"></canvas></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="download-btn">⬇ Download Image</button>
+      <button class="btn btn-outline" id="new-btn">New Image</button>
+    </div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+<h2>When do you need to rotate an image?</h2>
+<p>Photos taken on mobile devices sometimes save with incorrect orientation — they appear sideways or upside-down when viewed on a computer. Rotating corrects this. Flipping (mirroring) is useful for creating symmetrical designs, correcting selfie mirror effects, or creating left/right variants of a graphic.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+let imgEl=null, totalRotation=0, flipH=false, flipV=false;
+const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d');
+const dz=document.getElementById('dz'), fi=document.getElementById('fi');
+
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])loadImg(e.dataTransfer.files[0])});
+fi.addEventListener('change',()=>{if(fi.files[0])loadImg(fi.files[0])});
+
+function loadImg(file){
+  const url=URL.createObjectURL(file);
+  imgEl=new Image();
+  imgEl.onload=()=>{totalRotation=0;flipH=false;flipV=false;redraw();document.getElementById('editor').style.display='';URL.revokeObjectURL(url)};
+  imgEl.src=url;
+}
+
+function redraw(){
+  if(!imgEl)return;
+  const rad=totalRotation*Math.PI/180;
+  const sin=Math.abs(Math.sin(rad)), cos=Math.abs(Math.cos(rad));
+  canvas.width=Math.round(imgEl.naturalWidth*cos+imgEl.naturalHeight*sin);
+  canvas.height=Math.round(imgEl.naturalWidth*sin+imgEl.naturalHeight*cos);
+  ctx.save();
+  ctx.translate(canvas.width/2,canvas.height/2);
+  ctx.rotate(rad);
+  ctx.scale(flipH?-1:1,flipV?-1:1);
+  ctx.drawImage(imgEl,-imgEl.naturalWidth/2,-imgEl.naturalHeight/2);
+  ctx.restore();
+}
+
+document.getElementById('r-left').addEventListener('click',()=>{totalRotation=(totalRotation-90+360)%360;redraw()});
+document.getElementById('r-right').addEventListener('click',()=>{totalRotation=(totalRotation+90)%360;redraw()});
+document.getElementById('r-180').addEventListener('click',()=>{totalRotation=(totalRotation+180)%360;redraw()});
+document.getElementById('f-h').addEventListener('click',()=>{flipH=!flipH;redraw()});
+document.getElementById('f-v').addEventListener('click',()=>{flipV=!flipV;redraw()});
+document.getElementById('r-reset').addEventListener('click',()=>{totalRotation=0;flipH=false;flipV=false;redraw()});
+document.getElementById('apply-custom').addEventListener('click',()=>{
+  const a=parseInt(document.getElementById('custom-angle').value)||0;
+  totalRotation=((totalRotation+a)%360+360)%360;redraw();
+});
+document.getElementById('download-btn').addEventListener('click',()=>{
+  canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rotated.png';a.click()},'image/png');
+});
+document.getElementById('new-btn').addEventListener('click',()=>{
+  document.getElementById('editor').style.display='none';imgEl=null;fi.value='';
+});
+</script>
+</body></html>

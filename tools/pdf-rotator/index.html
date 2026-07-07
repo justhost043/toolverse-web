@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free PDF Rotator Online — Rotate PDF Pages | OMIToolKit</title>
+<meta name="description" content="Rotate PDF pages online for free. Rotate all pages or individual pages by 90°, 180°, or 270°. Browser-based — no upload required.">
+<link rel="canonical" href="../../tools/pdf-rotator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px}
+.m-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.m-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.angle-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.a-btn{padding:16px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:#fff;font-size:24px;cursor:pointer;transition:all .15s;text-align:center}
+.a-btn:hover,.a-btn.active{border-color:var(--color-primary);background:#F4F3FE}
+.a-btn .a-lbl{font-size:12px;font-weight:600;color:var(--color-text-muted);margin-top:4px}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF Rotator</div>
+<div class="container tool-page-header">
+<h1>PDF Rotator</h1>
+<p>Rotate all pages or specific pages of a PDF by 90°, 180°, or 270°.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:620px">
+  <div class="drop-zone" id="dz">
+    <div style="font-size:36px;margin-bottom:10px">🔄</div>
+    <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
+    <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+  </div>
+  <div id="editor" style="display:none">
+    <div id="file-info" style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin:14px 0;font-size:14px;font-weight:500"></div>
+    <div class="field-label" style="margin-bottom:10px">Rotation angle</div>
+    <div class="angle-btns">
+      <div class="a-btn active" data-deg="90"><div>↻</div><div class="a-lbl">90° Right</div></div>
+      <div class="a-btn" data-deg="180"><div>🔃</div><div class="a-lbl">180°</div></div>
+      <div class="a-btn" data-deg="270"><div>↺</div><div class="a-lbl">90° Left</div></div>
+    </div>
+    <div class="mode-tabs">
+      <button class="m-tab active" data-m="all">All pages</button>
+      <button class="m-tab" data-m="range">Page range</button>
+    </div>
+    <div id="range-panel" style="display:none;margin-bottom:14px">
+      <div style="display:flex;gap:12px">
+        <div style="flex:1"><label class="field-label">From</label><input type="number" id="r-from" class="field-input" value="1" min="1"></div>
+        <div style="flex:1"><label class="field-label">To</label><input type="number" id="r-to" class="field-input" value="1" min="1"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="rotate-btn" style="width:100%;justify-content:center;padding:13px">🔄 Rotate & Download</button>
+    <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+<h2>Why rotate PDF pages?</h2>
+<p>Scanned documents often come out sideways or upside-down, especially when paper is fed into a scanner incorrectly. PDF Rotator permanently corrects the orientation in the saved file — unlike viewing rotation in a PDF reader which only affects how you see it on screen without saving the change. This tool uses PDF-lib to rotate pages without re-encoding or reducing quality.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+const {PDFDocument,degrees}=PDFLib;
+let pdfBytes=null,totalPages=0,rotDeg=90,mode="all";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadFile(fi.files[0])});
+
+async function loadFile(file){
+  const buf=await file.arrayBuffer();
+  pdfBytes=new Uint8Array(buf);
+  const pdf=await PDFDocument.load(pdfBytes);
+  totalPages=pdf.getPageCount();
+  document.getElementById("file-info").textContent=file.name+" · "+totalPages+" pages";
+  document.getElementById("r-to").value=totalPages;
+  document.getElementById("r-from").max=document.getElementById("r-to").max=totalPages;
+  document.getElementById("editor").style.display="";
+}
+
+document.querySelectorAll(".a-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".a-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");rotDeg=parseInt(b.dataset.deg);
+}));
+document.querySelectorAll(".m-tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".m-tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");mode=t.dataset.m;
+  document.getElementById("range-panel").style.display=mode==="range"?"":"none";
+}));
+
+document.getElementById("rotate-btn").addEventListener("click",async()=>{
+  if(!pdfBytes)return;
+  document.getElementById("status").textContent="Rotating…";
+  document.getElementById("rotate-btn").disabled=true;
+  try{
+    const pdf=await PDFDocument.load(pdfBytes);
+    const pages=pdf.getPages();
+    let toRotate;
+    if(mode==="all"){toRotate=Array.from({length:totalPages},(_,i)=>i);}
+    else{const f=parseInt(document.getElementById("r-from").value)-1,t=parseInt(document.getElementById("r-to").value)-1;toRotate=Array.from({length:t-f+1},(_,i)=>f+i);}
+    toRotate.forEach(i=>{const p=pages[i];if(p)p.setRotation(degrees((p.getRotation().angle+rotDeg)%360));});
+    const out=await pdf.save();
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([out],{type:"application/pdf"}));a.download="rotated.pdf";a.click();
+    document.getElementById("status").textContent="✅ Download started";
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("rotate-btn").disabled=false;
+});
+</script>
+</body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Markdown Editor Online — Live Preview | OMIToolKit</title>
+<meta name="description" content="Free online Markdown editor with live HTML preview. Write Markdown on the left, see rendered HTML on the right. Export as HTML or download .md file.">
+<link rel="canonical" href="../../tools/markdown-editor/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Markdown Editor","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+@media(max-width:640px){.editor-layout{grid-template-columns:1fr}}
+.editor-pane{display:flex;flex-direction:column}
+.pane-header{background:#F4F3FE;padding:10px 16px;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-primary);border-bottom:1px solid var(--color-border)}
+#md-input{border:none;border-right:1.5px solid var(--color-border);border-radius:0;font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.7;padding:16px;min-height:480px;resize:none;outline:none;background:#FAFAFA}
+#md-preview{padding:20px;min-height:480px;overflow-y:auto;font-size:14.5px;line-height:1.8}
+#md-preview h1,#md-preview h2,#md-preview h3{margin:1em 0 .4em;font-weight:700}
+#md-preview h1{font-size:1.8em;border-bottom:2px solid var(--color-border);padding-bottom:.3em}
+#md-preview h2{font-size:1.4em;border-bottom:1px solid var(--color-border);padding-bottom:.2em}
+#md-preview code{background:#F4F3FE;padding:1px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:13px}
+#md-preview pre{background:#1E1B2E;padding:16px;border-radius:8px;overflow-x:auto}
+#md-preview pre code{background:transparent;color:#E2E8F0;padding:0}
+#md-preview blockquote{border-left:4px solid var(--color-primary);padding-left:16px;color:var(--color-text-muted);margin:1em 0}
+#md-preview table{width:100%;border-collapse:collapse}
+#md-preview th,#md-preview td{padding:8px 12px;border:1px solid var(--color-border)}
+#md-preview th{background:#F4F3FE;font-weight:600}
+#md-preview a{color:var(--color-primary)}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--color-border);background:#fff}
+.tb-btn{padding:5px 10px;border-radius:5px;border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;font-family:monospace;transition:all .12s}
+.tb-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.stats-row{display:flex;gap:10px;padding:8px 16px;background:#F9F9F9;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Markdown Editor</div>
+<div class="container tool-page-header">
+<h1>Markdown Editor</h1>
+<p>Write Markdown on the left — see live HTML preview on the right. Export as HTML or download .md.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:1000px;padding:0">
+  <div class="toolbar">
+    <button class="tb-btn" onclick="insert('**','**')"><b>B</b></button>
+    <button class="tb-btn" onclick="insert('*','*')"><i>I</i></button>
+    <button class="tb-btn" onclick="insert('# ','')">H1</button>
+    <button class="tb-btn" onclick="insert('## ','')">H2</button>
+    <button class="tb-btn" onclick="insert('### ','')">H3</button>
+    <button class="tb-btn" onclick="insert('[text](',')')">🔗</button>
+    <button class="tb-btn" onclick="insert('`','`')">code</button>
+    <button class="tb-btn" onclick="insert('\`\`\`\n','\n\`\`\`')">```</button>
+    <button class="tb-btn" onclick="insert('> ','')">❝</button>
+    <button class="tb-btn" onclick="insert('- ','')">• List</button>
+    <button class="tb-btn" onclick="insert('1. ','')">1. List</button>
+    <button class="tb-btn" onclick="insert('---\n','')">HR</button>
+    <button class="tb-btn" onclick="insert('| Col1 | Col2 |\n|------|------|\n| Cell | Cell |\n','')">Table</button>
+    <div style="flex:1"></div>
+    <button class="tb-btn" id="dl-md-btn">⬇ .md</button>
+    <button class="tb-btn" id="dl-html-btn">⬇ HTML</button>
+    <button class="tb-btn" id="copy-html-btn">Copy HTML</button>
+  </div>
+  <div class="editor-layout">
+    <div class="editor-pane">
+      <div class="pane-header">✏️ Markdown Input</div>
+      <textarea id="md-input" placeholder="# Hello World&#10;&#10;Start writing Markdown here...&#10;&#10;**Bold**, *italic*, `code`&#10;&#10;- List item&#10;- Another item&#10;&#10;> Blockquote&#10;&#10;[Link](https://example.com)"></textarea>
+    </div>
+    <div class="editor-pane">
+      <div class="pane-header">👁️ Preview</div>
+      <div id="md-preview"></div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <span id="s-words">0 words</span>
+    <span id="s-chars">0 chars</span>
+    <span id="s-lines">0 lines</span>
+    <span id="s-read">~0 min read</span>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+<h2>Markdown syntax quick reference</h2>
+<p>Markdown is a lightweight markup language that converts plain text to formatted HTML. <code># Heading</code> creates an H1, <code>**bold**</code> makes text bold, <code>*italic*</code> makes it italic, and backticks create <code>inline code</code>. Hyphens create bullet lists, and you can create links with <code>[text](URL)</code>. Triple backticks create code blocks. Markdown is widely used in README files, blogs, documentation, and messaging apps like Slack and Discord.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+const inp=document.getElementById("md-input"), preview=document.getElementById("md-preview");
+marked.setOptions({breaks:true,gfm:true});
+function render(){
+  const t=inp.value;
+  preview.innerHTML=marked.parse(t);
+  const words=t.trim()?t.trim().split(/\s+/).length:0;
+  document.getElementById("s-words").textContent=words+" words";
+  document.getElementById("s-chars").textContent=t.length+" chars";
+  document.getElementById("s-lines").textContent=t.split("\n").length+" lines";
+  document.getElementById("s-read").textContent="~"+Math.max(1,Math.ceil(words/200))+" min read";
+}
+inp.addEventListener("input",render);
+function insert(before,after){
+  const s=inp.selectionStart,e=inp.selectionEnd,t=inp.value;
+  const sel=t.substring(s,e);
+  inp.value=t.substring(0,s)+before+sel+after+t.substring(e);
+  inp.selectionStart=s+before.length;
+  inp.selectionEnd=s+before.length+sel.length;
+  inp.focus();render();
+}
+document.getElementById("dl-md-btn").addEventListener("click",()=>{
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([inp.value],{type:"text/markdown"}));a.download="document.md";a.click();
+});
+document.getElementById("dl-html-btn").addEventListener("click",()=>{
+  const html="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Markdown Export</title></head><body>"+preview.innerHTML+"</body></html>";
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="document.html";a.click();
+});
+document.getElementById("copy-html-btn").addEventListener("click",()=>{
+  navigator.clipboard.writeText(preview.innerHTML).then(()=>{const b=document.getElementById("copy-html-btn");b.textContent="Copied!";setTimeout(()=>b.textContent="Copy HTML",1200)});
+});
+// Demo content
+inp.value=`# Welcome to Markdown Editor
+
+This is a **live preview** Markdown editor. Type on the left, see rendered HTML on the right.
+
+## Features
+- Bold, *italic*, and \`inline code\`
+- Lists, blockquotes, tables
+- Code blocks with syntax hints
+- Export as .md or HTML
+
+## Code Example
+\`\`\`
+const greet = (name) => \`Hello, \${name}!\`;
+console.log(greet("World"));
+\`\`\`
+
+> **Tip:** Use the toolbar buttons above to insert formatting quickly.
+
+| Format | Syntax |
+|--------|--------|
+| Bold | **text** |
+| Italic | *text* |
+| Code | \`text\` |`;
+render();
+</script>
+</body></html>

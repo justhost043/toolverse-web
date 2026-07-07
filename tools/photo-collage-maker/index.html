@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Photo Collage Maker Online — Create Image Collages | OMIToolKit</title>
+<meta name="description" content="Create photo collages online with grid layouts. Choose 2-6 images, pick a layout and gap color, then download your collage. Free browser-based collage maker.">
+<link rel="canonical" href="../../tools/photo-collage-maker/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Photo Collage Maker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.layout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin:12px 0}
+.layout-btn{aspect-ratio:1;border:2px solid var(--color-border);border-radius:8px;background:#fff;cursor:pointer;padding:6px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.layout-btn.active{border-color:var(--color-primary);background:#F4F3FE}
+.layout-btn svg{width:100%;height:100%}
+.slot-grid{display:grid;gap:8px;margin:14px 0}
+.img-slot{border:2px dashed var(--color-border);border-radius:var(--radius-sm);aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#F9F9F9;overflow:hidden;position:relative;transition:all .15s}
+.img-slot:hover{border-color:var(--color-primary);background:#F4F3FE}
+.img-slot img{width:100%;height:100%;object-fit:cover}
+.img-slot .slot-lbl{font-size:13px;color:var(--color-text-muted);pointer-events:none}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Photo Collage Maker</div>
+<div class="container tool-page-header">
+  <h1>Photo Collage Maker</h1>
+  <p>Combine 2–6 photos into a collage grid — choose layout, gap, and background. Download instantly.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:700px">
+  <div class="field-label" style="margin-bottom:8px">Layout</div>
+  <div class="layout-grid" id="layout-grid">
+    <button class="layout-btn active" data-l="2h" title="2 photos side by side"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="18" height="38" rx="2" fill="#C9C5F7"/><rect x="21" y="1" width="18" height="38" rx="2" fill="#C9C5F7"/></svg></button>
+    <button class="layout-btn" data-l="2v" title="2 photos stacked"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="18" rx="2" fill="#C9C5F7"/><rect x="1" y="21" width="38" height="18" rx="2" fill="#C9C5F7"/></svg></button>
+    <button class="layout-btn" data-l="3h" title="3 columns"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="11" height="38" rx="2" fill="#C9C5F7"/><rect x="14" y="1" width="11" height="38" rx="2" fill="#C9C5F7"/><rect x="27" y="1" width="12" height="38" rx="2" fill="#C9C5F7"/></svg></button>
+    <button class="layout-btn" data-l="4g" title="2x2 grid"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="18" height="18" rx="2" fill="#C9C5F7"/><rect x="21" y="1" width="18" height="18" rx="2" fill="#C9C5F7"/><rect x="1" y="21" width="18" height="18" rx="2" fill="#C9C5F7"/><rect x="21" y="21" width="18" height="18" rx="2" fill="#C9C5F7"/></svg></button>
+    <button class="layout-btn" data-l="5g" title="1 large + 4 small"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="25" height="38" rx="2" fill="#C9C5F7"/><rect x="28" y="1" width="11" height="17" rx="2" fill="#A78BFA"/><rect x="28" y="21" width="11" height="18" rx="2" fill="#A78BFA"/></svg></button>
+    <button class="layout-btn" data-l="6g" title="2x3 grid"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="18" height="12" rx="2" fill="#C9C5F7"/><rect x="21" y="1" width="18" height="12" rx="2" fill="#C9C5F7"/><rect x="1" y="15" width="18" height="12" rx="2" fill="#C9C5F7"/><rect x="21" y="15" width="18" height="12" rx="2" fill="#C9C5F7"/><rect x="1" y="29" width="18" height="10" rx="2" fill="#C9C5F7"/><rect x="21" y="29" width="18" height="10" rx="2" fill="#C9C5F7"/></svg></button>
+  </div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin:12px 0;align-items:center">
+    <div style="display:flex;align-items:center;gap:8px">
+      <label class="field-label" style="margin:0">Gap: <strong id="gap-lbl" style="color:var(--color-primary)">8px</strong></label>
+      <input type="range" id="gap" min="0" max="40" value="8" style="width:100px;accent-color:var(--color-primary)">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <label class="field-label" style="margin:0">Background</label>
+      <input type="color" id="bg-color" value="#ffffff" style="width:42px;height:36px;border-radius:6px;border:1px solid var(--color-border);cursor:pointer">
+    </div>
+  </div>
+
+  <div style="font-size:13px;color:var(--color-text-muted);margin-bottom:8px">Click a slot to add a photo</div>
+  <div id="slot-grid" class="slot-grid" style="grid-template-columns:1fr 1fr"></div>
+
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn btn-primary" id="make-btn">Create Collage</button>
+    <button class="btn btn-outline" id="clear-btn">Clear All</button>
+  </div>
+  <canvas id="canvas" style="display:none;max-width:100%;margin-top:14px;border:1px solid var(--color-border);border-radius:var(--radius-md)"></canvas>
+  <button class="btn btn-primary" id="dl-btn" style="display:none;width:100%;justify-content:center;padding:13px;margin-top:10px">&#11015; Download Collage</button>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>Create photo collages for social media</h2>
+  <p>Photo collages are a popular format for Instagram, Pinterest, and blog posts. A 2x2 grid works well for product photos or before/after comparisons. The 2-column layout is classic for portrait photography. The 1-large + 2-small layout (5-photo) creates visual hierarchy that draws attention to a hero image while supporting it with context photos.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+const LAYOUTS={
+  "2h":{cols:2,cells:[{r:0,c:0,rs:1,cs:1},{r:0,c:1,rs:1,cs:1}],gridCols:2,gridRows:1},
+  "2v":{cols:1,cells:[{r:0,c:0,rs:1,cs:1},{r:1,c:0,rs:1,cs:1}],gridCols:1,gridRows:2},
+  "3h":{cols:3,cells:[{r:0,c:0,rs:1,cs:1},{r:0,c:1,rs:1,cs:1},{r:0,c:2,rs:1,cs:1}],gridCols:3,gridRows:1},
+  "4g":{cols:2,cells:[{r:0,c:0,rs:1,cs:1},{r:0,c:1,rs:1,cs:1},{r:1,c:0,rs:1,cs:1},{r:1,c:1,rs:1,cs:1}],gridCols:2,gridRows:2},
+  "5g":{cols:2,cells:[{r:0,c:0,rs:2,cs:1},{r:0,c:1,rs:1,cs:1},{r:1,c:1,rs:1,cs:1}],gridCols:2,gridRows:2},
+  "6g":{cols:2,cells:[{r:0,c:0},{r:0,c:1},{r:1,c:0},{r:1,c:1},{r:2,c:0},{r:2,c:1}],gridCols:2,gridRows:3},
+};
+let currentLayout="2h",images=[];
+document.getElementById("gap").addEventListener("input",e=>document.getElementById("gap-lbl").textContent=e.target.value+"px");
+document.querySelectorAll(".layout-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".layout-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");currentLayout=b.dataset.l;images=[];buildSlots();
+}));
+function buildSlots(){
+  const l=LAYOUTS[currentLayout];
+  const n=l.cells.length;
+  const sg=document.getElementById("slot-grid");
+  sg.style.gridTemplateColumns="repeat("+l.gridCols+",1fr)";
+  sg.style.gridTemplateRows=l.gridRows?"repeat("+l.gridRows+",140px)":"";
+  sg.innerHTML=Array.from({length:n},(_,i)=>`
+    <div class="img-slot" id="slot-${i}" onclick="pickImg(${i})" ${l.cells[i].rs>1?"style=grid-row:span "+l.cells[i].rs:""}
+      ${(l.cells[i].cs||1)>1?"style=grid-column:span "+(l.cells[i].cs||1):""}
+    ><span class="slot-lbl">+ Photo ${i+1}</span></div>`).join("");
+  images=Array(n).fill(null);
+  document.getElementById("canvas").style.display="none";
+  document.getElementById("dl-btn").style.display="none";
+}
+function pickImg(i){
+  const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=()=>{
+    const url=URL.createObjectURL(inp.files[0]);
+    const img=new Image();img.onload=()=>{images[i]=img;const s=document.getElementById("slot-"+i);s.innerHTML=`<img src="${url}">`;};img.src=url;
+  };inp.click();
+}
+document.getElementById("make-btn").addEventListener("click",()=>{
+  const filled=images.filter(Boolean).length;
+  if(!filled){alert("Add at least one photo first");return;}
+  const l=LAYOUTS[currentLayout],n=l.cells.length;
+  const gap=parseInt(document.getElementById("gap").value)||0;
+  const bg=document.getElementById("bg-color").value;
+  const cw=800,cellW=(cw-gap*(l.gridCols-1))/l.gridCols,cellH=cellW;
+  const rows=l.gridRows||Math.ceil(n/l.gridCols);
+  const ch=rows*cellH+(rows-1)*gap;
+  const canvas=document.getElementById("canvas");
+  canvas.width=cw;canvas.height=ch;canvas.style.display="block";
+  const ctx=canvas.getContext("2d");
+  ctx.fillStyle=bg;ctx.fillRect(0,0,cw,ch);
+  l.cells.forEach((cell,i)=>{
+    if(!images[i])return;
+    const cs=cell.cs||1,rs=cell.rs||1;
+    const x=cell.c*(cellW+gap),y=cell.r*(cellH+gap);
+    const w=cs*cellW+(cs-1)*gap,h=rs*cellH+(rs-1)*gap;
+    const img=images[i];
+    const scale=Math.max(w/img.naturalWidth,h/img.naturalHeight);
+    const sw=img.naturalWidth*scale,sh=img.naturalHeight*scale;
+    const ox=(w-sw)/2,oy=(h-sh)/2;
+    ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+    ctx.drawImage(img,x+ox,y+oy,sw,sh);ctx.restore();
+  });
+  document.getElementById("dl-btn").style.display="flex";
+});
+document.getElementById("dl-btn").addEventListener("click",()=>{
+  document.getElementById("canvas").toBlob(blob=>{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="collage.png";a.click()},"image/png");
+});
+document.getElementById("clear-btn").addEventListener("click",()=>buildSlots());
+buildSlots();
+</script>
+</body></html>

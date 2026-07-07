@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Watermark Image Online — Add Text or Logo Watermark | OMIToolKit</title>
+<meta name="description" content="Add a text or image watermark to photos online. Control opacity, position, size, and font. Free browser-based watermark tool.">
+<link rel="canonical" href="../../tools/watermark-image/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Watermark Image","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:500px){.opts-grid{grid-template-columns:1fr}}
+.preview-canvas{max-width:100%;border:1px solid var(--color-border);border-radius:var(--radius-md);display:block;margin:14px auto}
+.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:150px}
+.pos-btn{padding:8px;border:1.5px solid var(--color-border);border-radius:6px;background:#fff;cursor:pointer;font-size:18px;transition:all .12s}
+.pos-btn.active{background:var(--color-primary);border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Watermark Image</div>
+<div class="container tool-page-header"><h1>Watermark Image</h1><p>Add text or image watermarks to photos — control position, opacity, font, and size.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:700px">
+<div class="dz" id="dz">
+  <div style="font-size:36px;margin-bottom:10px">🖼️</div>
+  <div style="font-size:15px;font-weight:600">Drop an image here or click to select</div>
+  <input type="file" id="fi" accept="image/*" style="display:none">
+</div>
+<div id="editor" style="display:none">
+  <div style="margin:14px 0">
+    <div class="field-label" style="margin-bottom:8px">Watermark text</div>
+    <input type="text" id="wm-text" class="field-input" value="© OMIToolKit.com" placeholder="Your watermark text…">
+  </div>
+  <div class="opts-grid">
+    <div><label class="field-label">Font size: <span id="fs-val">36</span>px</label><input type="range" id="font-size" min="12" max="120" value="36" style="width:100%;accent-color:var(--color-primary)"></div>
+    <div><label class="field-label">Opacity: <span id="op-val">70</span>%</label><input type="range" id="opacity" min="10" max="100" value="70" style="width:100%;accent-color:var(--color-primary)"></div>
+    <div><label class="field-label">Color</label><input type="color" id="wm-color" value="#ffffff" style="width:100%;height:42px;border-radius:8px;border:1px solid var(--color-border)"></div>
+    <div><label class="field-label">Rotation: <span id="rot-val">-30</span>°</label><input type="range" id="wm-rot" min="-90" max="90" value="-30" style="width:100%;accent-color:var(--color-primary)"></div>
+  </div>
+  <div class="field-label" style="margin-bottom:8px">Position</div>
+  <div class="pos-grid" id="pos-grid">
+    <div class="pos-btn" data-p="tl">↖</div><div class="pos-btn" data-p="tc">↑</div><div class="pos-btn" data-p="tr">↗</div>
+    <div class="pos-btn" data-p="ml">←</div><div class="pos-btn active" data-p="center">◎</div><div class="pos-btn" data-p="mr">→</div>
+    <div class="pos-btn" data-p="bl">↙</div><div class="pos-btn" data-p="bc">↓</div><div class="pos-btn" data-p="br">↘</div>
+  </div>
+  <canvas id="canvas" class="preview-canvas"></canvas>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" id="dl-btn">⬇ Download Image</button>
+    <button class="btn btn-outline" id="new-btn">New Image</button>
+  </div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Why watermark your images?</h2><p>Watermarking protects your creative work from being used without credit. Adding your brand name, website URL, or logo discourages unauthorized use and increases brand visibility when images are shared on social media. For photographers and digital artists, watermarking is an essential step before sharing preview images of paid work.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+let imgEl=null,wmPos='center';
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+const dz=document.getElementById('dz'),fi=document.getElementById('fi');
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])loadImg(e.dataTransfer.files[0])});
+fi.addEventListener('change',()=>{if(fi.files[0])loadImg(fi.files[0])});
+function loadImg(file){const url=URL.createObjectURL(file);imgEl=new Image();imgEl.onload=()=>{redraw();document.getElementById('editor').style.display='';URL.revokeObjectURL(url)};imgEl.src=url}
+function getPos(w,h,pos,tw,th){const pad=20;const m={tl:[pad,pad+th],tc:[w/2,pad+th],tr:[w-pad-tw,pad+th],ml:[pad,h/2],center:[w/2,h/2],mr:[w-pad,h/2],bl:[pad,h-pad],bc:[w/2,h-pad],br:[w-pad,h-pad]};return m[pos]||[w/2,h/2]}
+function redraw(){
+  if(!imgEl)return;
+  const MAX=680;const scale=Math.min(1,MAX/Math.max(imgEl.naturalWidth,imgEl.naturalHeight));
+  canvas.width=imgEl.naturalWidth*scale;canvas.height=imgEl.naturalHeight*scale;
+  ctx.drawImage(imgEl,0,0,canvas.width,canvas.height);
+  const text=document.getElementById('wm-text').value||'Watermark';
+  const fs=parseInt(document.getElementById('font-size').value)*scale;
+  const op=parseInt(document.getElementById('opacity').value)/100;
+  const color=document.getElementById('wm-color').value;
+  const rot=parseInt(document.getElementById('wm-rot').value)*Math.PI/180;
+  ctx.save();ctx.globalAlpha=op;ctx.font=`bold ${fs}px Plus Jakarta Sans`;ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
+  const tm=ctx.measureText(text);const[x,y]=getPos(canvas.width,canvas.height,wmPos,tm.width,fs);
+  ctx.translate(x,y);ctx.rotate(rot);ctx.fillText(text,0,0);ctx.restore();
+}
+['wm-text','font-size','opacity','wm-color','wm-rot'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  const el=document.getElementById(id);
+  if(id==='font-size')document.getElementById('fs-val').textContent=el.value;
+  if(id==='opacity')document.getElementById('op-val').textContent=el.value;
+  if(id==='wm-rot')document.getElementById('rot-val').textContent=el.value;
+  redraw();
+}));
+document.querySelectorAll('.pos-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.pos-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');wmPos=b.dataset.p;redraw()}));
+document.getElementById('dl-btn').addEventListener('click',()=>{
+  const full=document.createElement('canvas');full.width=imgEl.naturalWidth;full.height=imgEl.naturalHeight;
+  const fctx=full.getContext('2d');fctx.drawImage(imgEl,0,0);
+  const text=document.getElementById('wm-text').value||'Watermark';
+  const fs=parseInt(document.getElementById('font-size').value);
+  const op=parseInt(document.getElementById('opacity').value)/100;
+  const color=document.getElementById('wm-color').value;
+  const rot=parseInt(document.getElementById('wm-rot').value)*Math.PI/180;
+  fctx.save();fctx.globalAlpha=op;fctx.font=`bold ${fs}px sans-serif`;fctx.fillStyle=color;fctx.textAlign='center';fctx.textBaseline='middle';
+  const[x,y]=getPos(full.width,full.height,wmPos,fctx.measureText(text).width,fs);
+  fctx.translate(x,y);fctx.rotate(rot);fctx.fillText(text,0,0);fctx.restore();
+  full.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='watermarked.png';a.click()},'image/png');
+});
+document.getElementById('new-btn').addEventListener('click',()=>{document.getElementById('editor').style.display='none';imgEl=null;fi.value=''});
+</script>
+</body></html>

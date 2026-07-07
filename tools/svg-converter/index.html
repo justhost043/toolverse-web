@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free SVG Converter Online — SVG to PNG, JPG, Optimize SVG | OMIToolKit</title>
+<meta name="description" content="Convert SVG to PNG or JPG, or optimize/minify SVG code online. Paste SVG code or upload file. Free browser-based SVG converter.">
+<link rel="canonical" href="../../tools/svg-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SVG Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.m-tab{padding:9px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.m-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+textarea.code{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.6;resize:vertical;min-height:180px}
+.preview-box{background:repeating-conic-gradient(#E7E5EE 0% 25%,#EFECFA 0% 50%) 0 0/20px 20px;border-radius:var(--radius-md);border:1px solid var(--color-border);min-height:180px;display:flex;align-items:center;justify-content:center;padding:20px;margin:14px 0}
+.preview-box svg,.preview-box img{max-width:100%;max-height:220px}
+.opts-row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;align-items:center}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / SVG Converter</div>
+<div class="container tool-page-header">
+  <h1>SVG Converter</h1>
+  <p>Convert SVG to PNG/JPG, or optimize and clean SVG code — all in your browser.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+  <div class="mode-tabs">
+    <button class="m-tab active" data-m="to-png">SVG → PNG/JPG</button>
+    <button class="m-tab" data-m="optimize">Optimize SVG</button>
+  </div>
+
+  <!-- TO PNG/JPG -->
+  <div id="panel-png">
+    <div class="field-row">
+      <label class="field-label">SVG code</label>
+      <textarea id="svg-inp" class="field-input code" placeholder="Paste SVG code here..."></textarea>
+    </div>
+    <div class="opts-row">
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline fmt-btn active" data-f="png">PNG</button>
+        <button class="btn btn-outline fmt-btn" data-f="jpeg">JPG</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label class="field-label" style="margin:0">Width:</label>
+        <input type="number" id="out-w" class="field-input" value="512" style="width:90px">
+        <label class="field-label" style="margin:0">Height:</label>
+        <input type="number" id="out-h" class="field-input" value="512" style="width:90px">
+      </div>
+      <button class="btn btn-primary" id="render-btn">Render</button>
+    </div>
+    <div class="preview-box" id="preview-box"><span style="color:var(--color-text-muted);font-size:13.5px">SVG preview appears here</span></div>
+    <button class="btn btn-primary" id="download-btn" disabled style="width:100%;justify-content:center;padding:13px">&#11015; Download Image</button>
+  </div>
+
+  <!-- OPTIMIZE -->
+  <div id="panel-opt" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div><label class="field-label" style="margin-bottom:6px">SVG input</label>
+        <textarea id="svg-opt-inp" class="field-input code" placeholder="Paste SVG code to optimize..."></textarea></div>
+      <div><label class="field-label" style="margin-bottom:6px">Optimized output</label>
+        <textarea id="svg-opt-out" class="field-input code" readonly style="background:#F9F9F9"></textarea></div>
+    </div>
+    <div id="opt-stats" style="margin:10px 0"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="opt-btn">Optimize SVG</button>
+      <button class="btn btn-outline" id="copy-opt-btn">Copy</button>
+      <button class="btn btn-outline" id="dl-svg-btn">&#11015; Download .svg</button>
+    </div>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>SVG conversion and optimization</h2>
+  <p>SVG (Scalable Vector Graphics) is an XML-based format that scales to any size without quality loss — ideal for logos, icons, and illustrations. Converting SVG to PNG or JPG creates a fixed-resolution raster image for use in contexts that don't support SVG. SVG optimization removes unnecessary metadata, editor comments, and whitespace from SVG files exported by tools like Illustrator or Figma, reducing file size by 30-70% while preserving visual fidelity.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+let fmt="png",currentSvg=null;
+document.querySelectorAll(".m-tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".m-tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  document.getElementById("panel-png").style.display=t.dataset.m==="to-png"?"":"none";
+  document.getElementById("panel-opt").style.display=t.dataset.m==="optimize"?"":"none";
+}));
+document.querySelectorAll(".fmt-btn").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".fmt-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");fmt=b.dataset.f}));
+
+document.getElementById("render-btn").addEventListener("click",()=>{
+  const svg=document.getElementById("svg-inp").value.trim();
+  if(!svg.includes("<svg")){alert("No valid SVG found");return;}
+  currentSvg=svg;
+  document.getElementById("preview-box").innerHTML=svg;
+  const w=parseInt(document.getElementById("out-w").value)||512;
+  const h=parseInt(document.getElementById("out-h").value)||512;
+  const blob=new Blob([svg],{type:"image/svg+xml;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();img.onload=()=>{
+    const c=document.createElement("canvas");c.width=w;c.height=h;
+    const ctx=c.getContext("2d");
+    if(fmt==="jpeg"){ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);}
+    ctx.drawImage(img,0,0,w,h);
+    URL.revokeObjectURL(url);
+    c.toBlob(b=>{
+      const dl=document.getElementById("download-btn");dl.disabled=false;
+      dl.onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="converted."+(fmt==="jpeg"?"jpg":fmt);a.click()};
+    },"image/"+fmt,0.95);
+  };img.src=url;
+});
+
+// OPTIMIZE
+document.getElementById("opt-btn").addEventListener("click",()=>{
+  let svg=document.getElementById("svg-opt-inp").value.trim();
+  if(!svg){alert("Paste SVG code first");return;}
+  const orig=svg.length;
+  svg=svg.replace(/<!--[\s\S]*?-->/g,"");
+  svg=svg.replace(/\s*(inkscape|sodipodi|dc|cc|rdf|xml):[^/][\s\S]*?\/>/gi,"");
+  svg=svg.replace(/\s+/g," ");
+  svg=svg.replace(/>\s+</g,"><");
+  svg=svg.replace(/\s*=\s*/g,"=");
+  svg=svg.trim();
+  document.getElementById("svg-opt-out").value=svg;
+  const saved=Math.round((1-svg.length/orig)*100);
+  document.getElementById("opt-stats").innerHTML=`<span style="font-size:12.5px;background:#F0FDF4;color:#16A34A;padding:4px 12px;border-radius:999px;font-weight:600">Reduced by ${saved}% (${orig} → ${svg.length} chars)</span>`;
+});
+document.getElementById("copy-opt-btn").addEventListener("click",()=>navigator.clipboard.writeText(document.getElementById("svg-opt-out").value).then(()=>{const b=document.getElementById("copy-opt-btn");b.textContent="Copied!";setTimeout(()=>b.textContent="Copy",1200)}));
+document.getElementById("dl-svg-btn").addEventListener("click",()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([document.getElementById("svg-opt-out").value],{type:"image/svg+xml"}));a.download="optimized.svg";a.click()});
+
+// Demo SVG
+document.getElementById("svg-inp").value=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs><circle cx="50" cy="50" r="45" fill="url(#g)"/><text x="50" y="60" font-size="36" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">O</text></svg>`;
+</script>
+</body></html>

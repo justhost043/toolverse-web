@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Bulk Image Converter — Convert Multiple Images at Once | OMIToolKit</title>
+<meta name="description" content="Convert dozens of images to JPG, PNG, or WebP in one go. Bulk batch converter — no upload, runs entirely in your browser.">
+<link rel="canonical" href="../../tools/bulk-image-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Bulk Image Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.fmt-tabs{display:flex;gap:8px;margin:12px 0}
+.fmt-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.fmt-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.file-list{display:flex;flex-direction:column;gap:5px;max-height:340px;overflow-y:auto;margin:12px 0}
+.file-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:8px}
+.file-row.done{background:#F0FDF4;border-color:#86EFAC}
+.file-row.err{background:#FEF2F2;border-color:#FCA5A5}
+.fr-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-sz{font-size:11.5px;color:var(--color-text-muted);white-space:nowrap;font-family:monospace}
+.fr-st{font-size:12px;font-weight:600;min-width:70px;text-align:right}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:500px){.fmt-tabs{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Bulk Image Converter</div>
+<div class="container tool-page-header">
+  <h1>Bulk Image Converter</h1>
+  <p>Convert dozens of images to JPG, PNG, or WebP in one go — all processed locally in your browser.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:700px">
+  <div class="dz" id="dz">
+    <div style="font-size:40px;margin-bottom:10px">&#128194;</div>
+    <div style="font-size:15px;font-weight:600">Drop images here or click to select</div>
+    <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">JPG, PNG, WebP, GIF — any number of files</div>
+    <input type="file" id="fi" accept="image/*" multiple style="display:none">
+  </div>
+  <div id="editor" style="display:none;margin-top:16px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div class="field-label" style="margin-bottom:6px">Convert to</div>
+        <div class="fmt-tabs">
+          <button class="fmt-tab active" data-f="jpeg">JPG</button>
+          <button class="fmt-tab" data-f="png">PNG</button>
+          <button class="fmt-tab" data-f="webp">WebP</button>
+        </div>
+      </div>
+      <div id="q-wrap" style="display:flex;align-items:center;gap:10px">
+        <label class="field-label" style="margin:0;white-space:nowrap">Quality: <strong id="q-val" style="color:var(--color-primary)">90%</strong></label>
+        <input type="range" id="quality" min="10" max="100" value="90" style="width:110px;accent-color:var(--color-primary)">
+      </div>
+    </div>
+    <div style="margin:10px 0" id="stats-row"></div>
+    <div class="file-list" id="file-list"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn btn-primary" id="convert-btn">Convert All</button>
+      <button class="btn btn-outline" id="dl-all-btn" disabled>Download All</button>
+      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    </div>
+    <div id="prog" style="margin-top:12px;font-size:13.5px;color:var(--color-text-muted);text-align:center"></div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>Batch convert images in seconds</h2>
+  <p>Converting images one at a time is tedious when you have a batch of product photos, screenshots, or design exports. Bulk Image Converter processes your entire selection at once. Use <strong>JPG</strong> for photographs, <strong>PNG</strong> when transparency or pixel-perfect quality is needed, and <strong>WebP</strong> for modern web usage — it achieves 25-35% better compression than both JPG and PNG.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+let files=[],fmt="jpeg",blobs=[];
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");addFiles([...e.dataTransfer.files])});
+fi.addEventListener("change",()=>addFiles([...fi.files]));
+document.getElementById("quality").addEventListener("input",e=>document.getElementById("q-val").textContent=e.target.value+"%");
+document.querySelectorAll(".fmt-tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".fmt-tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");fmt=t.dataset.f;
+  document.getElementById("q-wrap").style.display=fmt==="png"?"none":"flex";
+}));
+function addFiles(nf){files=[...files,...nf.filter(f=>f.type.startsWith("image/"))];blobs=[];render();}
+function render(){
+  const total=(files.reduce((a,f)=>a+f.size,0)/1024/1024).toFixed(1);
+  document.getElementById("stats-row").innerHTML=`<span class="stat-chip">${files.length} files</span><span class="stat-chip">${total} MB total</span>`;
+  document.getElementById("file-list").innerHTML=files.map((f,i)=>`
+    <div class="file-row" id="row-${i}">
+      <span>&#128444;</span>
+      <span class="fr-name" title="${f.name}">${f.name}</span>
+      <span class="fr-sz">${(f.size/1024).toFixed(0)}KB</span>
+      <span class="fr-st" id="st-${i}">Pending</span>
+      <span id="dl-${i}"></span>
+      <button onclick="files.splice(${i},1);blobs=[];render()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px;line-height:1">x</button>
+    </div>`).join("");
+  document.getElementById("editor").style.display=files.length?"":"none";
+}
+document.getElementById("convert-btn").addEventListener("click",async()=>{
+  if(!files.length)return;
+  blobs=[];document.getElementById("convert-btn").disabled=true;
+  const q=parseInt(document.getElementById("quality").value)/100;
+  const ext=fmt==="jpeg"?"jpg":fmt;
+  for(let i=0;i<files.length;i++){
+    document.getElementById("st-"+i).textContent="...";
+    try{
+      const url=URL.createObjectURL(files[i]);
+      const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url});
+      const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;
+      const ctx=c.getContext("2d");
+      if(fmt==="jpeg"){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
+      ctx.drawImage(img,0,0);
+      const blob=await new Promise(res=>c.toBlob(res,"image/"+fmt,q));
+      const outName=files[i].name.replace(/\.[^.]+$/,".")+ext;
+      const outUrl=URL.createObjectURL(blob);
+      blobs.push({name:outName,url:outUrl});
+      document.getElementById("st-"+i).innerHTML=`<span style="color:#16A34A">done ${(blob.size/1024).toFixed(0)}KB</span>`;
+      document.getElementById("dl-"+i).innerHTML=`<a href="${outUrl}" download="${outName}" style="font-size:12px;padding:3px 10px;border-radius:5px;background:var(--color-primary);color:#fff;text-decoration:none">Save</a>`;
+      document.getElementById("row-"+i).classList.add("done");
+      URL.revokeObjectURL(url);
+    }catch(e){document.getElementById("st-"+i).innerHTML=`<span style="color:#EF4444">Error</span>`;document.getElementById("row-"+i).classList.add("err");}
+    document.getElementById("prog").textContent="Converting "+( i+1)+" / "+files.length+"...";
+  }
+  document.getElementById("convert-btn").disabled=false;
+  document.getElementById("dl-all-btn").disabled=false;
+  document.getElementById("prog").textContent="All "+files.length+" images converted!";
+});
+document.getElementById("dl-all-btn").addEventListener("click",()=>{
+  blobs.forEach((b,i)=>setTimeout(()=>{const a=document.createElement("a");a.href=b.url;a.download=b.name;a.click()},i*350));
+});
+document.getElementById("clear-btn").addEventListener("click",()=>{files=[];blobs=[];render();fi.value="";document.getElementById("prog").textContent="";});
+</script>
+</body></html>

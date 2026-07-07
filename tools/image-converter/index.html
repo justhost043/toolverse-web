@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Image Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert any image to JPG, PNG, or WebP. Supports multiple files, custom quality, and instant download.">
+<link rel="canonical" href="../../tools/image-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Image Converter</div>
+<div class="container tool-page-header"><h1>Image Converter</h1><p>Convert any image to JPG, PNG, or WebP. Supports multiple files, custom quality, and instant download.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:720px">
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+  <select id="out-fmt" class="field-select" style="max-width:180px">
+    <option value="jpeg">Convert to JPG</option>
+    <option value="png">Convert to PNG</option>
+    <option value="webp">Convert to WebP</option>
+    <option value="gif">Keep as GIF (PNG out)</option>
+  </select>
+  <div style="display:flex;align-items:center;gap:8px">
+    <label class="field-label" style="margin:0;white-space:nowrap">Quality: <strong id="q-lbl" style="color:var(--color-primary)">92%</strong></label>
+    <input type="range" id="quality" min="10" max="100" value="92" style="width:120px;accent-color:var(--color-primary)">
+  </div>
+</div>
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">&#127912;</div>
+  <div style="font-size:15px;font-weight:600">Drop any image here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">JPG, PNG, WebP, BMP, GIF — multiple files OK</div>
+  <input type="file" id="fi" accept="image/*" multiple style="display:none">
+</div>
+<div id="results" style="margin-top:14px"></div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Universal image format converter</h2><p>This tool supports all common web image formats. Drop any image and choose the output format. JPG is best for photos (smaller size), PNG is best for graphics with transparency, and WebP is the modern web-optimised format that browsers load fastest.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+document.getElementById("quality").addEventListener("input",e=>document.getElementById("q-lbl").textContent=e.target.value+"%");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");process([...e.dataTransfer.files])});
+fi.addEventListener("change",()=>process([...fi.files]));
+function process(files){
+  const res=document.getElementById("results");
+  const fmt=document.getElementById("out-fmt").value;
+  const q=parseInt(document.getElementById("quality").value)/100;
+  const ext=fmt==="jpeg"?"jpg":fmt==="webp"?"webp":"png";
+  files.filter(f=>f.type.startsWith("image/")).forEach(file=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;
+      const ctx=c.getContext("2d");
+      if(fmt==="jpeg"){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
+      ctx.drawImage(img,0,0);
+      c.toBlob(blob=>{
+        const outName=file.name.replace(/\.[^.]+$/,".")+ext;
+        const outUrl=URL.createObjectURL(blob);
+        const pct=Math.round((1-blob.size/file.size)*100);
+        const card=document.createElement("div");
+        card.style.cssText="background:#fff;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px 16px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap";
+        card.innerHTML=`<div><div style="font-weight:600;font-size:14px">${outName}</div><div style="font-size:12.5px;color:var(--color-text-muted);margin-top:3px">${img.naturalWidth}x${img.naturalHeight}px &nbsp;|&nbsp; ${(file.size/1024).toFixed(0)}KB → ${(blob.size/1024).toFixed(0)}KB ${pct>0?`<span style="color:#16A34A;font-weight:600">(-${pct}%)</span>`:""}</div></div>
+        <a href="${outUrl}" download="${outName}" class="btn btn-primary" style="padding:7px 16px;font-size:13px">&#11015; Download</a>`;
+        res.appendChild(card);URL.revokeObjectURL(url);
+      },"image/"+fmt,q);
+    };img.src=url;
+  });
+}
+</script>
+</body></html>

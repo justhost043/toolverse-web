@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free JPG to PNG Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert JPG to PNG online instantly. Transparent background preserved. Free browser-based JPG to PNG converter — no upload required.">
+<link rel="canonical" href="../../tools/jpg-to-png/"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"JPG to PNG Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.preview-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.preview-box{background:repeating-conic-gradient(#E7E5EE 0% 25%,#F9F9F9 0% 50%) 0 0/16px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);min-height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px}
+.preview-box img{max-width:100%;max-height:180px;object-fit:contain}
+.info-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.info-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
+@media(max-width:540px){.preview-row{grid-template-columns:1fr}}
+</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / JPG to PNG</div>
+<div class="container tool-page-header">
+<h1>JPG to PNG Converter</h1>
+<p>Convert JPEG images to PNG format instantly — no upload, no account, runs in your browser.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:680px">
+  <div class="drop-zone" id="dz">
+    <div style="font-size:36px;margin-bottom:10px">🖼️</div>
+    <div style="font-size:15px;font-weight:600">Drop a JPG/JPEG here or click to select</div>
+    <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">Multiple files supported</div>
+    <input type="file" id="fi" accept=".jpg,.jpeg,image/jpeg" multiple style="display:none">
+  </div>
+  <div id="results"></div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+<h2>Why convert JPG to PNG?</h2>
+<p>PNG supports transparency (alpha channel) while JPG does not. If you need a transparent background, logos, icons, or images with sharp edges on solid colours, PNG is the better format. PNG is also lossless — converting from JPG to PNG will not reduce quality further, though it won't recover quality already lost in the original JPG compression.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+const dz=document.getElementById('dz'),fi=document.getElementById('fi');
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');processFiles([...e.dataTransfer.files])});
+fi.addEventListener('change',()=>processFiles([...fi.files]));
+
+function processFiles(files){
+  const res=document.getElementById('results');
+  res.innerHTML='';
+  files.forEach(file=>{
+    if(!file.type.includes('jpeg')&&!file.type.includes('jpg')&&!file.name.match(/\.jpe?g$/i)){return;}
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=img.naturalWidth;c.height=img.naturalHeight;
+      c.getContext('2d').drawImage(img,0,0);
+      c.toBlob(blob=>{
+        const outUrl=URL.createObjectURL(blob);
+        const outName=file.name.replace(/\.jpe?g$/i,'.png');
+        const card=document.createElement('div');
+        card.style.cssText='background:#fff;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px;margin:12px 0';
+        card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-weight:600;font-size:14px">${outName}</span>
+          <a href="${outUrl}" download="${outName}" class="btn btn-primary" style="padding:7px 16px;font-size:13px">⬇ Download PNG</a>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="info-chip">Original: ${(file.size/1024).toFixed(0)} KB JPG</span>
+          <span class="info-chip">Output: PNG</span>
+          <span class="info-chip">${img.naturalWidth}×${img.naturalHeight}px</span>
+        </div>`;
+        res.appendChild(card);
+        URL.revokeObjectURL(url);
+      },'image/png');
+    };
+    img.src=url;
+  });
+}
+</script></body></html>

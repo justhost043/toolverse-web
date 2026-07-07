@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free PDF to Images Converter Online — PDF to JPG/PNG | OMIToolKit</title>
+<meta name="description" content="Convert PDF pages to JPG or PNG images online. Each page becomes a separate image. Free, browser-based — no upload required.">
+<link rel="canonical" href="../../tools/pdf-to-images/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF to Images","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin:14px 0}
+.img-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);overflow:hidden;text-align:center}
+.img-card canvas{width:100%;display:block}
+.img-card .ic-foot{padding:8px;font-size:12px;font-weight:500;color:var(--color-text-muted)}
+.img-card a{display:block;padding:6px 12px;background:var(--color-primary);color:#fff;font-size:12px;font-weight:500;text-decoration:none;margin:0 8px 8px}
+.img-card a:hover{background:var(--color-primary-dark)}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF to Images</div>
+<div class="container tool-page-header">
+  <h1>PDF to Images</h1>
+  <p>Convert each PDF page to a high-quality PNG or JPG image — download individually or all at once.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+  <div class="dz" id="dz">
+    <div style="font-size:36px;margin-bottom:10px">&#128196;</div>
+    <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
+    <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+  </div>
+  <div id="editor" style="display:none;margin-top:16px">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline fmt-btn active" data-f="png">PNG</button>
+        <button class="btn btn-outline fmt-btn" data-f="jpeg">JPG</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label class="field-label" style="margin:0;white-space:nowrap">Scale: <strong id="scale-lbl" style="color:var(--color-primary)">1.5x</strong></label>
+        <input type="range" id="scale" min="1" max="3" step="0.5" value="1.5" style="width:100px;accent-color:var(--color-primary)">
+      </div>
+      <button class="btn btn-primary" id="convert-btn">Convert All Pages</button>
+      <button class="btn btn-outline" id="dl-all-btn" style="display:none">&#11015; Download All</button>
+    </div>
+    <div id="status" style="font-size:13.5px;color:var(--color-text-muted);margin-bottom:10px"></div>
+    <div class="img-grid" id="img-grid"></div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>Use cases for PDF to image conversion</h2>
+  <p>Converting PDF pages to images is useful when you need to embed PDF content in a website (browsers render images faster than PDFs), when sharing a PDF preview on social media, when you need to edit a PDF page as an image, or when extracting charts and diagrams from a PDF report. The Scale control increases resolution — use 2x or 3x for print-quality output.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+let pdfDoc=null, fmt="png", blobs=[];
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.getElementById("scale").addEventListener("input",e=>document.getElementById("scale-lbl").textContent=e.target.value+"x");
+document.querySelectorAll(".fmt-btn").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".fmt-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");fmt=b.dataset.f}));
+async function loadF(file){
+  const buf=await file.arrayBuffer();
+  pdfDoc=await pdfjsLib.getDocument({data:buf}).promise;
+  document.getElementById("editor").style.display="";
+  document.getElementById("status").textContent="Loaded: "+pdfDoc.numPages+" pages. Click Convert All Pages.";
+  document.getElementById("img-grid").innerHTML="";
+}
+document.getElementById("convert-btn").addEventListener("click",async()=>{
+  if(!pdfDoc)return;
+  blobs=[];
+  document.getElementById("convert-btn").disabled=true;
+  document.getElementById("img-grid").innerHTML="";
+  const scale=parseFloat(document.getElementById("scale").value)||1.5;
+  for(let i=1;i<=pdfDoc.numPages;i++){
+    document.getElementById("status").textContent="Rendering page "+i+" of "+pdfDoc.numPages+"...";
+    const page=await pdfDoc.getPage(i);
+    const vp=page.getViewport({scale});
+    const canvas=document.createElement("canvas");
+    canvas.width=vp.width;canvas.height=vp.height;
+    await page.render({canvasContext:canvas.getContext("2d"),viewport:vp}).promise;
+    const blob=await new Promise(res=>canvas.toBlob(res,"image/"+fmt,0.92));
+    const ext=fmt==="jpeg"?"jpg":"png";
+    const name="page-"+i+"."+ext;
+    const url=URL.createObjectURL(blob);
+    blobs.push({name,url});
+    // Thumbnail canvas (smaller)
+    const thumb=document.createElement("canvas");
+    const ts=160/vp.width;thumb.width=160;thumb.height=Math.round(vp.height*ts);
+    thumb.getContext("2d").drawImage(canvas,0,0,thumb.width,thumb.height);
+    const card=document.createElement("div");card.className="img-card";
+    card.innerHTML=`<div></div><div class="ic-foot">Page ${i}</div><a href="${url}" download="${name}">&#11015; Download</a>`;
+    card.querySelector("div").appendChild(thumb);
+    document.getElementById("img-grid").appendChild(card);
+  }
+  document.getElementById("status").textContent="All "+pdfDoc.numPages+" pages converted!";
+  document.getElementById("dl-all-btn").style.display="";
+  document.getElementById("convert-btn").disabled=false;
+});
+document.getElementById("dl-all-btn").addEventListener("click",()=>{
+  blobs.forEach((b,i)=>setTimeout(()=>{const a=document.createElement("a");a.href=b.url;a.download=b.name;a.click()},i*400));
+});
+</script>
+</body></html>

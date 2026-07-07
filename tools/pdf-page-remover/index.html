@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free PDF Page Remover Online — Delete PDF Pages | OMIToolKit</title>
+<meta name="description" content="Remove specific pages from a PDF online. Select pages to delete and download the clean PDF instantly. Free, browser-based — no upload required.">
+<link rel="canonical" href="../../tools/pdf-page-remover/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.page-grid{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.page-chip{padding:6px 14px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-family:monospace;font-weight:500;cursor:pointer;transition:all .15s}
+.page-chip.remove{background:#FEE2E2;border-color:#EF4444;color:#991B1B;text-decoration:line-through}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF Page Remover</div>
+<div class="container tool-page-header">
+<h1>PDF Page Remover</h1>
+<p>Click pages to mark them for deletion, then download the cleaned PDF.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:700px">
+  <div class="drop-zone" id="dz">
+    <div style="font-size:36px;margin-bottom:10px">🗑️</div>
+    <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
+    <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+  </div>
+  <div id="editor" style="display:none">
+    <div id="file-info" style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin:14px 0;font-size:14px;font-weight:500"></div>
+    <div class="field-label" style="margin-bottom:8px">Click pages to mark for removal <span id="rem-count" style="color:#EF4444;font-weight:400"></span></div>
+    <div class="page-grid" id="page-grid"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" id="remove-btn">🗑️ Remove Pages & Download</button>
+      <button class="btn btn-outline" id="clear-sel">Clear selection</button>
+    </div>
+    <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+<h2>When to remove PDF pages</h2>
+<p>Use this tool to remove cover pages, blank pages, accidentally scanned extra pages, confidential pages before sharing, or any unwanted content from a PDF. All processing happens in your browser using PDF-lib — your file is never uploaded to any server.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+const {PDFDocument}=PDFLib;
+let pdfBytes=null,totalPages=0;
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadFile(fi.files[0])});
+async function loadFile(file){
+  const buf=await file.arrayBuffer();
+  pdfBytes=new Uint8Array(buf);
+  const pdf=await PDFDocument.load(pdfBytes);
+  totalPages=pdf.getPageCount();
+  document.getElementById("file-info").textContent=file.name+" · "+totalPages+" pages";
+  const g=document.getElementById("page-grid");g.innerHTML="";
+  for(let i=1;i<=totalPages;i++){
+    const chip=document.createElement("div");chip.className="page-chip";chip.textContent="Page "+i;chip.dataset.p=i;
+    chip.addEventListener("click",()=>{chip.classList.toggle("remove");updateCount()});
+    g.appendChild(chip);
+  }
+  document.getElementById("editor").style.display="";
+}
+function updateCount(){
+  const n=document.querySelectorAll(".page-chip.remove").length;
+  document.getElementById("rem-count").textContent=n?`(${n} marked for removal)`:"";
+}
+document.getElementById("clear-sel").addEventListener("click",()=>{
+  document.querySelectorAll(".page-chip.remove").forEach(c=>c.classList.remove("remove"));updateCount();
+});
+document.getElementById("remove-btn").addEventListener("click",async()=>{
+  const toRemove=new Set([...document.querySelectorAll(".page-chip.remove")].map(c=>parseInt(c.dataset.p)-1));
+  if(!toRemove.size){document.getElementById("status").textContent="Select at least one page to remove";return;}
+  if(toRemove.size>=totalPages){document.getElementById("status").textContent="Cannot remove all pages";return;}
+  document.getElementById("status").textContent="Processing…";
+  document.getElementById("remove-btn").disabled=true;
+  try{
+    const src=await PDFDocument.load(pdfBytes);
+    const out=await PDFDocument.create();
+    const keep=Array.from({length:totalPages},(_,i)=>i).filter(i=>!toRemove.has(i));
+    const pages=await out.copyPages(src,keep);
+    pages.forEach(p=>out.addPage(p));
+    const bytes=await out.save();
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));a.download="cleaned.pdf";a.click();
+    document.getElementById("status").textContent=`✅ ${toRemove.size} pages removed. Download started.`;
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("remove-btn").disabled=false;
+});
+</script>
+</body></html>

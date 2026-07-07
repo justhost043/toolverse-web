@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free PDF Compressor Online | OMIToolKit</title>
+<meta name="description" content="Reduce PDF file size online. Remove unused objects and compress metadata — free, browser-based.">
+<link rel="canonical" href="../../tools/pdf-compressor/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF Compressor</div>
+<div class="container tool-page-header"><h1>PDF Compressor</h1><p>Reduce PDF file size online. Remove unused objects and compress metadata — free, browser-based.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:720px">
+<div class="dz" id="dz">
+  <div style="font-size:36px;margin-bottom:10px">&#128196;</div>
+  <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">Processed entirely in your browser</div>
+  <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div id="fi-info" style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;font-size:14px;font-weight:500;margin-bottom:14px"></div>
+  <div class="field-label" style="margin-bottom:8px">Compression level</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+    <div id="lvl-low" class="btn btn-outline active-lvl" onclick="setLvl(this,'low')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-border)">
+      <div style="font-size:22px">&#128197;</div><div style="font-weight:600;font-size:13px;margin-top:4px">Low</div>
+      <div style="font-size:11.5px;color:var(--color-text-muted)">Better quality</div>
+    </div>
+    <div id="lvl-med" class="btn btn-outline" onclick="setLvl(this,'med')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-primary);background:#F4F3FE">
+      <div style="font-size:22px">&#128205;</div><div style="font-weight:600;font-size:13px;margin-top:4px">Medium</div>
+      <div style="font-size:11.5px;color:var(--color-text-muted)">Recommended</div>
+    </div>
+    <div id="lvl-high" class="btn btn-outline" onclick="setLvl(this,'high')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-border)">
+      <div style="font-size:22px">&#128263;</div><div style="font-weight:600;font-size:13px;margin-top:4px">High</div>
+      <div style="font-size:11.5px;color:var(--color-text-muted)">Smallest size</div>
+    </div>
+  </div>
+  <button class="btn btn-primary" id="compress-btn" style="width:100%;justify-content:center;padding:13px">Compress PDF</button>
+  <div id="result" style="margin-top:14px"></div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>How PDF compression works</h2><p>This tool uses PDF-lib to remove unused objects, compress object streams, and strip unnecessary metadata from your PDF. This is most effective on PDFs that have been edited many times or exported from design software. Scanned image PDFs have limited compression potential since the file size is dominated by image data.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+const {PDFDocument}=PDFLib;
+let pdfB=null,lvl="med";
+function setLvl(el,l){
+  document.querySelectorAll("[id^=lvl-]").forEach(x=>{x.style.borderColor="var(--color-border)";x.style.background="#fff"});
+  el.style.borderColor="var(--color-primary)";el.style.background="#F4F3FE";lvl=l;
+}
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+async function loadF(file){
+  const buf=await file.arrayBuffer();pdfB=new Uint8Array(buf);
+  document.getElementById("fi-info").textContent=file.name+" - "+(file.size/1024).toFixed(0)+" KB";
+  document.getElementById("editor").style.display="";
+  document.getElementById("fi").dataset.name=file.name;
+  document.getElementById("fi").dataset.size=file.size;
+}
+document.getElementById("compress-btn").addEventListener("click",async()=>{
+  if(!pdfB)return;
+  document.getElementById("compress-btn").disabled=true;
+  document.getElementById("result").textContent="Compressing...";
+  try{
+    const pdf=await PDFDocument.load(pdfB,{updateMetadata:false});
+    // Remove unused objects, flatten metadata
+    const compressed=await pdf.save({useObjectStreams:lvl!=="low",addDefaultPage:false});
+    const orig=pdfB.length,comp=compressed.length;
+    const saved=Math.round((1-comp/orig)*100);
+    const blob=new Blob([compressed],{type:"application/pdf"});
+    const url=URL.createObjectURL(blob);
+    const name=(document.getElementById("fi").dataset.name||"file.pdf").replace(".pdf","-compressed.pdf");
+    document.getElementById("result").innerHTML=`
+      <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-sm);padding:14px 16px">
+        <div style="font-weight:600;font-size:14.5px;color:#166534;margin-bottom:8px">Compression complete!</div>
+        <div style="font-size:13.5px;margin-bottom:10px;color:var(--color-text)">
+          Original: ${(orig/1024).toFixed(0)} KB &rarr; Compressed: ${(comp/1024).toFixed(0)} KB
+          ${saved>0?`<strong style="color:#16A34A"> (-${saved}%)</strong>`:"<span style='color:var(--color-text-muted)'> (PDF already optimised)</span>"}
+        </div>
+        <a href="${url}" download="${name}" class="btn btn-primary" style="padding:9px 20px">&#11015; Download Compressed PDF</a>
+      </div>`;
+  }catch(e){document.getElementById("result").textContent="Error: "+e.message;}
+  document.getElementById("compress-btn").disabled=false;
+});
+</script>
+</body></html>

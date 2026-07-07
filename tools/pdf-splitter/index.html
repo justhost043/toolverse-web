@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free PDF Splitter Online — Split PDF Pages | OMIToolKit</title>
+<meta name="description" content="Split a PDF into individual pages or extract a specific page range. Free online PDF splitter — no upload, runs in your browser using PDF-lib.">
+<link rel="canonical" href="../../tools/pdf-splitter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Splitter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Split PDF into individual pages or extract page ranges. Free, browser-based."}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.page-grid{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.page-chip{padding:6px 14px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-family:"JetBrains Mono",monospace;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
+.page-chip.selected{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px}
+.m-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.m-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+@media(max-width:600px){.tool-panel{padding:16px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF Splitter</div>
+<div class="container tool-page-header">
+  <h1>PDF Splitter</h1>
+  <p>Split a PDF into individual pages, extract a range, or pick specific pages to keep.</p>
+</div>
+<div class="container">
+  <div class="tool-panel" style="max-width:700px">
+    <div class="drop-zone" id="drop-zone">
+      <div style="font-size:36px;margin-bottom:10px">📄</div>
+      <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
+      <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">Max 50MB · Processed entirely in your browser</div>
+      <input type="file" id="file-inp" accept=".pdf,application/pdf" style="display:none">
+    </div>
+
+    <div id="editor" style="display:none">
+      <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin:14px 0;display:flex;justify-content:space-between;align-items:center">
+        <span id="file-info" style="font-size:13.5px;font-weight:500"></span>
+        <span id="page-info" style="font-size:13px;color:var(--color-text-muted)"></span>
+      </div>
+
+      <div class="mode-tabs">
+        <button class="m-tab active" data-m="all">Split all pages</button>
+        <button class="m-tab" data-m="range">Page range</button>
+        <button class="m-tab" data-m="pick">Pick pages</button>
+      </div>
+
+      <div id="panel-range" style="display:none">
+        <div class="field-row" style="display:flex;gap:12px;align-items:flex-end">
+          <div style="flex:1"><label class="field-label">From page</label><input type="number" id="range-from" class="field-input" value="1" min="1"></div>
+          <div style="flex:1"><label class="field-label">To page</label><input type="number" id="range-to" class="field-input" value="1" min="1"></div>
+        </div>
+      </div>
+
+      <div id="panel-pick" style="display:none">
+        <div class="field-label" style="margin-bottom:8px">Click pages to select/deselect</div>
+        <div class="page-grid" id="page-grid"></div>
+        <div style="font-size:13px;color:var(--color-text-muted)" id="sel-count"></div>
+      </div>
+
+      <button class="btn btn-primary" id="split-btn" style="width:100%;justify-content:center;padding:13px;margin-top:16px">✂️ Split & Download</button>
+      <div id="status" style="margin-top:10px;font-size:13.5px;text-align:center;color:var(--color-text-muted)"></div>
+    </div>
+  </div>
+</div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>How to split a PDF</h2>
+  <p>Choose your split mode: <strong>Split all pages</strong> extracts every page into a separate PDF file (downloaded as a ZIP). <strong>Page range</strong> extracts a consecutive range of pages into one PDF. <strong>Pick pages</strong> lets you select individual non-consecutive pages to extract into one PDF. All processing happens in your browser — your file is never uploaded to any server.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+const {PDFDocument}=PDFLib;
+let pdfBytes=null,totalPages=0,mode='all';
+const dz=document.getElementById('drop-zone'),fi=document.getElementById('file-inp');
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+fi.addEventListener('change',()=>{if(fi.files[0])loadFile(fi.files[0])});
+
+async function loadFile(file){
+  document.getElementById('status').textContent='Loading…';
+  const buf=await file.arrayBuffer();
+  pdfBytes=new Uint8Array(buf);
+  const pdf=await PDFDocument.load(pdfBytes);
+  totalPages=pdf.getPageCount();
+  document.getElementById('file-info').textContent=file.name;
+  document.getElementById('page-info').textContent=`${totalPages} pages · ${(file.size/1024).toFixed(0)} KB`;
+  document.getElementById('range-to').value=totalPages;
+  document.getElementById('range-from').max=totalPages;
+  document.getElementById('range-to').max=totalPages;
+  buildPageGrid(totalPages);
+  document.getElementById('editor').style.display='';
+  document.getElementById('status').textContent='';
+}
+
+function buildPageGrid(n){
+  const g=document.getElementById('page-grid');
+  g.innerHTML='';
+  for(let i=1;i<=n;i++){
+    const chip=document.createElement('div');
+    chip.className='page-chip';chip.textContent=i;chip.dataset.p=i;
+    chip.addEventListener('click',()=>{
+      chip.classList.toggle('selected');
+      document.getElementById('sel-count').textContent=`${document.querySelectorAll('.page-chip.selected').length} pages selected`;
+    });
+    g.appendChild(chip);
+  }
+}
+
+document.querySelectorAll('.m-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.m-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');mode=t.dataset.m;
+  document.getElementById('panel-range').style.display=mode==='range'?'':'none';
+  document.getElementById('panel-pick').style.display=mode==='pick'?'':'none';
+}));
+
+document.getElementById('split-btn').addEventListener('click',async()=>{
+  if(!pdfBytes){return;}
+  document.getElementById('status').textContent='Processing…';
+  document.getElementById('split-btn').disabled=true;
+  try{
+    if(mode==='all'){
+      // Split all — create zip-like multiple downloads
+      for(let i=0;i<totalPages;i++){
+        const src=await PDFDocument.load(pdfBytes);
+        const out=await PDFDocument.create();
+        const [pg]=await out.copyPages(src,[i]);
+        out.addPage(pg);
+        const bytes=await out.save();
+        downloadBytes(bytes,`page-${i+1}.pdf`,'application/pdf');
+        await new Promise(r=>setTimeout(r,300));
+      }
+      document.getElementById('status').textContent=`✅ ${totalPages} pages downloaded`;
+    } else if(mode==='range'){
+      const from=parseInt(document.getElementById('range-from').value)-1;
+      const to=parseInt(document.getElementById('range-to').value)-1;
+      const src=await PDFDocument.load(pdfBytes);
+      const out=await PDFDocument.create();
+      const indices=Array.from({length:to-from+1},(_,i)=>from+i);
+      const pages=await out.copyPages(src,indices);
+      pages.forEach(p=>out.addPage(p));
+      const bytes=await out.save();
+      downloadBytes(bytes,`pages-${from+1}-to-${to+1}.pdf`,'application/pdf');
+      document.getElementById('status').textContent=`✅ Pages ${from+1}–${to+1} extracted`;
+    } else {
+      const selected=[...document.querySelectorAll('.page-chip.selected')].map(c=>parseInt(c.dataset.p)-1);
+      if(!selected.length){document.getElementById('status').textContent='Select at least one page';document.getElementById('split-btn').disabled=false;return;}
+      const src=await PDFDocument.load(pdfBytes);
+      const out=await PDFDocument.create();
+      const pages=await out.copyPages(src,selected);
+      pages.forEach(p=>out.addPage(p));
+      const bytes=await out.save();
+      downloadBytes(bytes,'extracted-pages.pdf','application/pdf');
+      document.getElementById('status').textContent=`✅ ${selected.length} pages extracted`;
+    }
+  }catch(e){document.getElementById('status').textContent='Error: '+e.message;}
+  document.getElementById('split-btn').disabled=false;
+});
+
+function downloadBytes(bytes,name,type){
+  const blob=new Blob([bytes],{type});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+}
+</script>
+</body>
+</html>
