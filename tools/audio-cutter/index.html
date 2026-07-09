@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Cutter Online | OMIToolKit</title>
+<meta name="description" content="Cut and trim audio files online. Set start and end points with a waveform display. Free browser-based audio cutter — supports MP3, WAV, OGG.">
+<link rel="canonical" href="../../tools/audio-cutter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Cutter","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.audio-player{width:100%;margin:14px 0;border-radius:var(--radius-sm)}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Cutter</div>
+<div class="container tool-page-header"><h1>Audio Cutter</h1><p>Trim any audio file — set start/end points on the waveform and download the cut clip.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">✂️</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC, WebM</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px">
+    <span class="stat-chip" id="dur-chip">Duration: 0s</span>
+    <span class="stat-chip" id="sr-chip">Sample rate: —</span>
+  </div>
+  <audio id="preview" controls class="audio-player"></audio>
+  <div class="field-label" style="margin-top:16px;margin-bottom:8px">Cut range (seconds)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div><label class="field-label">Start (sec)</label><input type="number" id="start" class="field-input" value="0" min="0" step="0.1"></div>
+    <div><label class="field-label">End (sec)</label><input type="number" id="end" class="field-input" value="0" min="0" step="0.1"></div>
+  </div>
+  <div id="range-info" style="font-size:13.5px;color:var(--color-text-muted);margin-bottom:14px"></div>
+  <button class="btn btn-primary" id="cut-btn" style="width:100%;justify-content:center;padding:13px">✂️ Cut & Download</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>How audio cutting works</h2><p>Audio cutting extracts a specific time range from your audio file. The start and end times are converted to sample positions (multiplied by the sample rate), and only those samples are kept in the output file. This is a lossless operation — no re-compression happens within the selected range, so audio quality is preserved perfectly.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All processing is done locally in your browser.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+  const out=new Float32Array(len*numCh);
+  for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}
+  const pcm=new Int16Array(out.length);
+  for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));
+  const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);
+  const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+  ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");
+  ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);
+  v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);
+  new Int16Array(wb,44).set(pcm);return wb;
+}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
+let abuf=null,fname="",duration=0;
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();
+  abuf=await ctx.decodeAudioData(buf);
+  await ctx.close();
+  duration=abuf.duration;
+  document.getElementById("dur-chip").textContent="Duration: "+duration.toFixed(2)+"s";
+  document.getElementById("sr-chip").textContent="Sample rate: "+abuf.sampleRate+"Hz";
+  document.getElementById("end").value=duration.toFixed(2);
+  document.getElementById("editor").style.display="";
+  updateInfo();
+}
+function updateInfo(){
+  const s=parseFloat(document.getElementById("start").value)||0;
+  const e=parseFloat(document.getElementById("end").value)||duration;
+  const len=Math.max(0,e-s);
+  document.getElementById("range-info").textContent=`Selected: ${s.toFixed(2)}s → ${e.toFixed(2)}s (${len.toFixed(2)}s clip)`;
+}
+["start","end"].forEach(id=>document.getElementById(id).addEventListener("input",updateInfo));
+
+document.getElementById("cut-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  const s=parseFloat(document.getElementById("start").value)||0;
+  const e=Math.min(parseFloat(document.getElementById("end").value)||duration,duration);
+  if(s>=e){document.getElementById("status").textContent="Start must be before end";return;}
+  document.getElementById("cut-btn").disabled=true;
+  document.getElementById("status").textContent="Processing...";
+  const sr=abuf.sampleRate,numCh=abuf.numberOfChannels;
+  const startSample=Math.floor(s*sr),endSample=Math.floor(e*sr);
+  const newLen=endSample-startSample;
+  const ctx=new AudioContext();
+  const newBuf=ctx.createBuffer(numCh,newLen,sr);
+  for(let ch=0;ch<numCh;ch++){
+    const src=abuf.getChannelData(ch);
+    const dst=newBuf.getChannelData(ch);
+    dst.set(src.subarray(startSample,endSample));
+  }
+  await ctx.close();
+  const outName=fname.replace(/\.[^.]+$/,"")+"-cut.wav";
+  dlWav(newBuf,outName);
+  document.getElementById("status").textContent="✅ Download started — "+outName;
+  document.getElementById("cut-btn").disabled=false;
+});
+</script>
+</body></html>

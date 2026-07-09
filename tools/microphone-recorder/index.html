@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Microphone Recorder Online — Record Audio | OMIToolKit | OMIToolKit</title>
+<meta name="description" content="Record audio directly from your microphone online. Free browser-based mic recorder — play back, download as WAV or WebM. No app needed.">
+<link rel="canonical" href="../../tools/microphone-recorder/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Microphone Recorder Online — Record Audio | OMIToolKit","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Record audio directly from your microphone online. Free browser-based mic recorder — play back, download as WAV or WebM. No app needed."}</script>
+<style>
+.rec-btn{width:90px;height:90px;border-radius:50%;border:none;font-size:36px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.rec-btn.idle{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 20px rgba(239,68,68,.4)}
+.rec-btn.recording{background:linear-gradient(135deg,#6B7280,#4B5563);animation:pulse 1s infinite alternate}
+@keyframes pulse{from{box-shadow:0 4px 20px rgba(239,68,68,.4)}to{box-shadow:0 8px 36px rgba(239,68,68,.8)}}
+.timer{font-size:48px;font-weight:700;font-family:monospace;color:var(--color-primary);text-align:center;margin:16px 0}
+.viz-bars{display:flex;align-items:center;justify-content:center;gap:3px;height:60px;margin:14px 0}
+.vb{width:6px;border-radius:3px;background:var(--color-primary);transition:height .05s;min-height:4px}
+.rec-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.rec-item{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ri-name{font-weight:600;font-size:13.5px;flex:1}
+.ri-dur{font-size:12px;color:var(--color-text-muted);font-family:monospace}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}}
+</style></head><body><header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Microphone Recorder</div>
+<div class="container tool-page-header">
+  <h1>Microphone Recorder</h1>
+  <p>Record audio directly from your microphone — play back instantly and download as audio file.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:580px">
+  <div style="text-align:center;padding:20px 0">
+    <div class="timer" id="timer">00:00</div>
+    <div class="viz-bars" id="viz-bars"></div>
+    <button class="rec-btn idle" id="rec-btn">🎙️</button>
+    <div style="margin-top:12px;font-size:13.5px;color:var(--color-text-muted)" id="rec-status">Click to start recording</div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:center;margin:10px 0;flex-wrap:wrap">
+    <select id="fmt-sel" class="field-select" style="max-width:160px">
+      <option value="audio/webm">WebM (default)</option>
+      <option value="audio/wav">WAV</option>
+      <option value="audio/ogg">OGG</option>
+    </select>
+    <button class="btn btn-outline" id="clear-btn">Clear All</button>
+  </div>
+  <div class="rec-list" id="rec-list"></div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>How to record from your microphone</h2>
+  <p>Click the red microphone button to start recording — your browser will ask permission to access your microphone. Click again to stop. Each recording appears below with playback controls and a download button. Recordings are processed entirely in your browser — nothing is uploaded to any server.</p>
+  <h2>Which format should I choose?</h2>
+  <p>WebM is the default and works in Chrome, Edge, and Firefox. WAV produces uncompressed audio — the highest quality but larger file size. OGG is an open-source format with good compression. For most uses, WebM is the best choice. If you need the recording for professional editing software, use WAV.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All recording happens locally — nothing is uploaded.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+// Build visualizer bars
+const vizWrap=document.getElementById("viz-bars");
+const BARS=28;
+for(let i=0;i<BARS;i++){const d=document.createElement("div");d.className="vb";d.style.height="4px";vizWrap.appendChild(d);}
+const bars=[...vizWrap.querySelectorAll(".vb")];
+
+let mediaRec=null,chunks=[],recInterval=null,vizInterval=null,seconds=0,recCount=0;
+let analyser=null,dataArr=null,audioCtx=null;
+
+function fmtTime(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+
+document.getElementById("rec-btn").addEventListener("click",async()=>{
+  if(mediaRec && mediaRec.state==="recording"){
+    // STOP
+    mediaRec.stop();
+    clearInterval(recInterval);clearInterval(vizInterval);
+    bars.forEach(b=>b.style.height="4px");
+    document.getElementById("rec-btn").className="rec-btn idle";
+    document.getElementById("rec-btn").textContent="🎙️";
+    document.getElementById("rec-status").textContent="Click to start recording";
+    if(audioCtx){audioCtx.close();audioCtx=null;}
+    return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioCtx=new AudioContext();
+    const src=audioCtx.createMediaStreamSource(stream);
+    analyser=audioCtx.createAnalyser();analyser.fftSize=64;
+    src.connect(analyser);
+    dataArr=new Uint8Array(analyser.frequencyBinCount);
+    const fmt=document.getElementById("fmt-sel").value;
+    const opts=MediaRecorder.isTypeSupported(fmt)?{mimeType:fmt}:{};
+    mediaRec=new MediaRecorder(stream,opts);
+    chunks=[];
+    mediaRec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+    mediaRec.onstop=()=>{
+      const blob=new Blob(chunks,{type:mediaRec.mimeType||"audio/webm"});
+      addRecording(blob,seconds);
+      stream.getTracks().forEach(t=>t.stop());
+    };
+    mediaRec.start(100);
+    seconds=0;
+    document.getElementById("timer").textContent=fmtTime(0);
+    recInterval=setInterval(()=>{seconds++;document.getElementById("timer").textContent=fmtTime(seconds);},1000);
+    vizInterval=setInterval(()=>{
+      analyser.getByteFrequencyData(dataArr);
+      bars.forEach((b,i)=>{const v=dataArr[i]||0;b.style.height=Math.max(4,v/2)+"px";});
+    },50);
+    document.getElementById("rec-btn").className="rec-btn recording";
+    document.getElementById("rec-btn").textContent="⏹";
+    document.getElementById("rec-status").textContent="Recording... click to stop";
+  }catch(e){alert("Microphone access denied. Please allow microphone permission.");} 
+});
+
+function addRecording(blob,dur){
+  recCount++;
+  const ext=blob.type.includes("ogg")?"ogg":blob.type.includes("wav")?"wav":"webm";
+  const name=`recording-${recCount}.${ext}`;
+  const url=URL.createObjectURL(blob);
+  const item=document.createElement("div");item.className="rec-item";
+  item.innerHTML=`<div style="font-size:22px">🎵</div>
+    <div class="ri-name">${name}</div>
+    <div class="ri-dur">${fmtTime(dur)}</div>
+    <audio controls src="${url}" style="height:36px;flex:1;min-width:160px"></audio>
+    <a href="${url}" download="${name}" class="btn btn-primary" style="padding:7px 14px;font-size:12.5px">⬇ Save</a>
+    <button onclick="this.closest('.rec-item').remove()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px">×</button>`;
+  document.getElementById("rec-list").prepend(item);
+}
+document.getElementById("clear-btn").addEventListener("click",()=>document.getElementById("rec-list").innerHTML="");
+</script></body></html>

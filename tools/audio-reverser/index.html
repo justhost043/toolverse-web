@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Reverser Online | OMIToolKit</title>
+<meta name="description" content="Reverse audio files online. Play any audio backwards — MP3, WAV, OGG. Free browser-based audio reverser. Download the reversed audio instantly.">
+<link rel="canonical" href="../../tools/audio-reverser/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Reverser","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.audio-player{width:100%;margin:14px 0;border-radius:var(--radius-sm)}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Reverser</div>
+<div class="container tool-page-header"><h1>Audio Reverser</h1><p>Play any audio file backwards — create reverse effects instantly.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🔄</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC, WebM</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px">
+    <strong style="font-size:14px" id="fi-name"></strong>
+    <span class="stat-chip" id="dur-chip" style="margin-left:8px"></span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div>
+      <div class="field-label" style="margin-bottom:6px">Original</div>
+      <audio id="orig-audio" controls class="audio-player"></audio>
+    </div>
+    <div id="rev-panel" style="display:none">
+      <div class="field-label" style="margin-bottom:6px">Reversed Preview</div>
+      <audio id="rev-audio" controls class="audio-player"></audio>
+    </div>
+  </div>
+  <button class="btn btn-primary" id="rev-btn" style="width:100%;justify-content:center;padding:13px">🔄 Reverse Audio</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+  <button class="btn btn-outline" id="dl-btn" style="display:none;width:100%;justify-content:center;padding:11px;margin-top:8px">⬇ Download Reversed Audio</button>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Creative uses for reversed audio</h2><p>Reversed audio is used in music production for reverse reverb effects, creative intros, and psychoacoustic tricks. Reversing speech is also used in audio forensics and privacy protection. Some musicians record a melody reversed and then flip it to create unique melodic phrases that have a natural "backward feel" when played forward.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All processing is done locally in your browser.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+  const out=new Float32Array(len*numCh);
+  for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}
+  const pcm=new Int16Array(out.length);
+  for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));
+  const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);
+  const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+  ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");
+  ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);
+  v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);
+  new Int16Array(wb,44).set(pcm);return wb;
+}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
+let abuf=null,revBuf=null,fname="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("fi-name").textContent=file.name;
+  document.getElementById("orig-audio").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();
+  abuf=await ctx.decodeAudioData(buf);
+  await ctx.close();
+  document.getElementById("dur-chip").textContent=abuf.duration.toFixed(2)+"s";
+  document.getElementById("editor").style.display="";
+  document.getElementById("rev-panel").style.display="none";
+  document.getElementById("dl-btn").style.display="none";
+  revBuf=null;
+}
+document.getElementById("rev-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  document.getElementById("rev-btn").disabled=true;
+  document.getElementById("status").textContent="Reversing...";
+  const numCh=abuf.numberOfChannels,len=abuf.length,sr=abuf.sampleRate;
+  const ctx=new AudioContext();
+  revBuf=ctx.createBuffer(numCh,len,sr);
+  for(let ch=0;ch<numCh;ch++){
+    const src=abuf.getChannelData(ch);
+    const dst=revBuf.getChannelData(ch);
+    for(let i=0;i<len;i++)dst[i]=src[len-1-i];
+  }
+  await ctx.close();
+  const wav=audioBufferToWav(revBuf);
+  const blob=new Blob([wav],{type:"audio/wav"});
+  document.getElementById("rev-audio").src=URL.createObjectURL(blob);
+  document.getElementById("rev-panel").style.display="";
+  document.getElementById("dl-btn").style.display="flex";
+  document.getElementById("status").textContent="✅ Reversed! Preview plays below.";
+  document.getElementById("rev-btn").disabled=false;
+});
+document.getElementById("dl-btn").addEventListener("click",()=>{
+  if(!revBuf)return;
+  const outName=fname.replace(/\.[^.]+$/,"")+"-reversed.wav";
+  dlWav(revBuf,outName);
+});
+</script>
+</body></html>

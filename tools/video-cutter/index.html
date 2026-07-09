@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Video Cutter Online | OMIToolKit</title>
+<meta name="description" content="Cut and trim video files online. Set start and end time to extract a clip. Free browser-based video cutter — MP4, MKV, AVI, MOV.">
+<link rel="canonical" href="../../tools/video-cutter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Video Cutter","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+#pw{background:var(--color-border);border-radius:4px;height:10px;overflow:hidden;margin:12px 0;display:none}
+#pb{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .3s}
+#sb{margin:10px 0;padding:12px 16px;background:#F4F3FE;border-radius:var(--radius-sm);font-size:13px;color:var(--color-primary);font-family:monospace;display:none}
+video.pv{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);display:block;margin:14px 0}
+.chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-video">Video</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-video">Video</a> / Video Cutter</div>
+<div class="container tool-page-header"><h1>Video Cutter</h1><p>Extract any clip from a video — set start and end time, download the cut segment.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">✂️</div>
+  <div style="font-size:15px;font-weight:600">Drop video here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP4, MKV, AVI, MOV, WebM</div>
+  <input type="file" id="fi" accept="video/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px">
+    <strong id="fn" style="font-size:14px"></strong>
+    <span class="chip" id="fsz" style="margin-left:8px"></span>
+  </div>
+  <video id="pv" class="pv" controls style="max-height:220px"></video>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div><label class="field-label">Start time (seconds)</label>
+      <input type="number" id="start" class="field-input" value="0" min="0" step="0.1" placeholder="0"></div>
+    <div><label class="field-label">End time (seconds)</label>
+      <input type="number" id="end" class="field-input" value="30" min="0" step="0.1" placeholder="30"></div>
+  </div>
+  <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:14px" id="clip-info">
+    Selected: 0s → 30s (30s clip)
+  </div>
+  <label class="checkbox-item" style="margin-bottom:14px">
+    <input type="checkbox" id="fast-cut" checked style="accent-color:var(--color-primary)">
+    Fast cut (no re-encoding — instant but may have slight inaccuracy)
+  </label>
+  <div id="pw"><div id="pb"></div></div>
+  <div id="sb"></div>
+  <button class="btn btn-primary" id="go" style="width:100%;justify-content:center;padding:14px;margin-top:4px">Process & Download</button>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Fast cut vs re-encoded cut</h2><p>The "fast cut" option copies the video stream without re-encoding — this is instant and lossless but the cut points may be slightly inaccurate (up to a few seconds) because it can only cut at keyframes. Unchecking fast cut re-encodes the video for frame-accurate cuts but takes longer. For most uses — cutting out a middle section or extracting a highlight — fast cut is the better choice.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All processing runs in your browser — files never uploaded.</div></footer>
+<script type="module">
+document.getElementById("yr").textContent=new Date().getFullYear();
+
+let ffmpeg=null,fetchFile=null;
+async function getFFmpeg(){
+  if(ffmpeg)return ffmpeg;
+  showStatus("Loading FFmpeg... (~30MB, cached after first load)");showProg(3);
+  const ff=await import("https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js");
+  const ut=await import("https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js");
+  fetchFile=ut.fetchFile;
+  const toBlobURL=ut.toBlobURL;
+  ffmpeg=new ff.FFmpeg();
+  ffmpeg.on("progress",(p)=>showProg(5+Math.round(p.progress*88)));
+  const base="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+  await ffmpeg.load({coreURL:await toBlobURL(base+"/ffmpeg-core.js","text/javascript"),wasmURL:await toBlobURL(base+"/ffmpeg-core.wasm","application/wasm")});
+  showStatus("FFmpeg ready!");return ffmpeg;
+}
+function showStatus(m){const b=document.getElementById("sb");if(b){b.style.display="";b.textContent=m;}}
+function showProg(p){const w=document.getElementById("pw"),b=document.getElementById("pb");if(w&&b){w.style.display="";b.style.width=Math.min(100,p)+"%";}}
+function hideUI(){const w=document.getElementById("pw"),b=document.getElementById("sb");if(w)w.style.display="none";if(b)b.style.display="none";}
+function dlFile(data,name,mime){const blob=new Blob([data.buffer||data],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function initDZ(dId,fId,cb){
+  const dz=document.getElementById(dId),fi=document.getElementById(fId);
+  if(!dz||!fi)return;
+  dz.addEventListener("click",()=>fi.click());
+  dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+  dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+  dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])cb(e.dataTransfer.files[0])});
+  fi.addEventListener("change",()=>{if(fi.files[0])cb(fi.files[0])});
+}
+function ext(n){return n.substring(n.lastIndexOf("."));}
+function base(n){return n.substring(0,n.lastIndexOf("."));}
+
+let vf=null;
+initDZ("dz","fi",f=>{
+  vf=f;
+  document.getElementById("fn").textContent=f.name;
+  document.getElementById("fsz").textContent=(f.size/1024/1024).toFixed(1)+"MB";
+  document.getElementById("pv").src=URL.createObjectURL(f);
+  document.getElementById("editor").style.display="";hideUI();
+});
+function updInfo(){
+  const s=parseFloat(document.getElementById("start").value)||0;
+  const e=parseFloat(document.getElementById("end").value)||30;
+  document.getElementById("clip-info").textContent="Selected: "+s+"s → "+e+"s ("+(e-s).toFixed(1)+"s clip)";
+}
+["start","end"].forEach(id=>document.getElementById(id).addEventListener("input",updInfo));
+document.getElementById("pv").addEventListener("loadedmetadata",()=>{
+  document.getElementById("end").value=Math.floor(document.getElementById("pv").duration);
+  updInfo();
+});
+document.getElementById("go").addEventListener("click",async()=>{
+  if(!vf)return;
+  const btn=document.getElementById("go");btn.disabled=true;
+  const s=parseFloat(document.getElementById("start").value)||0;
+  const e=parseFloat(document.getElementById("end").value)||30;
+  if(s>=e){showStatus("Start must be before end time");btn.disabled=false;return;}
+  try{
+    const ff=await getFFmpeg();
+    const data=await fetchFile(vf);
+    const ex=ext(vf.name);
+    await ff.writeFile("i"+ex,data);showStatus("Cutting clip...");showProg(20);
+    const fast=document.getElementById("fast-cut").checked;
+    const args=["-i","i"+ex,"-ss",s.toString(),"-to",e.toString()];
+    if(fast)args.push("-c","copy");
+    else args.push("-c:v","libx264","-c:a","aac");
+    args.push("out.mp4");
+    await ff.exec(args);showProg(90);
+    const res=await ff.readFile("out.mp4");
+    dlFile(res,base(vf.name)+"-cut-"+s+"s-to-"+e+"s.mp4","video/mp4");
+    showStatus("Done! Clip saved.");showProg(100);
+    await ff.deleteFile("i"+ex);await ff.deleteFile("out.mp4");
+  }catch(er){showStatus("Error: "+er.message);}
+  btn.disabled=false;
+});
+</script></body></html>

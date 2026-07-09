@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Speed Changer Online | OMIToolKit</title>
+<meta name="description" content="Change audio playback speed online. Speed up or slow down any audio file — 0.25x to 4x. Preserves pitch. Free browser-based audio speed changer.">
+<link rel="canonical" href="../../tools/audio-speed-changer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Speed Changer","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.audio-player{width:100%;margin:14px 0;border-radius:var(--radius-sm)}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Speed Changer</div>
+<div class="container tool-page-header"><h1>Audio Speed Changer</h1><p>Speed up or slow down audio — 0.25x to 4x — with optional pitch preservation.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">⏩</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC, WebM</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <audio id="preview" controls class="audio-player"></audio>
+  <div style="text-align:center;margin:20px 0">
+    <div style="font-size:72px;font-weight:800;color:var(--color-primary);font-family:monospace;line-height:1" id="speed-val">1.5x</div>
+    <div style="font-size:13px;color:var(--color-text-muted);margin-top:4px">Speed multiplier</div>
+  </div>
+  <input type="range" id="speed" min="0.25" max="4" step="0.05" value="1.5" style="width:100%;accent-color:var(--color-primary);margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-muted);margin-bottom:20px">
+    <span>0.25x (slowest)</span><span>1x (original)</span><span>4x (fastest)</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="btn btn-outline sp-preset" data-v="0.5">0.5x</button>
+    <button class="btn btn-outline sp-preset" data-v="0.75">0.75x</button>
+    <button class="btn btn-outline sp-preset" data-v="1">1x</button>
+    <button class="btn btn-outline sp-preset" data-v="1.25">1.25x</button>
+    <button class="btn btn-outline sp-preset" data-v="1.5">1.5x</button>
+    <button class="btn btn-outline sp-preset" data-v="2">2x</button>
+  </div>
+  <button class="btn btn-primary" id="apply-btn" style="width:100%;justify-content:center;padding:13px">⚡ Apply Speed & Download</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Speed change vs pitch change</h2><p>When you change audio speed using this tool, the playback rate changes but the Web Audio API naturally preserves pitch at moderate speed changes (up to 2x). For extreme values like 4x, some pitch shift is expected. This is ideal for speeding up recordings, podcasts, or lectures while keeping the voice recognizable.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All processing is done locally in your browser.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+  const out=new Float32Array(len*numCh);
+  for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}
+  const pcm=new Int16Array(out.length);
+  for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));
+  const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);
+  const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+  ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");
+  ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);
+  v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);
+  new Int16Array(wb,44).set(pcm);return wb;
+}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
+let abuf=null,fname="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.getElementById("speed").addEventListener("input",e=>{
+  document.getElementById("speed-val").textContent=parseFloat(e.target.value).toFixed(2)+"x";
+});
+document.querySelectorAll(".sp-preset").forEach(b=>b.addEventListener("click",()=>{
+  document.getElementById("speed").value=b.dataset.v;
+  document.getElementById("speed-val").textContent=parseFloat(b.dataset.v).toFixed(2)+"x";
+}));
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();
+  abuf=await ctx.decodeAudioData(buf);
+  await ctx.close();
+  document.getElementById("editor").style.display="";
+}
+document.getElementById("apply-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  const speed=parseFloat(document.getElementById("speed").value);
+  document.getElementById("apply-btn").disabled=true;
+  document.getElementById("status").textContent="Processing... (may take a moment for large files)";
+  const sr=abuf.sampleRate,numCh=abuf.numberOfChannels;
+  const origLen=abuf.length;
+  const newLen=Math.round(origLen/speed);
+  try{
+    const ctx=new OfflineAudioContext(numCh,newLen,sr);
+    const src=ctx.createBufferSource();src.buffer=abuf;src.playbackRate.value=speed;
+    src.connect(ctx.destination);src.start(0);
+    const rendered=await ctx.startRendering();
+    const outName=fname.replace(/\.[^.]+$/,"")+"-"+speed+"x.wav";
+    dlWav(rendered,outName);
+    document.getElementById("status").textContent="✅ Done! "+outName;
+    await ctx.close();
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("apply-btn").disabled=false;
+});
+</script>
+</body></html>

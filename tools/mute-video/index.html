@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Mute Video Online | OMIToolKit</title>
+<meta name="description" content="Remove audio from video online. Silent video download — MP4, AVI, MKV, MOV. Free browser-based video muter.">
+<link rel="canonical" href="../../tools/mute-video/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"" + name + "","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.prog-wrap{background:var(--color-border);border-radius:4px;height:10px;overflow:hidden;margin:12px 0;display:none}
+.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .3s}
+.status-box{margin:12px 0;padding:12px 16px;background:#F4F3FE;border-radius:var(--radius-sm);font-size:13px;color:var(--color-primary);font-family:monospace;display:none}
+video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);display:block;margin:14px 0}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-video">Video</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-video">Video</a> / Mute Video</div>
+<div class="container tool-page-header"><h1>Mute Video</h1><p>Remove the audio track completely — download a silent version of any video.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🔇</div>
+  <div style="font-size:15px;font-weight:600">Drop a video file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP4, MKV, AVI, MOV, WebM</div>
+  <input type="file" id="fi" accept="video/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px">
+    <strong id="fi-name" style="font-size:14px"></strong>
+    <span class="stat-chip" id="sz-chip" style="margin-left:8px"></span>
+  </div>
+  <video id="preview" controls class="preview" style="max-height:240px"></video>
+  <div class="prog-wrap" id="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+  <div class="status-box" id="status-box"></div>
+  <button class="btn btn-primary" id="go-btn" style="width:100%;justify-content:center;padding:14px">🔇 Remove Audio & Download</button>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>When to use mute video</h2><p>Common reasons to remove audio: replacing background music with a copyright-free track, silencing a video before adding a professional voiceover, creating clean footage for a video essay, removing accidental audio from a screen recording, or sharing a clip that contains sensitive conversations. The video quality is completely preserved — only the audio stream is removed.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All video processing runs in your browser.</div></footer>
+<script type="module">
+document.getElementById("yr").textContent=new Date().getFullYear();
+
+let ffmpeg=null,fetchFile=null;
+async function getFFmpeg(onLog){
+  if(ffmpeg)return ffmpeg;
+  showStatus("Loading FFmpeg engine... (~30MB first load, cached after)");
+  showProg(5);
+  const ff=await import("https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js");
+  const ut=await import("https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js");
+  fetchFile=ut.fetchFile;
+  const toBlobURL=ut.toBlobURL;
+  ffmpeg=new ff.FFmpeg();
+  if(onLog)ffmpeg.on("log",onLog);
+  ffmpeg.on("progress",(p)=>showProg(Math.round(p.progress*90)+5));
+  const base="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+  await ffmpeg.load({
+    coreURL:await toBlobURL(base+"/ffmpeg-core.js","text/javascript"),
+    wasmURL:await toBlobURL(base+"/ffmpeg-core.wasm","application/wasm"),
+  });
+  showStatus("FFmpeg ready!");showProg(100);
+  return ffmpeg;
+}
+function showStatus(msg){const b=document.getElementById("status-box");if(b){b.style.display="";b.textContent=msg;}}
+function showProg(pct){const w=document.getElementById("prog-wrap"),b=document.getElementById("prog-bar");if(w&&b){w.style.display="";b.style.width=pct+"%";}}
+function hideProgress(){const w=document.getElementById("prog-wrap"),b=document.getElementById("status-box");if(w)w.style.display="none";if(b)b.style.display="none";}
+function dlFile(data,name,mime){const blob=new Blob([data.buffer||data],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function initDZ(dzId,fiId,onFile){
+  const dz=document.getElementById(dzId),fi=document.getElementById(fiId);
+  if(!dz||!fi)return;
+  dz.addEventListener("click",()=>fi.click());
+  dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+  dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+  dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])onFile(e.dataTransfer.files[0])});
+  fi.addEventListener("change",()=>{if(fi.files[0])onFile(fi.files[0])});
+}
+function getExt(name){return name.substring(name.lastIndexOf("."));}
+
+let vidFile=null;
+initDZ("dz","fi",file=>{
+  vidFile=file;
+  document.getElementById("fi-name").textContent=file.name;
+  document.getElementById("sz-chip").textContent=(file.size/1024/1024).toFixed(1)+"MB";
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  document.getElementById("editor").style.display="";hideProgress();
+});
+document.getElementById("go-btn").addEventListener("click",async()=>{
+  if(!vidFile)return;
+  const btn=document.getElementById("go-btn");btn.disabled=true;
+  try{
+    const ff=await getFFmpeg();
+    const data=await fetchFile(vidFile);
+    const ext=getExt(vidFile.name);
+    await ff.writeFile("inp"+ext,data);showStatus("Removing audio...");showProg(20);
+    await ff.exec(["-i","inp"+ext,"-c:v","copy","-an","muted.mp4"]);
+    showProg(90);
+    const out=await ff.readFile("muted.mp4");
+    dlFile(out,vidFile.name.replace(/[^.]+$/,"muted.mp4"),"video/mp4");
+    showStatus("Done! Audio removed.");showProg(100);
+    await ff.deleteFile("inp"+ext);await ff.deleteFile("muted.mp4");
+  }catch(e){showStatus("Error: "+e.message);}
+  btn.disabled=false;
+});
+</script>
+</body></html>

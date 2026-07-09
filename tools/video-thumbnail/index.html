@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Video Thumbnail Extractor Online | OMIToolKit</title>
+<meta name="description" content="Extract thumbnail images from any video file online. Capture frames at any timestamp. Free browser-based video thumbnail extractor — no upload required.">
+<link rel="canonical" href="../../tools/video-thumbnail/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Video Thumbnail Extractor","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Extract thumbnail images from any video file online. Capture frames at any timestamp. Free browser-based video thumbnail extractor — no upload required."}</script>
+
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.prog-wrap{background:var(--color-border);border-radius:4px;height:8px;overflow:hidden;margin:10px 0;display:none}
+.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .2s}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);margin:14px 0;display:block}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+.thumb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:14px 0}
+.thumb-card{background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer}
+.thumb-card img{width:100%;display:block}
+.thumb-card .tc-foot{padding:7px 10px;font-size:12px;font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.thumb-card a{font-size:11.5px;padding:3px 8px;border-radius:4px;background:var(--color-primary);color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-video">Video</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-video">Video</a> / Video Thumbnail Extractor</div>
+<div class="container tool-page-header"><h1>Video Thumbnail Extractor</h1><p>Capture any frame from a video as a high-quality PNG image — set exact timestamp.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🎬</div>
+  <div style="font-size:15px;font-weight:600">Drop a video file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP4, WebM, MOV, AVI — all formats</div>
+  <input type="file" id="fi" accept="video/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <video id="vid" controls class="preview" style="max-height:300px"></video>
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px">
+    <span class="stat-chip" id="dur-chip">Duration: —</span>
+    <span class="stat-chip" id="res-chip">Resolution: —</span>
+  </div>
+  <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+    <div style="flex:1;min-width:120px">
+      <label class="field-label">Capture at (seconds)</label>
+      <input type="number" id="timestamp" class="field-input" value="0" min="0" step="0.1">
+    </div>
+    <button class="btn btn-primary" id="capture-btn">📸 Capture Frame</button>
+    <button class="btn btn-outline" id="capture-all-btn">Capture 6 frames</button>
+  </div>
+  <canvas id="canvas" style="display:none"></canvas>
+  <div class="thumb-grid" id="thumb-grid"></div>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Extracting video thumbnails</h2><p>Video thumbnail extraction works by seeking the video to a specific timestamp and drawing the current frame onto an HTML5 Canvas element, then converting that canvas image to a PNG file for download. This is the same technique used by video editing software. Use the "Capture 6 frames" button to automatically extract evenly-spaced frames across the entire video for a quick visual overview.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All video processing runs in your browser — files are never uploaded.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+const dz=document.getElementById("dz"),fi=document.getElementById("fi"),vid=document.getElementById("vid");
+const canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadVid(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadVid(fi.files[0])});
+function loadVid(file){
+  vid.src=URL.createObjectURL(file);
+  vid.onloadedmetadata=()=>{
+    document.getElementById("dur-chip").textContent="Duration: "+vid.duration.toFixed(2)+"s";
+    document.getElementById("res-chip").textContent="Resolution: "+vid.videoWidth+"x"+vid.videoHeight;
+    document.getElementById("timestamp").max=vid.duration.toFixed(2);
+    document.getElementById("editor").style.display="";
+  };
+}
+function captureAt(t,label){
+  return new Promise(res=>{
+    vid.currentTime=t;
+    vid.onseeked=()=>{
+      canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
+      ctx.drawImage(vid,0,0);
+      canvas.toBlob(blob=>{
+        const url=URL.createObjectURL(blob);
+        const card=document.createElement("div");card.className="thumb-card";
+        card.innerHTML=`<img src="${url}" loading="lazy"><div class="tc-foot"><span>${label}</span><a href="${url}" download="frame-${t.toFixed(1)}s.png">⬇</a></div>`;
+        document.getElementById("thumb-grid").prepend(card);
+        res();
+      },"image/png");
+      vid.onseeked=null;
+    };
+  });
+}
+document.getElementById("capture-btn").addEventListener("click",()=>{
+  const t=parseFloat(document.getElementById("timestamp").value)||0;
+  captureAt(Math.min(t,vid.duration-0.01),"@"+t.toFixed(1)+"s");
+});
+document.getElementById("capture-all-btn").addEventListener("click",async()=>{
+  document.getElementById("capture-all-btn").disabled=true;
+  const dur=vid.duration;
+  const times=[0.05,0.2,0.35,0.5,0.65,0.8].map(p=>p*dur);
+  for(const t of times)await captureAt(t,Math.round(t)+"s");
+  document.getElementById("capture-all-btn").disabled=false;
+});
+</script>
+</body></html>

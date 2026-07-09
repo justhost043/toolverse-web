@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Fade In Out Online | OMIToolKit</title>
+<meta name="description" content="Add fade in and fade out effects to audio online. Control fade duration precisely. Free browser-based audio fade editor — download as WAV.">
+<link rel="canonical" href="../../tools/fade-in-out/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Fade In Out","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Fade In Out</div>
+<div class="container tool-page-header"><h1>Audio Fade In Out</h1><p>Add smooth fade in and fade out effects to any audio file.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px"><div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🌊</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px" id="fi-info"></div>
+  <audio id="preview" controls style="width:100%;margin-bottom:16px"></audio>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    <div>
+      <label class="field-label">Fade In: <strong id="fi-val" style="color:var(--color-primary)">1.0s</strong></label>
+      <input type="range" id="fade-in" min="0" max="10" step="0.1" value="1" style="width:100%;accent-color:var(--color-primary)">
+      <div style="font-size:12px;color:var(--color-text-muted)">0 = no fade in</div>
+    </div>
+    <div>
+      <label class="field-label">Fade Out: <strong id="fo-val" style="color:var(--color-primary)">1.0s</strong></label>
+      <input type="range" id="fade-out" min="0" max="10" step="0.1" value="1" style="width:100%;accent-color:var(--color-primary)">
+      <div style="font-size:12px;color:var(--color-text-muted)">0 = no fade out</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-outline" onclick="setFade(0.5,0.5)">Quick (0.5s)</button>
+    <button class="btn btn-outline" onclick="setFade(1,1)">Normal (1s)</button>
+    <button class="btn btn-outline" onclick="setFade(2,2)">Slow (2s)</button>
+    <button class="btn btn-outline" onclick="setFade(3,3)">Gradual (3s)</button>
+  </div>
+  <button class="btn btn-primary" id="apply-btn" style="width:100%;justify-content:center;padding:13px">Apply Fades & Download</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div></div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>What are fade in and fade out effects?</h2><p>A fade in gradually increases the volume from silence to full at the start of a track. A fade out gradually decreases volume to silence at the end. These effects are standard in music production, podcast editing, and video soundtracks — they prevent jarring starts and abrupt endings that feel unprofessional.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+  const out=new Float32Array(len*numCh);
+  for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}
+  const pcm=new Int16Array(out.length);
+  for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));
+  const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);
+  const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+  ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");
+  ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);
+  v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);
+  new Int16Array(wb,44).set(pcm);return wb;
+}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
+let abuf=null,fname="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.getElementById("fade-in").addEventListener("input",e=>document.getElementById("fi-val").textContent=parseFloat(e.target.value).toFixed(1)+"s");
+document.getElementById("fade-out").addEventListener("input",e=>document.getElementById("fo-val").textContent=parseFloat(e.target.value).toFixed(1)+"s");
+function setFade(i,o){
+  document.getElementById("fade-in").value=i;document.getElementById("fi-val").textContent=i+"s";
+  document.getElementById("fade-out").value=o;document.getElementById("fo-val").textContent=o+"s";
+}
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();abuf=await ctx.decodeAudioData(buf);await ctx.close();
+  document.getElementById("fi-info").textContent=file.name+" — "+abuf.duration.toFixed(2)+"s";
+  document.getElementById("editor").style.display="";
+}
+document.getElementById("apply-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  document.getElementById("apply-btn").disabled=true;
+  document.getElementById("status").textContent="Applying fades...";
+  const fi=parseFloat(document.getElementById("fade-in").value);
+  const fo=parseFloat(document.getElementById("fade-out").value);
+  const sr=abuf.sampleRate,numCh=abuf.numberOfChannels,len=abuf.length;
+  const ctx=new AudioContext();
+  const newBuf=ctx.createBuffer(numCh,len,sr);
+  const fiSamp=Math.floor(fi*sr),foSamp=Math.floor(fo*sr);
+  for(let ch=0;ch<numCh;ch++){
+    const src=abuf.getChannelData(ch);
+    const dst=newBuf.getChannelData(ch);
+    for(let i=0;i<len;i++){
+      let gain=1;
+      if(i<fiSamp&&fi>0)gain=i/fiSamp;
+      if(i>=len-foSamp&&fo>0)gain=Math.min(gain,(len-1-i)/foSamp);
+      dst[i]=src[i]*gain;
+    }
+  }
+  await ctx.close();
+  const outName=fname.replace(/\.[^.]+$/,"")+"-faded.wav";
+  dlWav(newBuf,outName);
+  document.getElementById("status").textContent="✅ Done! "+outName;
+  document.getElementById("apply-btn").disabled=false;
+});
+</script></body></html>

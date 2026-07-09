@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Bitrate Changer Online | OMIToolKit</title>
+<meta name="description" content="Change audio bitrate online. Check current audio bitrate and convert to WAV for reprocessing. Free browser-based audio bitrate tool.">
+<link rel="canonical" href="../../tools/change-bitrate/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Bitrate Changer","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Bitrate Changer</div>
+<div class="container tool-page-header"><h1>Audio Bitrate Changer</h1><p>Check your audio file bitrate and export to uncompressed WAV for re-encoding.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px"><div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">📊</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC, WebM</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    <div style="background:#F4F3FE;border:1px solid #C9C5F7;border-radius:var(--radius-sm);padding:14px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--color-primary)" id="info-sr">—</div>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:3px">Sample Rate (Hz)</div>
+    </div>
+    <div style="background:#F4F3FE;border:1px solid #C9C5F7;border-radius:var(--radius-sm);padding:14px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--color-primary)" id="info-ch">—</div>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:3px">Channels</div>
+    </div>
+    <div style="background:#F4F3FE;border:1px solid #C9C5F7;border-radius:var(--radius-sm);padding:14px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--color-primary)" id="info-dur">—</div>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:3px">Duration (s)</div>
+    </div>
+  </div>
+  <div id="bitrate-info" style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:12px 16px;font-size:13.5px;margin-bottom:14px"></div>
+  <audio id="preview" controls style="width:100%;margin-bottom:14px"></audio>
+  <div class="field-label" style="margin-bottom:8px">Target sample rate for WAV export</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-outline sr-btn active" data-sr="44100">44.1 kHz (CD)</button>
+    <button class="btn btn-outline sr-btn" data-sr="48000">48 kHz (Video)</button>
+    <button class="btn btn-outline sr-btn" data-sr="22050">22.05 kHz (Voice)</button>
+    <button class="btn btn-outline sr-btn" data-sr="16000">16 kHz (Speech)</button>
+  </div>
+  <button class="btn btn-primary" id="export-btn" style="width:100%;justify-content:center;padding:13px">Export WAV at Selected Rate</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div></div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>What is audio bitrate and sample rate?</h2><p>Bitrate measures how much data is used per second of audio — higher bitrate means better quality and larger file size. 320 kbps is CD quality for MP3. Sample rate is how many times per second the audio is sampled — 44,100 Hz (44.1 kHz) is the CD standard, and 48,000 Hz is the standard for video production. Changing the sample rate affects both file size and compatibility with different devices and software.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();function audioBufferToWav(buf){const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;const out=new Float32Array(len*numCh);for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}const pcm=new Int16Array(out.length);for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);new Int16Array(wb,44).set(pcm);return wb;}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}let abuf=null,fname="",targetSR=44100;
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.querySelectorAll(".sr-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".sr-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");targetSR=parseInt(b.dataset.sr);
+}));
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();abuf=await ctx.decodeAudioData(buf);await ctx.close();
+  document.getElementById("info-sr").textContent=(abuf.sampleRate/1000).toFixed(1)+"k";
+  document.getElementById("info-ch").textContent=abuf.numberOfChannels===1?"Mono":"Stereo";
+  document.getElementById("info-dur").textContent=abuf.duration.toFixed(2);
+  const estBitrate=Math.round((file.size*8)/(abuf.duration*1000));
+  document.getElementById("bitrate-info").innerHTML=`<strong>Estimated bitrate:</strong> ~${estBitrate} kbps &nbsp;|&nbsp; <strong>File size:</strong> ${(file.size/1024).toFixed(0)} KB &nbsp;|&nbsp; <strong>Format:</strong> ${file.type||"unknown"}`;
+  document.getElementById("editor").style.display="";
+}
+document.getElementById("export-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  document.getElementById("export-btn").disabled=true;
+  document.getElementById("status").textContent="Resampling and exporting...";
+  try{
+    const offCtx=new OfflineAudioContext(abuf.numberOfChannels,Math.ceil(abuf.duration*targetSR),targetSR);
+    const src=offCtx.createBufferSource();src.buffer=abuf;src.connect(offCtx.destination);src.start(0);
+    const rendered=await offCtx.startRendering();
+    const outName=fname.replace(/\.[^.]+$/,"")+"-"+targetSR+"hz.wav";
+    dlWav(rendered,outName);
+    document.getElementById("status").textContent="✅ Exported at "+targetSR+"Hz — "+outName;
+    await offCtx.close();
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("export-btn").disabled=false;
+});</script>
+</body></html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Noise Reducer Online | OMIToolKit</title>
+<meta name="description" content="Reduce background noise from audio online. Apply a noise gate to remove hiss and hum. Free browser-based noise reducer for podcasts and recordings.">
+<link rel="canonical" href="../../tools/noise-reducer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Noise Reducer","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Noise Reducer</div>
+<div class="container tool-page-header"><h1>Noise Reducer</h1><p>Apply noise gate to remove background hiss, hum, and ambient noise from recordings.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px"><div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🔇</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px" id="fi-info"></div>
+  <audio id="preview" controls style="width:100%;margin-bottom:16px"></audio>
+  <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#92400E;margin-bottom:14px">
+    ℹ️ This tool applies a <strong>noise gate</strong> — it silences parts of the audio below the threshold. For advanced noise reduction (spectral subtraction), professional software like Audacity or Adobe Audition is recommended.
+  </div>
+  <div style="margin-bottom:14px">
+    <label class="field-label">Noise Gate Threshold: <strong id="gate-val" style="color:var(--color-primary)">-40 dB</strong></label>
+    <input type="range" id="gate" min="-80" max="-10" value="-40" style="width:100%;accent-color:var(--color-primary)">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-muted)">
+      <span>-80dB (lightest)</span><span>-40dB (medium)</span><span>-10dB (heaviest)</span>
+    </div>
+  </div>
+  <div style="margin-bottom:16px">
+    <label class="field-label">Smoothing: <strong id="smooth-val" style="color:var(--color-primary)">10ms</strong></label>
+    <input type="range" id="smooth" min="1" max="50" value="10" style="width:100%;accent-color:var(--color-primary)">
+  </div>
+  <button class="btn btn-primary" id="apply-btn" style="width:100%;justify-content:center;padding:13px">Apply Noise Gate & Download</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div></div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Noise gate vs noise reduction</h2><p>A noise gate silences audio that falls below a set threshold, treating anything below that level as noise. This is effective for recordings with clear pauses between speech — the gate closes during silence and opens when you speak. True noise reduction (spectral subtraction) is more complex and requires a "noise profile" sample. For best results with this tool, set the threshold just above your background noise level and use smoothing to avoid harsh gating artifacts.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();function audioBufferToWav(buf){const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;const out=new Float32Array(len*numCh);for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}const pcm=new Int16Array(out.length);for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);new Int16Array(wb,44).set(pcm);return wb;}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}let abuf=null,fname="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.getElementById("gate").addEventListener("input",e=>document.getElementById("gate-val").textContent=e.target.value+" dB");
+document.getElementById("smooth").addEventListener("input",e=>document.getElementById("smooth-val").textContent=e.target.value+"ms");
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();abuf=await ctx.decodeAudioData(buf);await ctx.close();
+  document.getElementById("fi-info").textContent=file.name+" — "+abuf.duration.toFixed(2)+"s";
+  document.getElementById("editor").style.display="";
+}
+document.getElementById("apply-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  document.getElementById("apply-btn").disabled=true;
+  document.getElementById("status").textContent="Processing noise gate...";
+  const thresholdDB=parseFloat(document.getElementById("gate").value);
+  const thresholdLinear=Math.pow(10,thresholdDB/20);
+  const smoothMs=parseInt(document.getElementById("smooth").value);
+  const sr=abuf.sampleRate,numCh=abuf.numberOfChannels,len=abuf.length;
+  const smoothSamp=Math.floor(smoothMs*sr/1000);
+  const ctx=new AudioContext();
+  const out=ctx.createBuffer(numCh,len,sr);
+  for(let ch=0;ch<numCh;ch++){
+    const src=abuf.getChannelData(ch);
+    const dst=out.getChannelData(ch);
+    let gate=0;
+    for(let i=0;i<len;i++){
+      const level=Math.abs(src[i]);
+      const target=level>thresholdLinear?1:0;
+      gate+=(target-gate)/smoothSamp;
+      gate=Math.max(0,Math.min(1,gate));
+      dst[i]=src[i]*gate;
+    }
+  }
+  await ctx.close();
+  const outName=fname.replace(/\.[^.]+$/,"")+"-denoised.wav";
+  dlWav(out,outName);
+  document.getElementById("status").textContent="✅ Done! "+outName;
+  document.getElementById("apply-btn").disabled=false;
+});</script>
+</body></html>

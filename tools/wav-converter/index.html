@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free WAV Converter Online | OMIToolKit</title>
+<meta name="description" content="Convert audio files to WAV format online. MP3, OGG, AAC, WebM to WAV. Free browser-based converter — lossless output, no upload required.">
+<link rel="canonical" href="../../tools/wav-converter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"WAV Converter","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / WAV Converter</div>
+<div class="container tool-page-header"><h1>WAV Converter</h1><p>Convert any audio format to uncompressed WAV — perfect for editing and professional use.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px"><div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🎵</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, OGG, AAC, WebM, FLAC — any audio format</div>
+  <input type="file" id="fi" accept="audio/*" multiple style="display:none">
+</div>
+<div id="results" style="margin-top:14px"></div></div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Why convert to WAV?</h2><p>WAV (Waveform Audio File Format) is an uncompressed audio format that preserves 100% of the audio data without any quality loss. It is the standard format for professional audio editing, mastering, and archiving. If you plan to further edit an audio file — apply effects, mix with other tracks, or process in a DAW — converting to WAV first ensures you are always working with the highest possible quality.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();function audioBufferToWav(buf){const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;const out=new Float32Array(len*numCh);for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}const pcm=new Int16Array(out.length);for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);new Int16Array(wb,44).set(pcm);return wb;}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}const dz=document.getElementById("dz"),fi=document.getElementById("fi"),results=document.getElementById("results");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");processFiles([...e.dataTransfer.files])});
+fi.addEventListener("change",()=>processFiles([...fi.files]));
+async function processFiles(files){
+  for(const file of files.filter(f=>f.type.startsWith("audio/"))){
+    const card=document.createElement("div");
+    card.style.cssText="background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;margin:8px 0";
+    card.innerHTML=`<div style="font-weight:600;font-size:14px;margin-bottom:6px">${file.name}</div><div style="font-size:13px;color:var(--color-text-muted)">Converting...</div>`;
+    results.appendChild(card);
+    try{
+      const buf=await file.arrayBuffer();
+      const ctx=new AudioContext();
+      const abuf=await ctx.decodeAudioData(buf);
+      await ctx.close();
+      const wav=audioBufferToWav(abuf);
+      const blob=new Blob([wav],{type:"audio/wav"});
+      const outName=file.name.replace(/\.[^.]+$/,"")+".wav";
+      const url=URL.createObjectURL(blob);
+      card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div><div style="font-weight:600;font-size:14px">${outName}</div>
+        <div style="font-size:12.5px;color:var(--color-text-muted);margin-top:3px">${abuf.duration.toFixed(2)}s · ${abuf.sampleRate}Hz · ${abuf.numberOfChannels}ch · ${(blob.size/1024).toFixed(0)}KB</div></div>
+        <a href="${url}" download="${outName}" class="btn btn-primary" style="padding:7px 16px;font-size:13px">⬇ Download WAV</a>
+      </div>
+      <audio controls src="${url}" style="width:100%;margin-top:10px"></audio>`;
+    }catch(e){card.innerHTML+=`<div style="color:#EF4444;font-size:13px">Error: ${e.message}</div>`;}
+  }
+}</script>
+</body></html>

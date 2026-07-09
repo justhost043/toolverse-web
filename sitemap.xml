@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://justhost043.github.io/toolverse-web/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/add-audio-to-video/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/age-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/aspect-ratio-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-compressor/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-cutter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-joiner/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-reverser/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/audio-speed-changer/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/base64-encoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/base64-encoder-decoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/binary-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/bmi-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/bulk-image-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/calorie-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/change-bitrate/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/change-video-resolution/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/character-frequency/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/code-to-image/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/color-contrast-checker/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -23,9 +32,12 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/css-minifier/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/currency-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/emi-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/extract-audio/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/fade-in-out/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/favicon-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/flip-image/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/flip-text/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/gif-to-video/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/hash-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/heic-to-jpg/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/html-encoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -51,7 +63,11 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/markdown-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/markdown-editor/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/markdown-table-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/microphone-recorder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/morse-code-translator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/mp3-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/mute-video/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/noise-reducer/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/number-sorter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/number-to-words/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/password-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -73,6 +89,7 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/random-number-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/readability-checker/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/regex-tester/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/ringtone-maker/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/roman-numeral-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/scientific-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/screen-resolution/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -91,12 +108,29 @@
   <url><loc>https://justhost043.github.io/toolverse-web/tools/timestamp-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/timezone-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/tip-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/trim-video/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/typing-speed-test/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/unit-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/url-encoder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/uuid-generator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-compressor/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-cutter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-flipper/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-format-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-merger/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-reverser/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-rotator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-speed-changer/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-thumbnail/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-to-gif/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/video-to-mp3/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/volume-booster/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/watermark-image/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/watermark-pdf/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/watermark-video/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/wav-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://justhost043.github.io/toolverse-web/tools/webcam-recorder/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/webp-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/word-counter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://justhost043.github.io/toolverse-web/tools/word-frequency-counter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>

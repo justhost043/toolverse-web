@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Online Volume Booster — Increase Audio Volume | OMIToolKit | OMIToolKit</title>
+<meta name="description" content="Boost or reduce audio volume online. Upload any audio file and increase volume up to 10x. Free browser-based volume booster — no upload to server.">
+<link rel="canonical" href="../../tools/volume-booster/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Online Volume Booster — Increase Audio Volume | OMIToolKit","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Boost or reduce audio volume online. Upload any audio file and increase volume up to 10x. Free browser-based volume booster — no upload to server."}</script>
+<style>
+.preview-player{width:100%;margin:14px 0;border-radius:var(--radius-sm)}
+.boost-display{text-align:center;font-size:60px;font-weight:800;color:var(--color-primary);font-family:monospace;line-height:1;margin:10px 0}
+.boost-label{text-align:center;font-size:14px;color:var(--color-text-muted);margin-bottom:16px}
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}}
+</style></head><body><header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Volume Booster</div>
+<div class="container tool-page-header">
+  <h1>Volume Booster</h1>
+  <p>Increase or decrease audio volume up to 10x — download the boosted audio file instantly.</p>
+</div>
+<div class="container"><div class="tool-panel" style="max-width:620px">
+  <div class="dz" id="dz">
+    <div style="font-size:40px;margin-bottom:10px">🔊</div>
+    <div style="font-size:15px;font-weight:600">Drop an audio file here or click to select</div>
+    <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC, WebM</div>
+    <input type="file" id="fi" accept="audio/*" style="display:none">
+  </div>
+  <div id="editor" style="display:none;margin-top:16px">
+    <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px;font-size:14px;font-weight:500" id="fi-name"></div>
+    <audio id="preview" controls class="preview-player"></audio>
+    <div class="boost-display" id="boost-val">2.0x</div>
+    <div class="boost-label">Volume multiplier</div>
+    <input type="range" id="boost" min="0.1" max="10" step="0.1" value="2" style="width:100%;accent-color:var(--color-primary);margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-muted);margin-bottom:20px">
+      <span>0.1x (quieter)</span><span>1x (original)</span><span>10x (loudest)</span>
+    </div>
+    <button class="btn btn-primary" id="boost-btn" style="width:100%;justify-content:center;padding:13px">🔊 Apply & Download</button>
+    <div id="progress" style="margin-top:12px;height:6px;background:var(--color-border);border-radius:3px;display:none">
+      <div id="prog-bar" style="height:100%;width:0%;background:var(--color-primary);border-radius:3px;transition:width .1s"></div>
+    </div>
+    <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+  </div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>How the volume booster works</h2>
+  <p>This tool uses the Web Audio API to decode your audio file, applies a gain (multiplication) to the audio signal, then re-encodes it for download. A gain of 2x means every sample value is doubled — the audio will sound twice as loud. Values above 4x may cause clipping (distortion) if the original audio is already loud. For best results, start with 2x and increase gradually.</p>
+  <h2>Why does audio need volume boosting?</h2>
+  <p>Videos recorded on phones in noisy environments, podcast recordings from budget microphones, and audio extracted from screen recordings often come out too quiet. Rather than editing in a DAW, this quick tool lets you boost the volume in seconds and download the result.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+let audioBuffer=null,fileName="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadFile(fi.files[0])});
+document.getElementById("boost").addEventListener("input",e=>{
+  document.getElementById("boost-val").textContent=parseFloat(e.target.value).toFixed(1)+"x";
+});
+
+async function loadFile(file){
+  fileName=file.name;
+  document.getElementById("fi-name").textContent=file.name+" — "+(file.size/1024/1024).toFixed(2)+" MB";
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();
+  audioBuffer=await ctx.decodeAudioData(buf);
+  await ctx.close();
+  document.getElementById("editor").style.display="";
+  document.getElementById("status").textContent="";
+}
+
+document.getElementById("boost-btn").addEventListener("click",async()=>{
+  if(!audioBuffer)return;
+  const gain=parseFloat(document.getElementById("boost").value);
+  document.getElementById("boost-btn").disabled=true;
+  document.getElementById("status").textContent="Processing...";
+  document.getElementById("progress").style.display="";
+  
+  try{
+    const ctx=new OfflineAudioContext(audioBuffer.numberOfChannels,audioBuffer.length,audioBuffer.sampleRate);
+    const src=ctx.createBufferSource();src.buffer=audioBuffer;
+    const gainNode=ctx.createGain();gainNode.gain.value=gain;
+    src.connect(gainNode);gainNode.connect(ctx.destination);
+    src.start(0);
+    document.getElementById("prog-bar").style.width="40%";
+    const rendered=await ctx.startRendering();
+    document.getElementById("prog-bar").style.width="80%";
+    
+    // Encode to WAV
+    const wav=audioBufferToWav(rendered);
+    const blob=new Blob([wav],{type:"audio/wav"});
+    const url=URL.createObjectURL(blob);
+    const outName=fileName.replace(/\.[^.]+$/,"")+"-boosted.wav";
+    const a=document.createElement("a");a.href=url;a.download=outName;a.click();
+    document.getElementById("prog-bar").style.width="100%";
+    document.getElementById("status").textContent="✅ Download started — "+outName;
+    await ctx.close();
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("boost-btn").disabled=false;
+});
+
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+  const out=new Float32Array(len*numCh);
+  for(let ch=0;ch<numCh;ch++){const data=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=data[i];}
+  const pcm=new Int16Array(out.length);
+  for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));
+  const wavBuf=new ArrayBuffer(44+pcm.byteLength);
+  const view=new DataView(wavBuf);
+  function ws(off,str){for(let i=0;i<str.length;i++)view.setUint8(off+i,str.charCodeAt(i));}
+  ws(0,"RIFF");view.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");
+  ws(12,"fmt ");view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,numCh,true);
+  view.setUint32(24,sr,true);view.setUint32(28,sr*numCh*2,true);view.setUint16(32,numCh*2,true);
+  view.setUint16(34,16,true);ws(36,"data");view.setUint32(40,pcm.byteLength,true);
+  new Int16Array(wavBuf,44).set(pcm);
+  return wavBuf;
+}
+</script></body></html>

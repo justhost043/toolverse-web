@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Watermark Video Online | OMIToolKit</title>
+<meta name="description" content="Add text watermark to video online. Protect your videos with CONFIDENTIAL, your name, or custom text. Free browser-based video watermark tool.">
+<link rel="canonical" href="../../tools/watermark-video/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Watermark Video","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+#pw{background:var(--color-border);border-radius:4px;height:10px;overflow:hidden;margin:12px 0;display:none}
+#pb{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .3s}
+#sb{margin:10px 0;padding:12px 16px;background:#F4F3FE;border-radius:var(--radius-sm);font-size:13px;color:var(--color-primary);font-family:monospace;display:none}
+video.pv{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);display:block;margin:14px 0}
+.chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-video">Video</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-video">Video</a> / Watermark Video</div>
+<div class="container tool-page-header"><h1>Watermark Video</h1><p>Add a professional text watermark to any video — control position, opacity, and style.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+<div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">💧</div>
+  <div style="font-size:15px;font-weight:600">Drop video here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP4, MKV, AVI, MOV, WebM</div>
+  <input type="file" id="fi" accept="video/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px">
+    <strong id="fn" style="font-size:14px"></strong>
+    <span class="chip" id="fsz" style="margin-left:8px"></span>
+  </div>
+  <video id="pv" class="pv" controls style="max-height:220px"></video>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div><label class="field-label">Watermark text</label>
+      <input type="text" id="wt" class="field-input" value="© OMIToolKit.com" placeholder="Your watermark text..."></div>
+    <div><label class="field-label">Position</label>
+      <select id="wpos" class="field-select">
+        <option value="10:10">Top Left</option>
+        <option value="(W-tw)/2:10">Top Center</option>
+        <option value="W-tw-10:10">Top Right</option>
+        <option value="10:(H-th)/2">Middle Left</option>
+        <option value="(W-tw)/2:(H-th)/2">Center</option>
+        <option value="W-tw-10:(H-th)/2">Middle Right</option>
+        <option value="10:H-th-10">Bottom Left</option>
+        <option value="(W-tw)/2:H-th-10" selected>Bottom Center</option>
+        <option value="W-tw-10:H-th-10">Bottom Right</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div><label class="field-label">Font size: <strong id="fs-lbl" style="color:var(--color-primary)">28px</strong></label>
+      <input type="range" id="fsize" min="12" max="80" value="28" style="width:100%;accent-color:var(--color-primary)"></div>
+    <div><label class="field-label">Opacity: <strong id="op-lbl" style="color:var(--color-primary)">60%</strong></label>
+      <input type="range" id="opacity" min="10" max="100" value="60" style="width:100%;accent-color:var(--color-primary)"></div>
+  </div>
+  <div id="pw"><div id="pb"></div></div>
+  <div id="sb"></div>
+  <button class="btn btn-primary" id="go" style="width:100%;justify-content:center;padding:14px;margin-top:4px">Process & Download</button>
+</div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>When to watermark your videos</h2><p>Watermarking protects your creative work from unauthorized use and promotes your brand when videos are shared. For YouTube creators, adding your channel name at the bottom keeps your branding visible when clips are shared on social media. For businesses, CONFIDENTIAL or DRAFT watermarks prevent distribution of internal review copies. The semi-transparent text style ensures watermarks are visible without obstructing the content.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script type="module">
+document.getElementById("yr").textContent=new Date().getFullYear();
+
+let ffmpeg=null,fetchFile=null;
+async function getFFmpeg(){
+  if(ffmpeg)return ffmpeg;
+  showStatus("Loading FFmpeg... (~30MB, cached after first load)");showProg(3);
+  const ff=await import("https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js");
+  const ut=await import("https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js");
+  fetchFile=ut.fetchFile;
+  const toBlobURL=ut.toBlobURL;
+  ffmpeg=new ff.FFmpeg();
+  ffmpeg.on("progress",(p)=>showProg(5+Math.round(p.progress*88)));
+  const base="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+  await ffmpeg.load({coreURL:await toBlobURL(base+"/ffmpeg-core.js","text/javascript"),wasmURL:await toBlobURL(base+"/ffmpeg-core.wasm","application/wasm")});
+  showStatus("FFmpeg ready!");return ffmpeg;
+}
+function showStatus(m){const b=document.getElementById("sb");if(b){b.style.display="";b.textContent=m;}}
+function showProg(p){const w=document.getElementById("pw"),b=document.getElementById("pb");if(w&&b){w.style.display="";b.style.width=Math.min(100,p)+"%";}}
+function hideUI(){const w=document.getElementById("pw"),b=document.getElementById("sb");if(w)w.style.display="none";if(b)b.style.display="none";}
+function dlFile(data,name,mime){const blob=new Blob([data.buffer||data],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function initDZ(dId,fId,cb){
+  const dz=document.getElementById(dId),fi=document.getElementById(fId);
+  if(!dz||!fi)return;
+  dz.addEventListener("click",()=>fi.click());
+  dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+  dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+  dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])cb(e.dataTransfer.files[0])});
+  fi.addEventListener("change",()=>{if(fi.files[0])cb(fi.files[0])});
+}
+function ext(n){return n.substring(n.lastIndexOf("."));}
+function base(n){return n.substring(0,n.lastIndexOf("."));}
+
+let vf=null;
+initDZ("dz","fi",f=>{
+  vf=f;
+  document.getElementById("fn").textContent=f.name;
+  document.getElementById("fsz").textContent=(f.size/1024/1024).toFixed(1)+"MB";
+  document.getElementById("pv").src=URL.createObjectURL(f);
+  document.getElementById("editor").style.display="";hideUI();
+});
+document.getElementById("fsize").addEventListener("input",e=>document.getElementById("fs-lbl").textContent=e.target.value+"px");
+document.getElementById("opacity").addEventListener("input",e=>document.getElementById("op-lbl").textContent=e.target.value+"%");
+document.getElementById("go").addEventListener("click",async()=>{
+  if(!vf)return;
+  const btn=document.getElementById("go");btn.disabled=true;
+  const text=document.getElementById("wt").value||"Watermark";
+  const pos=document.getElementById("wpos").value;
+  const fs=document.getElementById("fsize").value;
+  const op=(parseInt(document.getElementById("opacity").value)/100).toFixed(2);
+  try{
+    const ff=await getFFmpeg();
+    const data=await fetchFile(vf);
+    const ex=ext(vf.name);
+    await ff.writeFile("i"+ex,data);showStatus("Adding watermark...");showProg(20);
+    const drawtext="drawtext=text='"+text.replace(/'/g,"")+"':fontsize="+fs+":fontcolor=white@"+op+":x="+pos.split(":")[0]+":y="+pos.split(":")[1]+":box=1:boxcolor=black@0.3:boxborderw=5";
+    await ff.exec(["-i","i"+ex,"-vf",drawtext,"-c:v","libx264","-crf","20","-c:a","copy","out.mp4"]);
+    showProg(90);
+    const res=await ff.readFile("out.mp4");
+    dlFile(res,base(vf.name)+"-watermarked.mp4","video/mp4");
+    showStatus("Done! Watermark added.");showProg(100);
+    await ff.deleteFile("i"+ex);await ff.deleteFile("out.mp4");
+  }catch(er){showStatus("Error: "+er.message);}
+  btn.disabled=false;
+});
+</script></body></html>

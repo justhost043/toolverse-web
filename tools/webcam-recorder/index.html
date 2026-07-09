@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Webcam Recorder Online | OMIToolKit</title>
+<meta name="description" content="Record video from your webcam online. Free browser-based webcam recorder — download as WebM. No app install needed. Supports camera and screen recording.">
+<link rel="canonical" href="../../tools/webcam-recorder/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Webcam Recorder","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Record video from your webcam online. Free browser-based webcam recorder — download as WebM. No app install needed. Supports camera and screen recording."}</script>
+
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.prog-wrap{background:var(--color-border);border-radius:4px;height:8px;overflow:hidden;margin:10px 0;display:none}
+.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .2s}
+.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
+video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);margin:14px 0;display:block}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
+.rec-btn{width:80px;height:80px;border-radius:50%;border:none;font-size:30px;cursor:pointer;transition:all .2s;margin:0 auto;display:flex;align-items:center;justify-content:center}
+.rec-btn.idle{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 20px rgba(239,68,68,.4)}
+.rec-btn.recording{background:linear-gradient(135deg,#374151,#1F2937);animation:pulseRec .8s infinite alternate}
+@keyframes pulseRec{from{box-shadow:0 4px 20px rgba(239,68,68,.3)}to{box-shadow:0 8px 32px rgba(239,68,68,.7)}}
+.timer{font-size:44px;font-weight:800;font-family:monospace;color:var(--color-primary);text-align:center;margin:10px 0}
+.src-tabs{display:flex;gap:8px;margin-bottom:16px}
+.src-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.src-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-video">Video</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-video">Video</a> / Webcam Recorder</div>
+<div class="container tool-page-header"><h1>Webcam Recorder</h1><p>Record directly from your webcam or screen — download video instantly.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
+<div class="src-tabs">
+  <button class="src-tab active" data-s="camera">📷 Camera</button>
+  <button class="src-tab" data-s="screen">🖥️ Screen</button>
+</div>
+<div style="background:#1E1B2E;border-radius:var(--radius-lg);overflow:hidden;position:relative">
+  <video id="live" autoplay muted playsinline style="width:100%;display:block;max-height:340px;background:#000"></video>
+</div>
+<div style="padding:20px 0;text-align:center">
+  <div class="timer" id="timer">00:00</div>
+  <button class="rec-btn idle" id="rec-btn">⏺</button>
+  <div style="margin-top:10px;font-size:13.5px;color:var(--color-text-muted)" id="rec-status">Click to start recording</div>
+</div>
+<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+  <div style="display:flex;align-items:center;gap:8px">
+    <label class="field-label" style="margin:0;white-space:nowrap">Quality:</label>
+    <select id="quality-sel" class="field-select" style="max-width:160px">
+      <option value="2500000">High (2.5 Mbps)</option>
+      <option value="1000000" selected>Medium (1 Mbps)</option>
+      <option value="500000">Low (500 Kbps)</option>
+    </select>
+  </div>
+</div>
+<div id="recordings" style="margin-top:8px"></div>
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>Recording webcam and screen video</h2><p>This tool uses the browser MediaRecorder API to capture video from your camera or screen directly. Camera recording captures both video and audio from your webcam and microphone. Screen recording captures everything on your screen — useful for tutorials, demos, and bug reports. All recordings are saved locally in WebM format, which is supported by all modern browsers and can be played in VLC on desktop.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All video processing runs in your browser — files are never uploaded.</div></footer>
+<script>
+document.getElementById("yr").textContent=new Date().getFullYear();
+let stream=null,mediaRec=null,chunks=[],recInterval=null,seconds=0,recSource="camera";
+document.querySelectorAll(".src-tab").forEach(t=>t.addEventListener("click",async()=>{
+  document.querySelectorAll(".src-tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");recSource=t.dataset.s;
+  if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;}
+  startPreview();
+}));
+async function startPreview(){
+  try{
+    if(recSource==="camera")stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    else stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+    document.getElementById("live").srcObject=stream;
+  }catch(e){document.getElementById("rec-status").textContent="Permission denied: "+e.message;}
+}
+startPreview();
+function fmtTime(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+document.getElementById("rec-btn").addEventListener("click",()=>{
+  if(mediaRec&&mediaRec.state==="recording"){
+    mediaRec.stop();clearInterval(recInterval);
+    document.getElementById("rec-btn").className="rec-btn idle";document.getElementById("rec-btn").textContent="⏺";
+    document.getElementById("rec-status").textContent="Click to start recording";
+    return;
+  }
+  if(!stream)return;
+  chunks=[];
+  const bitrate=parseInt(document.getElementById("quality-sel").value);
+  const opts=MediaRecorder.isTypeSupported("video/webm;codecs=vp9")?{mimeType:"video/webm;codecs=vp9",videoBitsPerSecond:bitrate}:{videoBitsPerSecond:bitrate};
+  mediaRec=new MediaRecorder(stream,opts);
+  mediaRec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+  mediaRec.onstop=()=>saveRecording();
+  mediaRec.start(200);
+  seconds=0;
+  recInterval=setInterval(()=>{seconds++;document.getElementById("timer").textContent=fmtTime(seconds);},1000);
+  document.getElementById("rec-btn").className="rec-btn recording";document.getElementById("rec-btn").textContent="⏹";
+  document.getElementById("rec-status").textContent="Recording... click to stop";
+});
+let recCount=0;
+function saveRecording(){
+  recCount++;
+  const blob=new Blob(chunks,{type:"video/webm"});
+  const url=URL.createObjectURL(blob);
+  const name="recording-"+recCount+".webm";
+  const div=document.createElement("div");
+  div.style.cssText="background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;margin:8px 0";
+  div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+    <span style="font-weight:600;font-size:14px">${name}</span>
+    <div style="display:flex;gap:8px">
+      <a href="${url}" download="${name}" class="btn btn-primary" style="padding:7px 14px;font-size:12.5px">⬇ Download</a>
+      <button onclick="this.closest('div').remove()" style="border:1px solid var(--color-border);background:#fff;border-radius:5px;padding:7px 12px;cursor:pointer;font-size:12.5px">Remove</button>
+    </div>
+  </div>
+  <video src="${url}" controls style="width:100%;border-radius:6px"></video>`;
+  document.getElementById("recordings").prepend(div);
+}
+</script>
+</body></html>

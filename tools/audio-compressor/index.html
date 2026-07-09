@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Audio Compressor Online | OMIToolKit</title>
+<meta name="description" content="Compress audio dynamics online. Reduce the difference between loud and quiet parts for more consistent volume. Free browser-based audio dynamics compressor.">
+<link rel="canonical" href="../../tools/audio-compressor/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Compressor","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+</head><body>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-audio">Audio</a> / Audio Compressor</div>
+<div class="container tool-page-header"><h1>Audio Compressor</h1><p>Reduce dynamic range — make quiet parts louder and loud parts softer for consistent audio.</p></div>
+<div class="container"><div class="tool-panel" style="max-width:680px"><div class="dz" id="dz">
+  <div style="font-size:40px;margin-bottom:10px">🔉</div>
+  <div style="font-size:15px;font-weight:600">Drop audio file here or click to select</div>
+  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">MP3, WAV, OGG, AAC</div>
+  <input type="file" id="fi" accept="audio/*" style="display:none">
+</div>
+<div id="editor" style="display:none;margin-top:16px">
+  <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px" id="fi-info"></div>
+  <audio id="preview" controls style="width:100%;margin-bottom:16px"></audio>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div>
+      <label class="field-label">Threshold: <strong id="th-val" style="color:var(--color-primary)">-24 dB</strong></label>
+      <input type="range" id="threshold" min="-100" max="0" value="-24" style="width:100%;accent-color:var(--color-primary)">
+      <div style="font-size:12px;color:var(--color-text-muted)">Level above which compression starts</div>
+    </div>
+    <div>
+      <label class="field-label">Ratio: <strong id="ratio-val" style="color:var(--color-primary)">4:1</strong></label>
+      <input type="range" id="ratio" min="1" max="20" value="4" step="0.5" style="width:100%;accent-color:var(--color-primary)">
+      <div style="font-size:12px;color:var(--color-text-muted)">Compression intensity</div>
+    </div>
+    <div>
+      <label class="field-label">Knee: <strong id="knee-val" style="color:var(--color-primary)">10 dB</strong></label>
+      <input type="range" id="knee" min="0" max="40" value="10" style="width:100%;accent-color:var(--color-primary)">
+    </div>
+    <div>
+      <label class="field-label">Make-up Gain: <strong id="gain-val" style="color:var(--color-primary)">3 dB</strong></label>
+      <input type="range" id="makeup" min="0" max="20" value="3" style="width:100%;accent-color:var(--color-primary)">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-outline preset-btn" data-th="-24" data-r="4" data-k="10" data-g="3">Podcast</button>
+    <button class="btn btn-outline preset-btn" data-th="-18" data-r="6" data-k="5" data-g="4">Music</button>
+    <button class="btn btn-outline preset-btn" data-th="-30" data-r="8" data-k="15" data-g="6">Heavy</button>
+    <button class="btn btn-outline preset-btn" data-th="-12" data-r="2" data-k="20" data-g="1">Light</button>
+  </div>
+  <button class="btn btn-primary" id="compress-btn" style="width:100%;justify-content:center;padding:13px">Apply Compression & Download</button>
+  <div id="status" style="margin-top:10px;text-align:center;font-size:13.5px;color:var(--color-text-muted)"></div>
+</div></div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container"><h2>What is audio dynamic compression?</h2><p>Dynamic compression reduces the volume difference between the loudest and quietest parts of audio. The threshold sets the level above which compression kicks in. The ratio controls how much compression is applied (4:1 means audio 4dB above the threshold becomes 1dB louder). Make-up gain then raises the overall level back up. The result is more consistent, "louder" sounding audio — the standard for podcasts, YouTube videos, and music streaming.</p></article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();function audioBufferToWav(buf){const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;const out=new Float32Array(len*numCh);for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}const pcm=new Int16Array(out.length);for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);new Int16Array(wb,44).set(pcm);return wb;}
+function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}let abuf=null,fname="";
+const dz=document.getElementById("dz"),fi=document.getElementById("fi");
+dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
+fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
+document.getElementById("threshold").addEventListener("input",e=>document.getElementById("th-val").textContent=e.target.value+" dB");
+document.getElementById("ratio").addEventListener("input",e=>document.getElementById("ratio-val").textContent=e.target.value+":1");
+document.getElementById("knee").addEventListener("input",e=>document.getElementById("knee-val").textContent=e.target.value+" dB");
+document.getElementById("makeup").addEventListener("input",e=>document.getElementById("gain-val").textContent=e.target.value+" dB");
+document.querySelectorAll(".preset-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.getElementById("threshold").value=b.dataset.th;document.getElementById("th-val").textContent=b.dataset.th+" dB";
+  document.getElementById("ratio").value=b.dataset.r;document.getElementById("ratio-val").textContent=b.dataset.r+":1";
+  document.getElementById("knee").value=b.dataset.k;document.getElementById("knee-val").textContent=b.dataset.k+" dB";
+  document.getElementById("makeup").value=b.dataset.g;document.getElementById("gain-val").textContent=b.dataset.g+" dB";
+}));
+async function loadF(file){
+  fname=file.name;
+  document.getElementById("preview").src=URL.createObjectURL(file);
+  const buf=await file.arrayBuffer();
+  const ctx=new AudioContext();abuf=await ctx.decodeAudioData(buf);await ctx.close();
+  document.getElementById("fi-info").textContent=file.name+" — "+abuf.duration.toFixed(2)+"s";
+  document.getElementById("editor").style.display="";
+}
+document.getElementById("compress-btn").addEventListener("click",async()=>{
+  if(!abuf)return;
+  document.getElementById("compress-btn").disabled=true;
+  document.getElementById("status").textContent="Applying compression...";
+  try{
+    const threshold=parseFloat(document.getElementById("threshold").value);
+    const ratio=parseFloat(document.getElementById("ratio").value);
+    const knee=parseFloat(document.getElementById("knee").value);
+    const makeup=parseFloat(document.getElementById("makeup").value);
+    const ctx=new OfflineAudioContext(abuf.numberOfChannels,abuf.length,abuf.sampleRate);
+    const src=ctx.createBufferSource();src.buffer=abuf;
+    const compressor=ctx.createDynamicsCompressor();
+    compressor.threshold.value=threshold;
+    compressor.ratio.value=ratio;
+    compressor.knee.value=knee;
+    compressor.attack.value=0.003;
+    compressor.release.value=0.25;
+    const gainNode=ctx.createGain();gainNode.gain.value=Math.pow(10,makeup/20);
+    src.connect(compressor);compressor.connect(gainNode);gainNode.connect(ctx.destination);
+    src.start(0);
+    const rendered=await ctx.startRendering();
+    const outName=fname.replace(/\.[^.]+$/,"")+"-compressed.wav";
+    dlWav(rendered,outName);
+    document.getElementById("status").textContent="✅ Done! "+outName;
+    await ctx.close();
+  }catch(e){document.getElementById("status").textContent="Error: "+e.message;}
+  document.getElementById("compress-btn").disabled=false;
+});</script>
+</body></html>
