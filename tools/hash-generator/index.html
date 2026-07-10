@@ -31,6 +31,7 @@
   .container{padding:0 16px}
 }
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -170,6 +171,19 @@ document.getElementById('compare-btn').addEventListener('click', () => {
   const res = document.getElementById('compare-result');
   res.className = 'compare-result ' + (a === b ? 'match' : 'nomatch');
   res.textContent = a === b ? '✓ Hashes match — data is identical' : '✗ Hashes do not match — data differs';
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

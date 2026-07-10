@@ -33,6 +33,7 @@ canvas#donut{width:140px;height:140px}
 .amort-table td:first-child{text-align:left;font-family:inherit}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Emi Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate monthly EMI, total interest and full amortization schedule for any loan. Free online EMI calculator for home, car, personal loans."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -170,6 +171,19 @@ document.getElementById('calc-btn').addEventListener('click',()=>{
 
 // Auto-calculate on load with defaults
 document.getElementById('calc-btn').click();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

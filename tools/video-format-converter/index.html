@@ -9,14 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Video Format Converter","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
-#pw{background:var(--color-border);border-radius:4px;height:10px;overflow:hidden;margin:12px 0;display:none}
-#pb{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .3s}
+<style>
 #sb{margin:10px 0;padding:12px 16px;background:#F4F3FE;border-radius:var(--radius-sm);font-size:13px;color:var(--color-primary);font-family:monospace;display:none}
 video.pv{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);display:block;margin:14px 0}
-.chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head><body>
 <header class="site-header"><div class="container inner">
   <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
@@ -74,25 +71,21 @@ video.pv{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--co
 <footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
 <script type="module">
 document.getElementById("yr").textContent=new Date().getFullYear();
+/* ── OMI Compatibility Shim ──
+   Old inline functions replaced by shared OMI core module.
+   These thin wrappers maintain backward compatibility
+   with existing tool code. */
+const getFFmpeg   = ()         => OMI.ffmpeg.load();
+const fetchFile   = (f)        => OMI.ffmpeg.fetchFile(f);
+const showStatus  = (m, t)     => OMI.ui.status(m, t || 'info');
+const showProg    = (p)        => OMI.ui.progress(p);
+const hideUI      = ()         => OMI.ui.reset();
+const dlFile      = (d, n, mi) => OMI.file.download(d, n, mi);
+const ext         = (n)        => OMI.file.ext(n);
+const base        = (n)        => OMI.file.base(n);
+const initDZ      = (dz, fi, cb, opts) => OMI.dz.init(dz, fi, cb, opts);
 
-let ffmpeg=null,fetchFile=null;
-async function getFFmpeg(){
-  if(ffmpeg)return ffmpeg;
-  showStatus("Loading FFmpeg... (~30MB, cached after first load)");showProg(3);
-  const ff=await import("https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js");
-  const ut=await import("https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js");
-  fetchFile=ut.fetchFile;
-  const toBlobURL=ut.toBlobURL;
-  ffmpeg=new ff.FFmpeg();
-  ffmpeg.on("progress",(p)=>showProg(5+Math.round(p.progress*88)));
-  const base="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-  await ffmpeg.load({coreURL:await toBlobURL(base+"/ffmpeg-core.js","text/javascript"),wasmURL:await toBlobURL(base+"/ffmpeg-core.wasm","application/wasm")});
-  showStatus("FFmpeg ready!");return ffmpeg;
-}
-function showStatus(m){const b=document.getElementById("sb");if(b){b.style.display="";b.textContent=m;}}
-function showProg(p){const w=document.getElementById("pw"),b=document.getElementById("pb");if(w&&b){w.style.display="";b.style.width=Math.min(100,p)+"%";}}
-function hideUI(){const w=document.getElementById("pw"),b=document.getElementById("sb");if(w)w.style.display="none";if(b)b.style.display="none";}
-function dlFile(data,name,mime){const blob=new Blob([data.buffer||data],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+}});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 function initDZ(dId,fId,cb){
   const dz=document.getElementById(dId),fi=document.getElementById(fId);
   if(!dz||!fi)return;
@@ -102,8 +95,6 @@ function initDZ(dId,fId,cb){
   dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])cb(e.dataTransfer.files[0])});
   fi.addEventListener("change",()=>{if(fi.files[0])cb(fi.files[0])});
 }
-function ext(n){return n.substring(n.lastIndexOf("."));}
-function base(n){return n.substring(0,n.lastIndexOf("."));}
 
 let vf=null;
 initDZ("dz","fi",f=>{

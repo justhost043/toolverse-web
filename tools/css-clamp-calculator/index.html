@@ -37,6 +37,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Css Clamp Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate CSS clamp() values for fluid, responsive typography. Set min/max font sizes and viewport range with live preview. Free online clamp calculator."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -171,6 +172,19 @@ document.getElementById('copy-css').addEventListener('click', () => {
 });
 
 update();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

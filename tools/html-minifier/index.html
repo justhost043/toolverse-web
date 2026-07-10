@@ -24,6 +24,7 @@ textarea.code-area{font-family:var(--font-mono);font-size:13px;line-height:1.55;
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Html Minifier","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Minify and compress HTML code online for free. Remove whitespace and comments to reduce file size. Free browser-based HTML minifier."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -87,6 +88,19 @@ document.getElementById('inp').addEventListener('input',minify);
 ['opt-comments','opt-space','opt-attrs'].forEach(id=>document.getElementById(id).addEventListener('change',minify));
 document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';['s-orig','s-min','s-saved'].forEach(id=>document.getElementById(id).textContent='0');});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

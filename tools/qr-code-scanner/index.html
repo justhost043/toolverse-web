@@ -41,6 +41,7 @@ video{width:100%;height:100%;object-fit:cover;display:block}
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Qr Code Scanner","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Scan QR codes using your camera or upload an image. Instantly decode any QR code in your browser — free, no app download, nothing uploaded to servers."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -116,7 +117,7 @@ video{width:100%;height:100%;object-fit:cover;display:block}
   <p>This scanner decodes standard QR codes including URL links, plain text, Wi-Fi network credentials (WIFI: format), contact cards (vCard format), email addresses, phone numbers, SMS messages, and any other content that can be stored in a standard QR code. It uses the jsQR open-source library for decoding.</p>
 </article>
 <footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 

@@ -38,6 +38,7 @@
 .preset-shadow:hover{border-color:var(--color-primary)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Css Box Shadow Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate CSS box shadows visually. Add multiple shadows, control offset, blur, spread and color. Live preview with instant CSS code copy. Free online tool."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -198,6 +199,19 @@ PRESETS.forEach(p => {
 });
 
 renderLayers(); render();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

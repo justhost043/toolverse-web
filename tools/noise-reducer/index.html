@@ -9,7 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Noise Reducer","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<style>.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+<style>@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}</style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head><body>
 <header class="site-header"><div class="container inner">
   <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
@@ -46,8 +47,7 @@
 <div class="ad-slot container">Ad slot</div>
 <article class="article container"><h2>Noise gate vs noise reduction</h2><p>A noise gate silences audio that falls below a set threshold, treating anything below that level as noise. This is effective for recordings with clear pauses between speech — the gate closes during silence and opens when you speak. True noise reduction (spectral subtraction) is more complex and requires a "noise profile" sample. For best results with this tool, set the threshold just above your background noise level and use smoothing to avoid harsh gating artifacts.</p></article>
 <footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
-<script>document.getElementById("yr").textContent=new Date().getFullYear();function audioBufferToWav(buf){const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;const out=new Float32Array(len*numCh);for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}const pcm=new Int16Array(out.length);for(let i=0;i<out.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,Math.round(out[i]*32767)));const wb=new ArrayBuffer(44+pcm.byteLength);const v=new DataView(wb);const ws=(o,s)=>s.split("").forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,36+pcm.byteLength,true);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,numCh,true);v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);new Int16Array(wb,44).set(pcm);return wb;}
-function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}let abuf=null,fname="";
+<script>document.getElementById("yr").textContent=new Date().getFullYear(););const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}let abuf=null,fname="";
 const dz=document.getElementById("dz"),fi=document.getElementById("fi");
 dz.addEventListener("click",()=>fi.click());
 dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
@@ -89,7 +89,7 @@ document.getElementById("apply-btn").addEventListener("click",async()=>{
   }
   await ctx.close();
   const outName=fname.replace(/\.[^.]+$/,"")+"-denoised.wav";
-  dlWav(out,outName);
+  OMI.audio.downloadWAV(out,outName);
   document.getElementById("status").textContent="✅ Done! "+outName;
   document.getElementById("apply-btn").disabled=false;
 });</script>

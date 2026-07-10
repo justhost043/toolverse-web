@@ -10,16 +10,12 @@
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"" + name + "","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
-.prog-wrap{background:var(--color-border);border-radius:4px;height:10px;overflow:hidden;margin:12px 0;display:none}
-.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .3s}
 .status-box{margin:12px 0;padding:12px 16px;background:#F4F3FE;border-radius:var(--radius-sm);font-size:13px;color:var(--color-primary);font-family:monospace;display:none}
 video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);display:block;margin:14px 0}
-.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
 
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -51,6 +47,20 @@ video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var
 <footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. All video processing runs in your browser.</div></footer>
 <script type="module">
 document.getElementById("yr").textContent=new Date().getFullYear();
+/* ── OMI Compatibility Shim ──
+   Old inline functions replaced by shared OMI core module.
+   These thin wrappers maintain backward compatibility
+   with existing tool code. */
+const getFFmpeg   = ()         => OMI.ffmpeg.load();
+const fetchFile   = (f)        => OMI.ffmpeg.fetchFile(f);
+const showStatus  = (m, t)     => OMI.ui.status(m, t || 'info');
+const showProg    = (p)        => OMI.ui.progress(p);
+const hideUI      = ()         => OMI.ui.reset();
+const dlFile      = (d, n, mi) => OMI.file.download(d, n, mi);
+const ext         = (n)        => OMI.file.ext(n);
+const base        = (n)        => OMI.file.base(n);
+const initDZ      = (dz, fi, cb, opts) => OMI.dz.init(dz, fi, cb, opts);
+
 
 let ffmpeg=null,fetchFile=null;
 async function getFFmpeg(onLog){
@@ -74,8 +84,7 @@ async function getFFmpeg(onLog){
 }
 function showStatus(msg){const b=document.getElementById("status-box");if(b){b.style.display="";b.textContent=msg;}}
 function showProg(pct){const w=document.getElementById("prog-wrap"),b=document.getElementById("prog-bar");if(w&&b){w.style.display="";b.style.width=pct+"%";}}
-function hideProgress(){const w=document.getElementById("prog-wrap"),b=document.getElementById("status-box");if(w)w.style.display="none";if(b)b.style.display="none";}
-function dlFile(data,name,mime){const blob=new Blob([data.buffer||data],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function hideProgress(){const w=document.getElementById("prog-wrap"),b=document.getElementById("status-box");if(w)w.style.display="none";if(b)b.style.display="none";});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 function initDZ(dzId,fiId,onFile){
   const dz=document.getElementById(dzId),fi=document.getElementById(fiId);
   if(!dz||!fi)return;

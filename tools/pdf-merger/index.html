@@ -35,6 +35,7 @@
   .container{padding:0 16px}
 }
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -79,7 +80,7 @@
 </article>
 <footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 

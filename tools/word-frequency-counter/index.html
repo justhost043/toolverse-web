@@ -28,6 +28,7 @@
 .sort-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
 .cloud-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:14px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);margin-top:14px}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -185,6 +186,19 @@ document.getElementById('copy-btn').addEventListener('click', () => {
 // Demo
 document.getElementById('inp').value = `The quick brown fox jumps over the lazy dog. The dog barked at the fox. The fox ran quickly away from the dog and jumped over a fence. The quick fox was very quick and very clever.`;
 analyze();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

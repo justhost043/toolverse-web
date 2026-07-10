@@ -18,6 +18,7 @@ textarea.code{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:
 .preview-box svg,.preview-box img{max-width:100%;max-height:220px}
 .opts-row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;align-items:center}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -134,5 +135,18 @@ document.getElementById("dl-svg-btn").addEventListener("click",()=>{const a=docu
 
 // Demo SVG
 document.getElementById("svg-inp").value=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs><circle cx="50" cy="50" r="45" fill="url(#g)"/><text x="50" y="60" font-size="36" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">O</text></svg>`;
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body></html>

@@ -29,6 +29,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compress JPEG and PNG images online for free. Reduce file size without losing quality. Runs in your browser — no upload to any server."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -68,14 +69,14 @@
 
     <div id="preview-grid" class="preview-grid" style="display:none">
       <div class="preview-box">
-        <img id="orig-img" alt="Original">
+        <img loading="lazy" id="orig-img" alt="Original">
         <div class="preview-info">
           <strong>Original</strong>
           <span id="orig-info"></span>
         </div>
       </div>
       <div class="preview-box">
-        <img id="comp-img" alt="Compressed">
+        <img loading="lazy" id="comp-img" alt="Compressed">
         <div class="preview-info">
           <strong>Compressed <span id="saving-badge" class="saving-badge"></span></strong>
           <span id="comp-info"></span>
@@ -156,6 +157,19 @@ downloadBtn.addEventListener('click',()=>{
   a.download='compressed-'+( originalFile.name.replace(/\.[^.]+$/,'')+'.jpg');
   a.href=URL.createObjectURL(compressedBlob);
   a.click();
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

@@ -34,6 +34,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Css Flexbox Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate CSS Flexbox layouts visually. Adjust all flex properties with live preview and instant CSS code copy. Free online Flexbox generator."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -178,6 +179,19 @@ document.getElementById('copy-css').addEventListener('click',()=>{
     const b=document.getElementById('copy-css');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy CSS',1200);});});
 
 renderPreview();updateItemControls();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

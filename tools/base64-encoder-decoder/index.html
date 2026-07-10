@@ -14,10 +14,10 @@
 .m-tab{padding:9px 22px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s}
 .m-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
 textarea.code{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.6;resize:vertical;min-height:160px}
-.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
 .img-preview{max-width:100%;max-height:200px;display:block;margin:10px 0;border-radius:var(--radius-sm);border:1px solid var(--color-border)}
 .section-divider{margin:20px 0;padding-top:16px;border-top:1px solid var(--color-border)}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -145,7 +145,7 @@ function encodeFile(file){
     const res=document.getElementById("file-result");
     res.innerHTML=`<div style="background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px">
       <div style="font-weight:600;margin-bottom:8px">${file.name} (${(file.size/1024).toFixed(0)} KB)</div>
-      ${isImg?`<img src="${dataUrl}" class="img-preview">`:""}
+      ${isImg?`<img loading="lazy" src="${dataUrl}" class="img-preview">`:""}
       <div class="field-label" style="margin:10px 0 4px">Data URL (for HTML/CSS src)</div>
       <textarea class="field-input code" readonly style="min-height:80px;background:#fff;font-size:12px">${dataUrl}</textarea>
       <div class="field-label" style="margin:10px 0 4px">Raw Base64 (without prefix)</div>

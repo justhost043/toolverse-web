@@ -10,10 +10,8 @@
 <link rel="stylesheet" href="../../assets/css/style.css">
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<style>
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
-</style>
+
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -80,5 +78,18 @@ function process(files){
     };img.src=url;
   });
 }
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body></html>

@@ -20,6 +20,7 @@
 .custom-row{display:flex;gap:12px;align-items:center;margin:10px 0}
 @media(max-width:600px){.rotate-btns{gap:8px}}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -114,6 +115,19 @@ document.getElementById('download-btn').addEventListener('click',()=>{
 });
 document.getElementById('new-btn').addEventListener('click',()=>{
   document.getElementById('editor').style.display='none';imgEl=null;fi.value='';
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body></html>

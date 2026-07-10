@@ -45,6 +45,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Scientific Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Full-featured scientific calculator online. Trigonometry, logarithms, powers, memory functions and calculation history. Free, keyboard-supported, runs in your browser."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -152,7 +153,12 @@ function evaluate(e) {
       .replace(/ln\(/g,'Math.log(')
       .replace(/sqrt\(/g,'Math.sqrt(')
       .replace(/abs\(/g,'Math.abs(')
-      .replace(/fact\(([^)]+)\)/g, (_,n) => factorial(eval(n)))
+      .replace(/fact\(([^)]+)\)/g, (_,n) => factorial((function(expr) {
+  if (!/^[0-9+\-*/().,%\s]+$/.test(expr.replace(/Math\.\w+|PI|E/g,''))) {
+    throw new Error('Invalid characters in expression');
+  }
+  return Function('"use strict"; return (' + expr + ')')();
+})(n)))
       .replace(/(\d+(?:\.\d+)?)\s*%/g, '($1/100)');
     const r = Function('"use strict";return (' + s + ')')();
     if(!isFinite(r)) return 'Error';

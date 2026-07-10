@@ -13,10 +13,9 @@
 .preview-player{width:100%;margin:14px 0;border-radius:var(--radius-sm)}
 .boost-display{text-align:center;font-size:60px;font-weight:800;color:var(--color-primary);font-family:monospace;line-height:1;margin:10px 0}
 .boost-label{text-align:center;font-size:14px;color:var(--color-text-muted);margin-bottom:16px}
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}}
-</style></head><body><header class="site-header"><div class="container inner">
+</style><script src="../../assets/js/omitoolkit-core.js"></script>
+</head><body><header class="site-header"><div class="container inner">
   <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
   <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-audio">Audio</a><a href="../../about/">About</a></nav>
 </div></header>
@@ -99,7 +98,7 @@ document.getElementById("boost-btn").addEventListener("click",async()=>{
     document.getElementById("prog-bar").style.width="80%";
     
     // Encode to WAV
-    const wav=audioBufferToWav(rendered);
+    const wav=OMI.audio.toWAV(rendered);
     const blob=new Blob([wav],{type:"audio/wav"});
     const url=URL.createObjectURL(blob);
     const outName=fileName.replace(/\.[^.]+$/,"")+"-boosted.wav";
@@ -111,7 +110,7 @@ document.getElementById("boost-btn").addEventListener("click",async()=>{
   document.getElementById("boost-btn").disabled=false;
 });
 
-function audioBufferToWav(buf){
+function OMI.audio.toWAV(buf){
   const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
   const out=new Float32Array(len*numCh);
   for(let ch=0;ch<numCh;ch++){const data=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=data[i];}

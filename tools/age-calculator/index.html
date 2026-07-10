@@ -23,6 +23,7 @@
 .zodiac-row{display:flex;align-items:center;gap:14px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px;margin-top:12px}
 .zodiac-sign{font-size:36px}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -153,6 +154,19 @@ document.getElementById('calc-btn').addEventListener('click', () => {
   document.getElementById('z-dates').textContent = `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.start[0]]} ${z.start[1]} – ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.end[0]]} ${z.end[1]}`;
 
   document.getElementById('results').style.display = '';
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

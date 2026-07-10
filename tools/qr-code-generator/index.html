@@ -40,6 +40,7 @@
 </script>
 <style>
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input,.field-select{font-size:16px}.btn{padding:10px 16px}}</style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 
@@ -148,7 +149,7 @@
   <div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -213,6 +214,19 @@ document.getElementById('download-qr').addEventListener('click', () => {
 });
 
 renderQR();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

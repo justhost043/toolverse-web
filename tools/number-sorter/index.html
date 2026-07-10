@@ -28,6 +28,7 @@ textarea.code-area{font-family:var(--font-mono);font-size:14px;resize:vertical;m
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Number Sorter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Sort numbers or text lists in ascending, descending, alphabetical or random order. Remove duplicates, trim whitespace and clean your list. Free online list sorter."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -162,6 +163,19 @@ document.getElementById('clear-btn').addEventListener('click',()=>{document.getE
 // Demo
 document.getElementById('inp').value='banana\napple\ncherry\ndate\nmango\nblueberry\napple\nkiwi';
 sortAndRender();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

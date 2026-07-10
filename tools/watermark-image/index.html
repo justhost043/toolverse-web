@@ -11,8 +11,6 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Watermark Image","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 
 <style>
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
 
 .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
 @media(max-width:500px){.opts-grid{grid-template-columns:1fr}}
@@ -21,6 +19,7 @@
 .pos-btn{padding:8px;border:1.5px solid var(--color-border);border-radius:6px;background:#fff;cursor:pointer;font-size:18px;transition:all .12s}
 .pos-btn.active{background:var(--color-primary);border-color:var(--color-primary)}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -109,5 +108,18 @@ document.getElementById('dl-btn').addEventListener('click',()=>{
   full.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='watermarked.png';a.click()},'image/png');
 });
 document.getElementById('new-btn').addEventListener('click',()=>{document.getElementById('editor').style.display='none';imgEl=null;fi.value=''});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body></html>

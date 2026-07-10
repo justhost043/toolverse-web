@@ -32,6 +32,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Countdown Timer","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Create a countdown timer to any future date and time. Live countdown in days, hours, minutes and seconds. Free online countdown timer."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -88,7 +89,7 @@ document.getElementById('target-date').value = nextYear.toISOString().split('T')
 let targetTime = nextYear.getTime();
 let startTime = Date.now();
 let timerInterval = null;
-let savedTimers = JSON.parse(localStorage.getItem('omi-countdowns')||'[]');
+let savedTimers = (()=>{ try { return JSON.parse(localStorage.getItem('omi-countdowns'); } catch(e) { OMI.error.handle(e,"JSON Parse"); return null; } })()||'[]');
 
 function pad(n){return String(n).padStart(2,'0');}
 
@@ -161,6 +162,19 @@ function renderSaved(){
 
 renderSaved();
 startCountdown(nextYear.getTime(),'New Year 2026');
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

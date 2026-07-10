@@ -28,6 +28,7 @@ textarea.diff-input{font-family:var(--font-mono);font-size:13px;line-height:1.7;
 .mode-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Diff","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compare two pieces of text and see differences highlighted line by line. Free online diff checker — additions in green, deletions in red. No sign-up needed."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -141,6 +142,19 @@ document.getElementById('clear-btn').addEventListener('click', () => {
   ['text-a','text-b'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('diff-out-wrap').style.display = 'none';
   document.getElementById('stats-pills').style.display = 'none';
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

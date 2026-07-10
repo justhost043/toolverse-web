@@ -27,6 +27,7 @@
 .dir-btn.active{background:var(--color-primary);color:#fff}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Timestamp Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert Unix timestamps to human-readable dates and vice versa. See the current epoch time live. Free online timestamp converter — no sign-up needed."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -176,6 +177,19 @@ function convertDate() {
 document.getElementById('inp-epoch').value = Math.floor(Date.now()/1000);
 convertEpoch();
 const now2=new Date(); document.getElementById('inp-date').valueAsDate=now2;
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

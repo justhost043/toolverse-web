@@ -40,6 +40,7 @@
 </script>
 <style>
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input,.field-select{font-size:16px}.btn{padding:10px 16px}}</style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 
@@ -208,6 +209,19 @@ document.getElementById('copy-pw').addEventListener('click', () => {
 });
 
 generate();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
 .drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:52px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
 .drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
@@ -27,6 +27,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Favicon Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate favicons in all sizes (16x16 to 512x512) from any image. Download all sizes as a ZIP with HTML code. Free online favicon generator, no sign-up."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -169,6 +170,19 @@ document.getElementById('copy-html').addEventListener('click', () => {
 document.getElementById('reset-btn').addEventListener('click', () => {
   document.getElementById('result-section').style.display = 'none';
   fileInput.value = ''; canvases = {};
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

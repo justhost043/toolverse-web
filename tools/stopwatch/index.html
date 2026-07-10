@@ -41,6 +41,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stopwatch","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free online stopwatch with lap timer. Millisecond precision, unlimited laps, keyboard shortcuts. No download needed — runs in your browser."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -188,6 +189,19 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Space'){e.preventDefault();document.getElementById('btn-startstop').click();}
   if(e.key.toLowerCase()==='l') document.getElementById('btn-lap').click();
   if(e.key.toLowerCase()==='r') document.getElementById('btn-reset').click();
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

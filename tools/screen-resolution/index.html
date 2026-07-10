@@ -31,6 +31,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Screen Resolution","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Check your screen resolution, viewport size, device pixel ratio, browser, operating system and connection type instantly. Free online device info tool."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -161,6 +162,19 @@ document.getElementById('copy-info').addEventListener('click',()=>{
   navigator.clipboard.writeText(text.join('\n')).then(()=>{
     const b=document.getElementById('copy-info');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy all info',1200);
   });
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

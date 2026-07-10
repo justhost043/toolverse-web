@@ -31,6 +31,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image To Base64","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert any image to a Base64 data URI online for free. Supports JPEG, PNG, WebP, GIF and SVG. Copy the data URI directly or download as a text file."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -55,7 +56,7 @@
 
     <div id="result-section" style="display:none">
       <div class="preview-box">
-        <img id="preview-img" alt="Preview">
+        <img loading="lazy" id="preview-img" alt="Preview">
         <div class="preview-info">
           <span class="info-chip" id="chip-name">—</span>
           <span class="info-chip" id="chip-size">—</span>
@@ -124,7 +125,7 @@ function processFile(file) {
     document.getElementById('output-area').textContent = currentDataUri;
 
     // Snippets
-    document.getElementById('snip-html').textContent = `<img src="${currentDataUri.substring(0,60)}…" alt="${file.name}">`;
+    document.getElementById('snip-html').textContent = `<img loading="lazy" src="${currentDataUri.substring(0,60)}…" alt="${file.name}">`;
     document.getElementById('snip-css').textContent = `.element {\n  background-image: url('${currentDataUri.substring(0,50)}…');\n}`;
     document.getElementById('snip-json').textContent = `{\n  "image": "${currentDataUri.substring(0,50)}…"\n}`;
 
@@ -161,6 +162,19 @@ document.querySelectorAll('.u-tab').forEach(tab => {
     tab.classList.add('active');
     document.getElementById('snip-'+tab.dataset.snip).classList.add('show');
   });
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

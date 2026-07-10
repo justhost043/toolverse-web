@@ -30,6 +30,7 @@
 .currency-sel{padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13.5px;font-family:var(--font-body)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Invoice Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Create professional invoices online for free. Add line items, tax, discount. Download as PDF instantly. No sign-up, no watermark, runs in your browser."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -135,7 +136,7 @@
 </article>
 <footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 const today = new Date();
@@ -285,6 +286,19 @@ function generateHTML(){
 }
 
 renderRows();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

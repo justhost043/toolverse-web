@@ -34,6 +34,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text To Handwriting","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert any text to realistic handwriting style on lined paper. Choose ink color and paper style. Download as PNG. Free online text to handwriting tool."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -97,7 +98,7 @@ You can write anything here and it will appear in a handwriting style below.</te
   <p>Handwriting generators are popular for creating personalized content for social media — a handwritten note aesthetic on Instagram or Pinterest feels more personal than typed text. Teachers use them to create worksheet templates that mimic handwritten instructions. Content creators use them to add a handmade feel to blog posts, thank-you card designs, and journal content. The lined paper background adds authenticity, making the output look like a genuine notebook page.</p>
 </article>
 <footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -217,6 +218,19 @@ document.getElementById('download-btn').addEventListener('click', async () => {
 });
 
 render();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

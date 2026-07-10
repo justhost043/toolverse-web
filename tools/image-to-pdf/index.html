@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" crossorigin="anonymous"></script>
 <style>
 .drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--color-text-muted);background:#FCFCFB}
 .drop-zone:hover,.drop-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
@@ -31,6 +31,7 @@
 .status-msg{font-size:13.5px;color:var(--color-text-muted);margin-top:6px}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image To Pdf","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert multiple images to a PDF file online for free. Drag to reorder pages, choose page size and orientation. No upload to server — runs in your browser."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -131,7 +132,7 @@ function renderGrid(){
   images.forEach((img,i)=>{
     const card=document.createElement('div');
     card.className='img-card'; card.draggable=true; card.dataset.i=i;
-    card.innerHTML=`<img src="${img.url}" alt=""><div class="img-num">${i+1}</div><button class="img-del" data-i="${i}">×</button><div class="img-name">${img.file.name}</div>`;
+    card.innerHTML=`<img loading="lazy" src="${img.url}" alt=""><div class="img-num">${i+1}</div><button class="img-del" data-i="${i}">×</button><div class="img-name">${img.file.name}</div>`;
 
     card.addEventListener('dragstart',()=>{dragSrc=i;card.classList.add('dragging');});
     card.addEventListener('dragend',()=>card.classList.remove('dragging'));

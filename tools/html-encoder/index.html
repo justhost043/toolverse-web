@@ -25,6 +25,7 @@ textarea.code{font-family:'JetBrains Mono',monospace;font-size:13.5px;resize:ver
 .options-row{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Html Encoder","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Encode special characters to HTML entities and decode HTML entities back to characters. Supports named and numeric entities. Free online HTML encoder."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -163,6 +164,19 @@ COMMON.forEach(([char,entity])=>{
 });
 
 convert();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

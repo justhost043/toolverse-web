@@ -28,6 +28,7 @@
   .container{padding:0 16px}
 }
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -126,6 +127,19 @@ document.getElementById('swap-btn').addEventListener('click',()=>{
 });
 [fromSel,toSel,inputVal].forEach(el=>el.addEventListener('input',convert));
 buildTabs();buildUnits();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

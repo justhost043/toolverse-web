@@ -10,10 +10,9 @@
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ringtone Maker","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head><body>
 <header class="site-header"><div class="container inner">
   <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
@@ -50,7 +49,7 @@
 <article class="article container"><h2>How to set a custom ringtone</h2><p>On iPhone: download the WAV file, rename it to .m4r (you can do this on a PC), then drag it to iTunes and sync. On Android: download the file, move it to the Ringtones folder using a file manager, then go to Settings > Sounds > Phone Ringtone and select it. Maximum ringtone length is typically 30-40 seconds on most phones.</p></article>
 <footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
 <script>document.getElementById("yr").textContent=new Date().getFullYear();
-function audioBufferToWav(buf){
+function OMI.audio.toWAV(buf){
   const numCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
   const out=new Float32Array(len*numCh);
   for(let ch=0;ch<numCh;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)out[i*numCh+ch]=d[i];}
@@ -63,8 +62,7 @@ function audioBufferToWav(buf){
   v.setUint32(24,sr,true);v.setUint32(28,sr*numCh*2,true);v.setUint16(32,numCh*2,true);
   v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,pcm.byteLength,true);
   new Int16Array(wb,44).set(pcm);return wb;
-}
-function dlWav(buf,name){const b=new Blob([audioBufferToWav(buf)],{type:"audio/wav"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
+});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();}
 let abuf=null,fname="";
 const dz=document.getElementById("dz"),fi=document.getElementById("fi");
 dz.addEventListener("click",()=>fi.click());
@@ -109,7 +107,7 @@ document.getElementById("make-btn").addEventListener("click",async()=>{
   }
   await ctx.close();
   const outName=fname.replace(/\.[^.]+$/,"")+"-ringtone.wav";
-  dlWav(out,outName);
+  OMI.audio.downloadWAV(out,outName);
   document.getElementById("status").textContent="✅ Ringtone created! "+outName+" ("+dur+"s)";
   document.getElementById("make-btn").disabled=false;
 });

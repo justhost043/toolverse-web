@@ -39,6 +39,7 @@
 .sug-swatch:hover{transform:scale(1.1);border-color:var(--color-primary)}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Color Contrast Checker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Check color contrast ratios for WCAG AA and AAA accessibility compliance. Test foreground and background color combinations. Free online contrast checker."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -140,7 +141,7 @@ function update(){
     const ratio=contrast(hex,bg);
     if(ratio>=4.5) suggestions.push({hex,ratio});
   });
-  document.getElementById('suggestions-row').innerHTML=suggestions.map(s=>`
+  document.getElementById('suggestions-row').textContent = suggestions.map(s=>`
     <div class="sug-swatch" style="background:${s.hex}" title="${s.hex} — ${s.ratio.toFixed(1)}:1" onclick="document.getElementById('fg-hex').value='${s.hex}';update()"></div>`).join('');
 }
 
@@ -158,6 +159,19 @@ document.getElementById('swap-btn').addEventListener('click',()=>{
 });
 
 update();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

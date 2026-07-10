@@ -41,6 +41,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Color Picker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Upload any image and click to pick colors. Get HEX, RGB and HSL values instantly. Extract a complete color palette from your image. Free online image color picker."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -230,6 +231,19 @@ function extractPalette() {
     return `<div style="position:relative;margin-bottom:24px"><div class="ext-swatch" style="background:${hex}" onclick="navigator.clipboard.writeText('${hex}')" title="${hex}"></div><div class="ext-hex">${hex.toUpperCase()}</div></div>`;
   }).join('');
 }
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

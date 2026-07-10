@@ -16,7 +16,6 @@
 .sep-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
 .result-area{font-family:'JetBrains Mono',monospace;font-size:13.5px;resize:vertical;min-height:200px;background:#F9F9F9}
 .stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.stat-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
 
 @media(max-width:600px){
   .tool-panel{padding:16px}
@@ -25,6 +24,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Repeater","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Repeat any text a specified number of times with custom separators. Newline, comma, space or custom separator. Free online text repeater tool."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -153,6 +153,19 @@ document.getElementById('clear-btn').addEventListener('click', () => {
 });
 
 generate();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

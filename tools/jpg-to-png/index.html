@@ -16,6 +16,7 @@
 .info-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
 @media(max-width:540px){.preview-row{grid-template-columns:1fr}}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head><body>
 <header class="site-header"><div class="container inner">
 <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
@@ -82,4 +83,17 @@ function processFiles(files){
     img.src=url;
   });
 }
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script></body></html>

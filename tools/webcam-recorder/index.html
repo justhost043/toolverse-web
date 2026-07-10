@@ -11,11 +11,6 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Webcam Recorder","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Record video from your webcam online. Free browser-based webcam recorder — download as WebM. No app install needed. Supports camera and screen recording."}</script>
 
 <style>
-.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
-.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
-.prog-wrap{background:var(--color-border);border-radius:4px;height:8px;overflow:hidden;margin:10px 0;display:none}
-.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:4px;transition:width .2s}
-.stat-chip{display:inline-block;font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500;margin:2px}
 video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var(--color-border);margin:14px 0;display:block}
 @media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input{font-size:16px}}
 .rec-btn{width:80px;height:80px;border-radius:50%;border:none;font-size:30px;cursor:pointer;transition:all .2s;margin:0 auto;display:flex;align-items:center;justify-content:center}
@@ -27,6 +22,7 @@ video.preview{max-width:100%;border-radius:var(--radius-md);border:1px solid var
 .src-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
 .src-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">

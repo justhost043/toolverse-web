@@ -39,6 +39,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Readability Checker","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Check the readability of any text. Get Flesch Reading Ease score, grade level, sentence complexity and improvement suggestions. Free online readability analyzer."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -206,6 +207,19 @@ document.getElementById('inp').addEventListener('input', () => {
 
 // Demo text
 document.getElementById('inp').value = `The quick brown fox jumps over the lazy dog. This sentence is easy to read and understand. However, when writers utilize unnecessarily complicated terminology and construct excessively lengthy sentences with multiple subordinate clauses, the comprehensibility of the text decreases substantially. Short sentences help. They keep readers engaged. Try to mix sentence lengths for the best reading experience.`;
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

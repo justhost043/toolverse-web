@@ -960,5 +960,15 @@ function applyFilters() {
 }
 </script>
 
+
+<script>
+// Register service worker for caching (performance)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./coi-serviceworker.js', {scope: './'})
+      .catch(() => {}); // Silent fail if blocked
+  });
+}
+</script>
 </body>
 </html>

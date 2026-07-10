@@ -31,6 +31,7 @@
 .quality-row{display:flex;align-items:center;gap:12px;margin-top:10px}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Resizer","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Resize images to exact pixel dimensions or percentage. Maintain aspect ratio. Download as PNG, JPEG or WebP. Free online image resizer — nothing uploaded to server."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -107,7 +108,7 @@
 
       <div class="preview-wrap">
         <div class="preview-box">
-          <img id="orig-img" alt="Original">
+          <img loading="lazy" id="orig-img" alt="Original">
           <div class="preview-info" id="orig-info"></div>
         </div>
         <div class="preview-box">
@@ -214,6 +215,19 @@ document.getElementById('resize-btn').addEventListener('click',()=>{
     a.download=`resized-${w}x${h}.${ext}`;
     a.click();
   },fmt,q);
+});
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
 });
 </script>
 </body>

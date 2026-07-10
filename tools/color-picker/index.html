@@ -35,6 +35,7 @@ input[type="color"]{width:56px;height:56px;border:1px solid var(--color-border);
   .container{padding:0 16px}
 }
 </style>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -118,7 +119,7 @@ function update(hex){
     {label:'HSL',value:`hsl(${h}, ${s}%, ${l}%)`},
     {label:'CMYK',value:`cmyk(${c}%, ${m}%, ${y}%, ${k}%)`},
   ];
-  formatGrid.innerHTML=formats.map(f=>`
+  formatGrid.textContent = formats.map(f=>`
     <div class="format-box">
       <div><div class="format-label">${f.label}</div><div class="format-value">${f.value}</div></div>
       <button class="copy-small" onclick="copyText('${f.value}',this)">Copy</button>
@@ -159,6 +160,19 @@ hexInp.addEventListener('input',()=>{
 });
 
 update('#4F46E5');
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

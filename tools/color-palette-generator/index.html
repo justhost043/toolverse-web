@@ -38,6 +38,7 @@
 }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Color Palette Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate beautiful color palettes from a base color. Complementary, triadic, analogous, monochromatic and split-complementary schemes. Export as CSS variables. Free online tool."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -170,6 +171,19 @@ document.getElementById('random-btn').addEventListener('click',()=>{const r=()=>
 document.getElementById('copy-css').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('css-export').textContent).then(()=>{const b=document.getElementById('copy-css');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy CSS vars',1200);});});
 
 render();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>

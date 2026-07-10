@@ -16,9 +16,9 @@
 textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;resize:vertical;min-height:320px}
 .output-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;background:#1E1B2E;color:#A78BFA;border:1px solid #3D3A5C;border-radius:var(--radius-sm);padding:14px;min-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-all}
 .stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.stat-chip{font-size:12.5px;background:#F4F3FE;color:var(--color-primary);padding:4px 12px;border-radius:999px;font-weight:500}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Html To Markdown","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert HTML to clean Markdown instantly. Handles headings, links, images, tables, lists, bold and italic. Free online HTML to Markdown converter."}</script>
+<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -202,6 +202,19 @@ inp.value = `<h1>Welcome to OMIToolKit</h1>
 <blockquote>Your files never leave your device.</blockquote>
 <p>Visit <a href="https://justhost043.github.io/toolverse-web/">OMIToolKit</a> for more tools.</p>`;
 convert();
+
+// Global error handler — OMI Foundation Sprint 1
+window.addEventListener('error', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.error || e.message, 'Runtime');
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  if (window.OMI && window.OMI.error) {
+    OMI.error.handle(e.reason, 'Promise');
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>
