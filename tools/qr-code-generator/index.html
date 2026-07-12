@@ -2,231 +2,270 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free QR Code Generator — Create QR Codes Online | OMIToolKit</title>
-<meta name="description" content="Generate free QR codes for links, text, Wi-Fi or contact info. No sign-up, no watermark, downloads instantly as PNG. Runs entirely in your browser.">
+<meta name="description" content="Generate QR codes for URLs, text, email, phone, WiFi, and vCard. Download as PNG or SVG. Free, instant, no sign-up required.">
 <link rel="canonical" href="../../tools/qr-code-generator/">
-<meta property="og:title" content="Free QR Code Generator | OMIToolKit">
-<meta property="og:description" content="Generate free, watermark-free QR codes instantly in your browser.">
-<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "QR Code Generator",
-  "applicationCategory": "UtilityApplication",
-  "operatingSystem": "Any (runs in browser)",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free browser-based QR code generator. Create QR codes for URLs, text, Wi-Fi and contact details with instant PNG download."
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type": "Question", "name": "Is this QR code generator really free?",
-     "acceptedAnswer": {"@type": "Answer", "text": "Yes. There is no sign-up, no watermark, and no limit on how many QR codes you can create."}},
-    {"@type": "Question", "name": "Do my QR codes expire?",
-     "acceptedAnswer": {"@type": "Answer", "text": "No. The QR code encodes your data directly, so it works forever and does not depend on this website staying online."}},
-    {"@type": "Question", "name": "Is my data uploaded anywhere?",
-     "acceptedAnswer": {"@type": "Answer", "text": "No. The QR code is generated entirely inside your browser using JavaScript. Nothing you type is sent to a server."}}
-  ]
-}
-</script>
-<style>
-@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.field-input,.field-select{font-size:16px}.btn{padding:10px 16px}}</style>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"QR Code Generator","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.type-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.type-tab{padding:7px 14px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--color-text)}
+.type-tab:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.type-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.type-panel{display:none}.type-panel.active{display:block}
+.qr-preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;padding:20px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-md)}
+.qr-preview-wrap canvas,.qr-preview-wrap img{max-width:240px;border-radius:8px;display:block}
+.qr-placeholder{text-align:center;color:var(--color-text-muted)}
+.customize-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+@media(max-width:600px){.customize-row{grid-template-columns:1fr 1fr}.tool-panel{padding:16px}.container{padding:0 14px}.type-tab{padding:6px 12px;font-size:12.5px}}
+.color-input-wrap{display:flex;align-items:center;gap:8px}
+.color-swatch{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--color-border);cursor:pointer;padding:0;overflow:hidden}
+</style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-
-<div class="container breadcrumb">
-  <a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / QR Code Generator
-</div>
-
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / QR Code Generator</div>
 <div class="container tool-page-header">
-  <h1>Free QR Code Generator</h1>
-  <p>Turn any link, text or Wi-Fi password into a scannable QR code — instantly, free, with no watermark.</p>
+  <h1>QR Code Generator</h1>
+  <p>Create QR codes for URLs, WiFi, contact cards, email, phone — download as PNG or SVG instantly.</p>
 </div>
-
-<div class="container">
-  <div class="tool-panel">
-
-    <div class="field-row">
-      <label class="field-label" for="qr-type">Content type</label>
-      <select id="qr-type" class="field-select">
-        <option value="url">Website URL</option>
-        <option value="text">Plain text</option>
-        <option value="wifi">Wi-Fi network</option>
-      </select>
-    </div>
-
-    <div id="input-url" class="qr-input-group">
-      <div class="field-row">
-        <label class="field-label" for="qr-url">URL</label>
-        <input id="qr-url" class="field-input" type="text" placeholder="https://example.com" value="https://example.com">
+<div class="container"><div class="tool-panel" style="max-width:800px">
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:24px">
+    <div>
+      <!-- Type selector -->
+      <div class="type-tabs" role="tablist" aria-label="QR code type">
+        <button class="type-tab active" data-type="url" role="tab" aria-selected="true">🔗 URL</button>
+        <button class="type-tab" data-type="text" role="tab">📝 Text</button>
+        <button class="type-tab" data-type="email" role="tab">📧 Email</button>
+        <button class="type-tab" data-type="phone" role="tab">📞 Phone</button>
+        <button class="type-tab" data-type="wifi" role="tab">📶 WiFi</button>
+        <button class="type-tab" data-type="vcard" role="tab">👤 vCard</button>
       </div>
-    </div>
 
-    <div id="input-text" class="qr-input-group" style="display:none;">
-      <div class="field-row">
-        <label class="field-label" for="qr-text">Text</label>
-        <input id="qr-text" class="field-input" type="text" placeholder="Type anything…">
+      <!-- URL -->
+      <div id="panel-url" class="type-panel active">
+        <label class="field-label" for="url-input">Website URL</label>
+        <input type="url" id="url-input" class="field-input" placeholder="https://example.com" value="https://omitoolkit.com" autocomplete="off" aria-describedby="url-hint">
+        <div id="url-hint" style="font-size:12px;color:var(--color-text-muted);margin-top:4px">Include https:// for clickable QR codes</div>
       </div>
-    </div>
 
-    <div id="input-wifi" class="qr-input-group" style="display:none;">
-      <div class="field-row">
+      <!-- Text -->
+      <div id="panel-text" class="type-panel">
+        <label class="field-label" for="text-input">Text content</label>
+        <textarea id="text-input" class="field-input" rows="4" placeholder="Enter any text..." style="resize:vertical"></textarea>
+        <div style="font-size:12px;color:var(--color-text-muted);margin-top:4px">Longer text = denser QR code (harder to scan)</div>
+      </div>
+
+      <!-- Email -->
+      <div id="panel-email" class="type-panel">
+        <label class="field-label" for="email-to">Email address</label>
+        <input type="email" id="email-to" class="field-input" placeholder="contact@example.com" style="margin-bottom:10px">
+        <label class="field-label" for="email-subject">Subject (optional)</label>
+        <input type="text" id="email-subject" class="field-input" placeholder="Hello!" style="margin-bottom:10px">
+        <label class="field-label" for="email-body">Body (optional)</label>
+        <textarea id="email-body" class="field-input" rows="3" placeholder="Message body..."></textarea>
+      </div>
+
+      <!-- Phone -->
+      <div id="panel-phone" class="type-panel">
+        <label class="field-label" for="phone-input">Phone number</label>
+        <input type="tel" id="phone-input" class="field-input" placeholder="+1 234 567 8900">
+        <div style="font-size:12px;color:var(--color-text-muted);margin-top:4px">Include country code for international numbers</div>
+      </div>
+
+      <!-- WiFi -->
+      <div id="panel-wifi" class="type-panel">
         <label class="field-label" for="wifi-ssid">Network name (SSID)</label>
-        <input id="wifi-ssid" class="field-input" type="text" placeholder="My Wi-Fi network">
-      </div>
-      <div class="field-row">
+        <input type="text" id="wifi-ssid" class="field-input" placeholder="MyHomeWiFi" style="margin-bottom:10px">
         <label class="field-label" for="wifi-pass">Password</label>
-        <input id="wifi-pass" class="field-input" type="text" placeholder="Network password">
+        <input type="text" id="wifi-pass" class="field-input" placeholder="password123" style="margin-bottom:10px">
+        <label class="field-label" for="wifi-sec">Security type</label>
+        <select id="wifi-sec" class="field-select">
+          <option value="WPA">WPA/WPA2 (most common)</option>
+          <option value="WEP">WEP (older)</option>
+          <option value="nopass">None (open network)</option>
+        </select>
+      </div>
+
+      <!-- vCard -->
+      <div id="panel-vcard" class="type-panel">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label class="field-label" for="vc-first">First name</label><input type="text" id="vc-first" class="field-input" placeholder="John"></div>
+          <div><label class="field-label" for="vc-last">Last name</label><input type="text" id="vc-last" class="field-input" placeholder="Doe"></div>
+          <div><label class="field-label" for="vc-phone">Phone</label><input type="tel" id="vc-phone" class="field-input" placeholder="+1 234 567 8900"></div>
+          <div><label class="field-label" for="vc-email">Email</label><input type="email" id="vc-email" class="field-input" placeholder="john@example.com"></div>
+          <div style="grid-column:1/-1"><label class="field-label" for="vc-org">Organization</label><input type="text" id="vc-org" class="field-input" placeholder="Acme Corp"></div>
+          <div style="grid-column:1/-1"><label class="field-label" for="vc-url">Website</label><input type="url" id="vc-url" class="field-input" placeholder="https://example.com"></div>
+        </div>
+      </div>
+
+      <!-- Customize -->
+      <div class="customize-row">
+        <div>
+          <label class="field-label" for="qr-size">Size</label>
+          <select id="qr-size" class="field-select">
+            <option value="200">Small (200px)</option>
+            <option value="300" selected>Medium (300px)</option>
+            <option value="500">Large (500px)</option>
+            <option value="800">X-Large (800px)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Foreground</label>
+          <div class="color-input-wrap">
+            <input type="color" id="qr-fg" value="#1E1B2E" class="color-swatch" aria-label="QR code foreground color">
+            <span id="qr-fg-val" style="font-size:12px;font-family:monospace">#1E1B2E</span>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Background</label>
+          <div class="color-input-wrap">
+            <input type="color" id="qr-bg" value="#FFFFFF" class="color-swatch" aria-label="QR code background color">
+            <span id="qr-bg-val" style="font-size:12px;font-family:monospace">#FFFFFF</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="generate-btn" style="flex:1;justify-content:center;padding:12px">⚡ Generate QR Code</button>
+        <button class="btn btn-outline" id="dl-png" style="padding:12px 18px" disabled>⬇ PNG</button>
+        <button class="btn btn-outline" id="dl-svg" style="padding:12px 18px" disabled>⬇ SVG</button>
       </div>
     </div>
 
-    <div class="field-row">
-      <label class="field-label" for="qr-size">Size</label>
-      <div class="range-row">
-        <input type="range" id="qr-size" min="150" max="500" value="260" step="10">
-        <span class="range-value" id="qr-size-val">260</span>
+    <!-- Preview -->
+    <div>
+      <div class="field-label" style="margin-bottom:8px">Preview</div>
+      <div class="qr-preview-wrap" id="qr-preview-wrap">
+        <div class="qr-placeholder">
+          <div style="font-size:32px;margin-bottom:8px">⬜</div>
+          <div style="font-size:13px">QR code appears here</div>
+        </div>
       </div>
+      <div id="qr-content-info" style="font-size:12px;color:var(--color-text-muted);text-align:center;margin-top:8px"></div>
     </div>
-
-    <div class="qr-output">
-      <div id="qr-canvas-wrap"><div id="qr-canvas"></div></div>
-      <button class="btn btn-primary" id="download-qr">Download PNG</button>
-    </div>
-
   </div>
-</div>
+</div></div>
 
-<div class="ad-slot container">Ad slot — below tool</div>
-
+<div class="ad-slot container">Ad slot</div>
 <article class="article container">
-  <h2>How to use the free QR code generator</h2>
-  <p>Generating a QR code with OMIToolKit takes three steps and produces a code you can use forever — there's no expiry, no account, and no hidden watermark added to the image.</p>
-  <ul>
-    <li>Choose what you want to encode: a website link, plain text, or a Wi-Fi network.</li>
-    <li>Fill in the field — the QR code updates automatically as you type.</li>
-    <li>Adjust the size if needed, then click <strong>Download PNG</strong> to save it.</li>
-  </ul>
-
-  <h2>Why use a browser-based QR code generator?</h2>
-  <p>Most "free" QR generators online quietly add a logo watermark, require an account once you exceed a handful of scans, or route your data through their servers before showing you a result. This tool works differently: the QR code is built entirely with JavaScript running on your own device. Nothing you type — your URL, your Wi-Fi password, your text — is ever transmitted anywhere. The moment you close the tab, no record of it exists on any server, because it was never sent to one in the first place.</p>
-
-  <h2>Common uses for QR codes</h2>
-  <p>QR codes have become a everyday bridge between print and digital. A restaurant prints one on a table tent to link to its menu. A small business owner puts one on a flyer to link straight to their Instagram. A freelancer adds one to a printed invoice linking to their portfolio. Event organizers use the Wi-Fi type to let guests join a network without typing a password. Because the code itself contains the full data, it keeps working indefinitely, regardless of which tool generated it.</p>
-
-  <h2>Frequently asked questions</h2>
-  <div class="faq-item">
-    <h3>Is this QR code generator really free?</h3>
-    <p>Yes. There is no sign-up, no watermark, and no limit on how many QR codes you can create.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Do my QR codes expire?</h3>
-    <p>No. The QR code encodes your data directly, so it works forever and does not depend on this website staying online.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Is my data uploaded anywhere?</h3>
-    <p>No. The QR code is generated entirely inside your browser using JavaScript. Nothing you type is sent to a server.</p>
-  </div>
+  <h2>Which QR code type should I use?</h2>
+  <p><strong>URL</strong> opens a website when scanned — most common use case. <strong>WiFi</strong> connects guests to your network without typing a password — perfect for cafes, hotels, and offices. <strong>vCard</strong> adds your contact details to someone's phone with a single scan. <strong>Email</strong> pre-fills an email draft. <strong>Phone</strong> dials a number. <strong>Text</strong> displays any message.</p>
+  <h2>What size QR code should I print?</h2>
+  <p>For business cards, 200-300px at actual print size (around 2cm × 2cm) is sufficient. For posters, use 500px or above — the larger the print, the further away it can be scanned. As a rule: the scanning distance should be 10× the QR code's physical size or less.</p>
 </article>
-
-<footer class="site-footer">
-  <div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById("yr").textContent=new Date().getFullYear();
 
-const typeSelect = document.getElementById('qr-type');
-const groups = {
-  url: document.getElementById('input-url'),
-  text: document.getElementById('input-text'),
-  wifi: document.getElementById('input-wifi'),
-};
-const sizeSlider = document.getElementById('qr-size');
-const sizeVal = document.getElementById('qr-size-val');
-const canvasWrap = document.getElementById('qr-canvas');
+let currentType="url",lastDataURL=null,lastSVG=null;
 
-let qr = null;
-
-function getPayload() {
-  const type = typeSelect.value;
-  if (type === 'url') return document.getElementById('qr-url').value || 'https://example.com';
-  if (type === 'text') return document.getElementById('qr-text').value || ' ';
-  if (type === 'wifi') {
-    const ssid = document.getElementById('wifi-ssid').value || '';
-    const pass = document.getElementById('wifi-pass').value || '';
-    return `WIFI:T:WPA;S:${ssid};P:${pass};;`;
-  }
-  return '';
-}
-
-function renderQR() {
-  canvasWrap.innerHTML = '';
-  const size = parseInt(sizeSlider.value, 10);
-  qr = new QRCode(canvasWrap, {
-    text: getPayload(),
-    width: size,
-    height: size,
-    colorDark: '#1E1B2E',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
+// Type tabs
+document.querySelectorAll(".type-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".type-tab").forEach(b=>{b.classList.remove("active");b.setAttribute("aria-selected","false");});
+    document.querySelectorAll(".type-panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");btn.setAttribute("aria-selected","true");
+    currentType=btn.dataset.type;
+    document.getElementById("panel-"+currentType).classList.add("active");
+    generateQR();
   });
+});
+
+// Color pickers
+document.getElementById("qr-fg").addEventListener("input",e=>{document.getElementById("qr-fg-val").textContent=e.target.value;generateQR();});
+document.getElementById("qr-bg").addEventListener("input",e=>{document.getElementById("qr-bg-val").textContent=e.target.value;generateQR();});
+document.getElementById("qr-size").addEventListener("change",generateQR);
+
+// Auto-generate on input
+document.querySelectorAll(".type-panel input, .type-panel textarea, .type-panel select").forEach(el=>{
+  el.addEventListener("input",()=>generateQR());
+});
+
+function buildContent(){
+  if(currentType==="url")return document.getElementById("url-input").value.trim()||"https://omitoolkit.com";
+  if(currentType==="text")return document.getElementById("text-input").value.trim()||"Hello from OMIToolKit!";
+  if(currentType==="phone")return"tel:"+document.getElementById("phone-input").value.trim();
+  if(currentType==="email"){
+    const to=document.getElementById("email-to").value.trim();
+    const sub=document.getElementById("email-subject").value.trim();
+    const body=document.getElementById("email-body").value.trim();
+    if(!to)return"mailto:contact@example.com";
+    let url="mailto:"+to;const params=[];
+    if(sub)params.push("subject="+encodeURIComponent(sub));
+    if(body)params.push("body="+encodeURIComponent(body));
+    if(params.length)url+="?"+params.join("&");
+    return url;
+  }
+  if(currentType==="wifi"){
+    const ssid=document.getElementById("wifi-ssid").value.trim()||"MyWiFi";
+    const pass=document.getElementById("wifi-pass").value;
+    const sec=document.getElementById("wifi-sec").value;
+    return"WIFI:T:"+sec+";S:"+ssid+";P:"+pass+";;";
+  }
+  if(currentType==="vcard"){
+    const f=document.getElementById("vc-first").value.trim();
+    const l=document.getElementById("vc-last").value.trim();
+    const p=document.getElementById("vc-phone").value.trim();
+    const e=document.getElementById("vc-email").value.trim();
+    const o=document.getElementById("vc-org").value.trim();
+    const u=document.getElementById("vc-url").value.trim();
+    return["BEGIN:VCARD","VERSION:3.0","FN:"+(f+" "+l).trim(),"N:"+l+";"+f,p?"TEL:"+p:"",e?"EMAIL:"+e:"",o?"ORG:"+o:"",u?"URL:"+u:"","END:VCARD"].filter(Boolean).join("\n");
+  }
+  return"https://omitoolkit.com";
 }
 
-typeSelect.addEventListener('change', () => {
-  Object.values(groups).forEach(g => g.style.display = 'none');
-  groups[typeSelect.value].style.display = '';
-  renderQR();
-});
-
-document.querySelectorAll('#input-url input, #input-text input, #input-wifi input').forEach(el => {
-  el.addEventListener('input', renderQR);
-});
-
-sizeSlider.addEventListener('input', () => {
-  sizeVal.textContent = sizeSlider.value;
-  renderQR();
-});
-
-document.getElementById('download-qr').addEventListener('click', () => {
-  const img = canvasWrap.querySelector('img') || canvasWrap.querySelector('canvas');
-  const link = document.createElement('a');
-  link.download = 'qr-code.png';
-  link.href = img.tagName === 'CANVAS' ? img.toDataURL('image/png') : img.src;
-  link.click();
-});
-
-renderQR();
-
-// Global error handler — OMI Foundation Sprint 1
-window.addEventListener('error', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.error || e.message, 'Runtime');
+async function generateQR(){
+  const content=buildContent();
+  if(!content)return;
+  const fg=document.getElementById("qr-fg").value;
+  const bg=document.getElementById("qr-bg").value;
+  const size=parseInt(document.getElementById("qr-size").value);
+  const wrap=document.getElementById("qr-preview-wrap");
+  wrap.innerHTML="<div style='font-size:13px;color:var(--color-text-muted)'>Generating…</div>";
+  try{
+    // Generate PNG via canvas
+    const dataURL=await QRCode.toDataURL(content,{width:size,color:{dark:fg,light:bg},errorCorrectionLevel:"M",margin:2});
+    lastDataURL=dataURL;
+    // Generate SVG string
+    const svgStr=await QRCode.toString(content,{type:"svg",color:{dark:fg,light:bg},errorCorrectionLevel:"M",margin:2,width:size});
+    lastSVG=svgStr;
+    const img=document.createElement("img");
+    img.src=dataURL;img.alt="Generated QR code";img.style.width=Math.min(size,240)+"px";img.style.imageRendering="pixelated";
+    wrap.innerHTML="";wrap.appendChild(img);
+    const chars=content.length;
+    document.getElementById("qr-content-info").textContent=chars+" character"+(chars!==1?"s":"")+" encoded";
+    document.getElementById("dl-png").disabled=false;
+    document.getElementById("dl-svg").disabled=false;
+  }catch(err){
+    wrap.innerHTML="<div style='color:#991B1B;font-size:13px'>⚠ "+OMI.safe.text(err.message)+"</div>";
+    OMI.error.handle(err,"QR Generator");
   }
+}
+
+document.getElementById("dl-png").addEventListener("click",()=>{
+  if(!lastDataURL)return;
+  const a=document.createElement("a");a.href=lastDataURL;a.download="qrcode.png";a.click();
 });
-window.addEventListener('unhandledrejection', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.reason, 'Promise');
-  }
-  e.preventDefault();
+document.getElementById("dl-svg").addEventListener("click",()=>{
+  if(!lastSVG)return;
+  const blob=new Blob([lastSVG],{type:"image/svg+xml"});
+  OMI.file.download(blob,"qrcode.svg","image/svg+xml");
 });
+
+// Generate on load
+generateQR();
+
+window.addEventListener("error",e=>OMI.error.handle(e.error||e.message,"Runtime"));
+window.addEventListener("unhandledrejection",e=>{OMI.error.handle(e.reason,"Promise");e.preventDefault();});
 </script>
-</body>
-</html>
+</body></html>

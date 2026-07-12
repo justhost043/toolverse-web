@@ -2,175 +2,347 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Online Image Compressor — Reduce Image Size | OMIToolKit</title>
-<meta name="description" content="Compress JPEG and PNG images online for free. Reduce file size without losing quality. Runs in your browser — no upload to any server.">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Image Compressor Online — Reduce Image Size Without Quality Loss | OMIToolKit</title>
+<meta name="description" content="Compress JPEG, PNG, and WebP images online for free. Reduce file size up to 90% without visible quality loss. Batch compress multiple images. Runs entirely in your browser.">
 <link rel="canonical" href="../../tools/image-compressor/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compress JPEG, PNG, and WebP images online. Batch compression, multiple formats, runs in your browser."}</script>
 <style>
-.file-drop{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;cursor:pointer;color:var(--color-text-muted);transition:all .15s}
-.file-drop:hover,.file-drop.drag{border-color:var(--color-primary);background:#F4F3FE}
-.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
-.preview-box{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:#F9F9F9}
-.preview-box img{width:100%;height:200px;object-fit:contain;display:block;background:#f0f0f0}
-.preview-info{padding:12px 14px;font-size:13px}
-.preview-info strong{display:block;font-weight:500;margin-bottom:2px}
-.preview-info span{color:var(--color-text-muted)}
-.saving-badge{display:inline-block;background:#DCFCE7;color:#16A34A;font-weight:500;font-size:12px;padding:3px 10px;border-radius:999px;margin-left:8px}
-.saving-badge.red{background:#FEE2E2;color:#E24B4A}
+/* ── Upload zone ── */
+.upload-zone{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:#FCFCFB;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--color-primary);background:#F4F3FE}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* ── Settings bar ── */
+.settings-bar{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end;margin:18px 0;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:16px}
+@media(max-width:580px){.settings-bar{grid-template-columns:1fr 1fr;}.settings-bar .compress-all-btn{grid-column:1/-1}}
+
+/* ── Results grid ── */
+.results-grid{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+
+/* ── Result card ── */
+.result-card{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:#fff;transition:box-shadow .15s}
+.result-card:hover{box-shadow:var(--shadow-card-hover)}
+.card-preview{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.card-preview-half{position:relative;overflow:hidden;background:#F0F0F0}
+.card-preview-half img{width:100%;height:180px;object-fit:contain;display:block;background:repeating-conic-gradient(#E7E5EE 0% 25%,#F9F9F9 0% 50%) 0 0/16px 16px}
+.card-preview-label{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:4px;color:#fff}
+.card-preview-label.orig{background:rgba(0,0,0,.5)}
+.card-preview-label.comp{background:var(--color-primary)}
+.card-divider{width:3px;background:var(--color-primary);flex-shrink:0;position:relative;z-index:2}
+.card-meta{padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--color-border)}
+.card-filename{font-weight:600;font-size:14px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.size-pill{font-size:12.5px;padding:4px 10px;border-radius:999px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.size-pill.orig-pill{background:#F4F3FE;color:#6B6B8A}
+.size-pill.comp-pill{background:#DCFCE7;color:#166534}
+.size-pill.worse{background:#FEE2E2;color:#991B1B}
+.saving-bar-wrap{width:100%;height:5px;background:var(--color-border);border-radius:4px;overflow:hidden;margin:4px 0}
+.saving-bar-fill{height:100%;background:linear-gradient(90deg,#16A34A,#22D3EE);border-radius:4px;transition:width .4s ease}
+
+/* ── Status states ── */
+.card-processing{padding:40px;text-align:center;color:var(--color-text-muted)}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid #E7E5EE;border-top-color:var(--color-primary);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Summary bar ── */
+.summary-bar{background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.summary-bar .sb-stat{display:flex;flex-direction:column;align-items:center}
+.summary-bar .sb-val{font-size:22px;font-weight:700;color:#166534;font-family:var(--font-display)}
+.summary-bar .sb-lbl{font-size:11.5px;color:#4B7A5A}
 
 @media(max-width:600px){
-  .tool-panel{padding:16px}
-  .site-header .inner{padding:0 16px}
-  .container{padding:0 16px}
+  .card-preview{grid-template-columns:1fr}
+  .card-preview-half:first-child{display:none}
+  .settings-bar{grid-template-columns:1fr}
 }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compress JPEG and PNG images online for free. Reduce file size without losing quality. Runs in your browser — no upload to any server."}</script>
-<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Image</a> / Image Compressor</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-image">Image</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Image Compressor</div>
 <div class="container tool-page-header">
   <h1>Image Compressor</h1>
-  <p>Reduce JPEG and PNG file sizes in your browser — no uploads, no servers, no limits.</p>
+  <p>Compress JPEG, PNG and WebP images up to 90% smaller — batch support, instant preview, no uploads.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:760px">
+<div class="container"><div class="tool-panel" style="max-width:860px">
 
-    <div class="file-drop" id="drop-zone">
-      <div style="font-size:36px;margin-bottom:10px">🖼️</div>
-      <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop image here or click to select</div>
-      <div style="font-size:13px;margin-top:6px">Supports JPEG, PNG, WebP</div>
-      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
-    </div>
-
-    <div id="controls" style="display:none;margin-top:22px">
-      <div class="field-row">
-        <label class="field-label">Quality — <span id="quality-val">80</span>%</label>
-        <div class="range-row">
-          <input type="range" id="quality" min="10" max="100" value="80">
-        </div>
-      </div>
-      <div class="field-row">
-        <label class="field-label">Max width (px) — 0 = no resize</label>
-        <input type="number" id="max-width" class="field-input" value="0" min="0" step="100">
-      </div>
-      <button class="btn btn-primary" id="compress-btn" style="width:100%;justify-content:center;padding:13px">Compress image</button>
-    </div>
-
-    <div id="preview-grid" class="preview-grid" style="display:none">
-      <div class="preview-box">
-        <img loading="lazy" id="orig-img" alt="Original">
-        <div class="preview-info">
-          <strong>Original</strong>
-          <span id="orig-info"></span>
-        </div>
-      </div>
-      <div class="preview-box">
-        <img loading="lazy" id="comp-img" alt="Compressed">
-        <div class="preview-info">
-          <strong>Compressed <span id="saving-badge" class="saving-badge"></span></strong>
-          <span id="comp-info"></span>
-        </div>
-      </div>
-    </div>
-    <button id="download-btn" class="btn btn-primary" style="display:none;margin-top:14px;width:100%;justify-content:center">Download compressed image</button>
+  <!-- Upload zone -->
+  <div class="upload-zone" id="upload-zone" role="button" aria-label="Upload images — click or drag and drop" tabindex="0">
+    <div style="font-size:42px;margin-bottom:12px;pointer-events:none">🖼️</div>
+    <div style="font-size:16px;font-weight:600;color:var(--color-text);pointer-events:none">Drop images here or click to select</div>
+    <div style="font-size:13px;color:var(--color-text-muted);margin-top:6px;pointer-events:none">JPEG, PNG, WebP — multiple files supported</div>
+    <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple aria-label="Select image files">
   </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
+
+  <!-- Settings -->
+  <div class="settings-bar" id="settings-bar" style="display:none">
+    <div>
+      <label class="field-label" for="quality-slider">Quality — <strong id="quality-val" style="color:var(--color-primary)">82%</strong></label>
+      <input type="range" id="quality-slider" min="10" max="100" value="82" style="width:100%;accent-color:var(--color-primary)">
+    </div>
+    <div>
+      <label class="field-label" for="format-select">Output format</label>
+      <select id="format-select" class="field-select">
+        <option value="auto">Auto (keep original)</option>
+        <option value="jpeg">Always JPEG</option>
+        <option value="webp">Always WebP (smallest)</option>
+        <option value="png">Always PNG (lossless)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary compress-all-btn" id="compress-all-btn" style="white-space:nowrap;padding:11px 22px">
+      ⚡ Compress All
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div class="results-grid" id="results-grid"></div>
+
+  <!-- Summary -->
+  <div class="summary-bar" id="summary-bar" style="display:none">
+    <div style="font-size:18px">🎉</div>
+    <div class="sb-stat"><div class="sb-val" id="sum-files">0</div><div class="sb-lbl">Files</div></div>
+    <div class="sb-stat"><div class="sb-val" id="sum-orig">0 KB</div><div class="sb-lbl">Original</div></div>
+    <div class="sb-stat"><div class="sb-val" id="sum-comp">0 KB</div><div class="sb-lbl">Compressed</div></div>
+    <div class="sb-stat"><div class="sb-val" id="sum-saved">0%</div><div class="sb-lbl">Saved</div></div>
+    <button class="btn btn-primary" id="download-all-btn" style="margin-left:auto">⬇ Download All</button>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
 <article class="article container">
-  <h2>Why compress images?</h2>
-  <p>Large image files are one of the most common reasons web pages load slowly. A high-quality photo straight from a camera can be 5–10MB; the same image compressed for web use can be under 200KB with almost no visible quality loss. Faster pages rank better in search results, reduce bounce rates, and give visitors a better experience across all devices.</p>
-  <h2>How this compressor works</h2>
-  <p>Your image is drawn onto an HTML Canvas element at the quality level you choose, then exported using the browser's built-in JPEG or WebP encoding. The entire process happens on your device — the image bytes never leave your browser, making this compressor safe for confidential documents, personal photos, or any image you'd rather not send to a third-party server.</p>
-  <h2>JPEG vs PNG — what format should you use?</h2>
-  <p>JPEG is best for photos and images with gradients — it produces much smaller files but uses lossy compression (some data is permanently removed). PNG is best for logos, screenshots, and images with text or sharp edges — it uses lossless compression but produces larger files. If the original is PNG and file size matters more than transparency, this tool will convert it to JPEG during compression.</p>
+  <h2>How this image compressor works</h2>
+  <p>Your images are drawn onto an HTML5 Canvas element at the quality level you set, then re-encoded using your browser's built-in JPEG or WebP codec. The entire process happens on your device — image data never leaves your browser. This makes it safe for confidential documents, medical images, legal photos, or any file you wouldn't upload to a third-party server.</p>
+  <h2>JPEG vs WebP vs PNG — which to choose?</h2>
+  <p><strong>Auto</strong> keeps the original format but compresses it. <strong>WebP</strong> consistently produces the smallest files (25–35% smaller than JPEG at equal quality) and is supported by all modern browsers — ideal for websites. <strong>JPEG</strong> is universally compatible and best for photographs. <strong>PNG</strong> is lossless and best for screenshots, logos, and images with transparency — compressing PNG reduces metadata and unused palette entries rather than image data.</p>
+  <h2>What quality setting should I use?</h2>
+  <p>For most web images, 75–85% quality produces files that are indistinguishable from the original at normal viewing distances, while being 40–70% smaller. Going below 60% introduces visible artifacts. The 82% default is a good starting point for most use cases. For print-quality output, stay above 90%.</p>
 </article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. Images never leave your browser.</div></footer>
 <script>
-document.getElementById('year').textContent=new Date().getFullYear();
-const dropZone=document.getElementById('drop-zone'),fileInput=document.getElementById('file-input');
-const controls=document.getElementById('controls'),previewGrid=document.getElementById('preview-grid');
-const origImg=document.getElementById('orig-img'),compImg=document.getElementById('comp-img');
-const origInfo=document.getElementById('orig-info'),compInfo=document.getElementById('comp-info');
-const qualitySlider=document.getElementById('quality'),qualityVal=document.getElementById('quality-val');
-const savingBadge=document.getElementById('saving-badge'),downloadBtn=document.getElementById('download-btn');
-let originalFile=null,compressedBlob=null;
+document.getElementById('yr').textContent = new Date().getFullYear();
 
-function fmt(bytes){if(bytes>1048576)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1024).toFixed(0)+' KB';}
+// ── State ──────────────────────────────────────────────────────────────
+let jobs = []; // [{file, origUrl, compBlob, compUrl, status}]
 
-dropZone.addEventListener('click',()=>fileInput.click());
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
-dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)loadFile(f);});
-fileInput.addEventListener('change',()=>{if(fileInput.files[0])loadFile(fileInput.files[0]);});
-qualitySlider.addEventListener('input',()=>qualityVal.textContent=qualitySlider.value);
+// ── Upload zone ────────────────────────────────────────────────────────
+const zone    = document.getElementById('upload-zone');
+const fileInp = document.getElementById('file-input');
 
-function loadFile(f){
-  originalFile=f;
-  const url=URL.createObjectURL(f);
-  origImg.src=url;
-  origInfo.textContent=`${f.name} — ${fmt(f.size)}`;
-  controls.style.display='';
-  previewGrid.style.display='none';
-  downloadBtn.style.display='none';
+// Keyboard accessibility
+zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInp.click(); });
+
+zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', e => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag'); });
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag');
+  addFiles([...e.dataTransfer.files].filter(f => f.type.startsWith('image/')));
+});
+fileInp.addEventListener('change', () => {
+  addFiles([...fileInp.files]); fileInp.value = '';
+});
+
+// ── Quality & format ───────────────────────────────────────────────────
+document.getElementById('quality-slider').addEventListener('input', e => {
+  document.getElementById('quality-val').textContent = e.target.value + '%';
+});
+
+// ── Add files ──────────────────────────────────────────────────────────
+function addFiles(files) {
+  if (!files.length) return;
+  document.getElementById('settings-bar').style.display = '';
+  document.getElementById('summary-bar').style.display = 'none';
+
+  files.forEach(file => {
+    const id = 'job-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    jobs.push({ id, file, origUrl: URL.createObjectURL(file), compBlob: null, compUrl: null, status: 'pending' });
+    renderCard(jobs[jobs.length - 1]);
+  });
 }
 
-document.getElementById('compress-btn').addEventListener('click',()=>{
-  if(!originalFile)return;
-  const q=parseInt(qualitySlider.value)/100;
-  const maxW=parseInt(document.getElementById('max-width').value)||0;
-  const img=new Image();
-  img.onload=()=>{
-    let w=img.width,h=img.height;
-    if(maxW>0&&w>maxW){h=Math.round(h*(maxW/w));w=maxW;}
-    const canvas=document.createElement('canvas');
-    canvas.width=w;canvas.height=h;
-    canvas.getContext('2d').drawImage(img,0,0,w,h);
-    canvas.toBlob(blob=>{
-      compressedBlob=blob;
-      const url=URL.createObjectURL(blob);
-      compImg.src=url;
-      const saving=((1-blob.size/originalFile.size)*100).toFixed(1);
-      compInfo.textContent=`${w}×${h}px — ${fmt(blob.size)}`;
-      savingBadge.textContent=(saving>0?'−':'+')+(Math.abs(saving))+'%';
-      savingBadge.className='saving-badge'+(saving<0?' red':'');
-      previewGrid.style.display='grid';
-      downloadBtn.style.display='block';
-    },'image/jpeg',q);
-  };
-  img.src=URL.createObjectURL(originalFile);
+// ── Render card ────────────────────────────────────────────────────────
+function renderCard(job) {
+  const grid = document.getElementById('results-grid');
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.id = job.id;
+  card.innerHTML = `<div class="card-processing">
+    <div style="font-weight:500;font-size:14px;color:var(--color-text)">${OMI.safe.text(job.file.name)}</div>
+    <div style="font-size:13px;margin-top:4px;color:var(--color-text-muted)">${OMI.file.formatSize(job.file.size)} · Ready to compress</div>
+  </div>`;
+  grid.appendChild(card);
+}
+
+function updateCard(job) {
+  const card = document.getElementById(job.id);
+  if (!card) return;
+
+  if (job.status === 'processing') {
+    card.innerHTML = `<div class="card-processing">
+      <div class="spinner"></div>
+      <div style="font-size:13.5px">Compressing ${OMI.safe.text(job.file.name)}…</div>
+    </div>`;
+    return;
+  }
+
+  if (job.status === 'done') {
+    const saving = ((1 - job.compBlob.size / job.file.size) * 100);
+    const savingText = saving > 0 ? `-${saving.toFixed(1)}%` : `+${Math.abs(saving).toFixed(1)}%`;
+    const compPill = saving > 0 ? 'comp-pill' : 'comp-pill worse';
+
+    card.innerHTML = `
+      <div class="card-preview">
+        <div class="card-preview-half">
+          <span class="card-preview-label orig">Original</span>
+          <img src="${job.origUrl}" alt="Original ${OMI.safe.attr(job.file.name)}" loading="lazy">
+        </div>
+        <div class="card-divider"></div>
+        <div class="card-preview-half">
+          <span class="card-preview-label comp">Compressed</span>
+          <img src="${job.compUrl}" alt="Compressed ${OMI.safe.attr(job.file.name)}" loading="lazy">
+        </div>
+      </div>
+      <div class="card-meta">
+        <div class="card-filename" title="${OMI.safe.attr(job.file.name)}">${OMI.safe.text(job.file.name)}</div>
+        <span class="size-pill orig-pill">${OMI.file.formatSize(job.file.size)}</span>
+        <span>→</span>
+        <span class="size-pill ${compPill}">${OMI.file.formatSize(job.compBlob.size)} <strong>${savingText}</strong></span>
+        <div style="flex-basis:100%">
+          <div class="saving-bar-wrap"><div class="saving-bar-fill" style="width:${Math.max(0,saving)}%"></div></div>
+        </div>
+        <button class="btn btn-primary" onclick="downloadSingle('${job.id}')" style="padding:8px 16px;font-size:13px;margin-left:auto">⬇ Download</button>
+      </div>`;
+    return;
+  }
+
+  if (job.status === 'error') {
+    card.innerHTML = `<div class="card-processing">
+      <div style="font-size:20px;margin-bottom:8px">⚠️</div>
+      <div style="font-weight:500;color:#991B1B">${OMI.safe.text(job.file.name)}</div>
+      <div style="font-size:13px;color:#991B1B;margin-top:4px">${OMI.safe.text(job.error || 'Compression failed')}</div>
+    </div>`;
+  }
+}
+
+// ── Compress ──────────────────────────────────────────────────────────
+async function compressFile(job) {
+  job.status = 'processing';
+  updateCard(job);
+
+  const quality = parseInt(document.getElementById('quality-slider').value) / 100;
+  const formatPref = document.getElementById('format-select').value;
+
+  try {
+    // Determine output mime type
+    let mime;
+    if (formatPref === 'jpeg') mime = 'image/jpeg';
+    else if (formatPref === 'webp') mime = 'image/webp';
+    else if (formatPref === 'png') mime = 'image/png';
+    else {
+      // Auto: preserve original, convert PNG→PNG lossless, JPEG/WebP→JPEG
+      mime = job.file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    }
+
+    // Load image
+    const img = await new Promise((res, rej) => {
+      const i = new Image();
+      i.onload = () => res(i);
+      i.onerror = () => rej(new Error('Could not load image file'));
+      i.src = job.origUrl;
+    });
+
+    // Draw to canvas
+    const canvas = document.createElement('canvas');
+    canvas.width  = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+
+    // White background for JPEG (no transparency support)
+    if (mime === 'image/jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(img, 0, 0);
+
+    // Encode
+    const blob = await new Promise((res, rej) => {
+      canvas.toBlob(b => {
+        if (b) res(b);
+        else rej(new Error('Encoding failed — format may not be supported in this browser'));
+      }, mime, mime === 'image/png' ? undefined : quality);
+    });
+
+    // Build output filename
+    const ext = mime === 'image/jpeg' ? '.jpg' : mime === 'image/webp' ? '.webp' : '.png';
+    job.outName  = OMI.file.base(job.file.name) + '-compressed' + ext;
+    job.compBlob = blob;
+    job.compUrl  = URL.createObjectURL(blob);
+    job.status   = 'done';
+    updateCard(job);
+
+  } catch (err) {
+    job.status = 'error';
+    job.error  = OMI.error._friendly(err);
+    updateCard(job);
+    OMI.error.handle(err, 'Image Compressor');
+  }
+}
+
+// ── Compress all ──────────────────────────────────────────────────────
+document.getElementById('compress-all-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('compress-all-btn');
+  OMI.ui.setLoading(btn, true, '⏳ Compressing…');
+
+  // Process sequentially to avoid memory pressure
+  for (const job of jobs) {
+    if (job.status === 'pending' || job.status === 'error') {
+      await compressFile(job);
+    }
+  }
+
+  // Update summary
+  const done  = jobs.filter(j => j.status === 'done');
+  const origTotal = done.reduce((a, j) => a + j.file.size, 0);
+  const compTotal = done.reduce((a, j) => a + j.compBlob.size, 0);
+  const savedPct  = origTotal ? ((1 - compTotal / origTotal) * 100).toFixed(1) : 0;
+
+  document.getElementById('sum-files').textContent = done.length;
+  document.getElementById('sum-orig').textContent  = OMI.file.formatSize(origTotal);
+  document.getElementById('sum-comp').textContent  = OMI.file.formatSize(compTotal);
+  document.getElementById('sum-saved').textContent = savedPct + '%';
+
+  if (done.length) {
+    document.getElementById('summary-bar').style.display = '';
+    OMI.error.toast(`Compressed ${done.length} image${done.length>1?'s':''}! Saved ${savedPct}%`, 'success', 4000);
+  }
+
+  OMI.ui.setLoading(btn, false);
 });
 
-downloadBtn.addEventListener('click',()=>{
-  if(!compressedBlob)return;
-  const a=document.createElement('a');
-  a.download='compressed-'+( originalFile.name.replace(/\.[^.]+$/,'')+'.jpg');
-  a.href=URL.createObjectURL(compressedBlob);
-  a.click();
+// ── Download single ────────────────────────────────────────────────────
+function downloadSingle(jobId) {
+  const job = jobs.find(j => j.id === jobId);
+  if (!job || !job.compBlob) return;
+  OMI.file.download(job.compBlob, job.outName, job.compBlob.type);
+}
+
+// ── Download all ──────────────────────────────────────────────────────
+document.getElementById('download-all-btn').addEventListener('click', () => {
+  const done = jobs.filter(j => j.status === 'done');
+  done.forEach((job, i) => {
+    setTimeout(() => OMI.file.download(job.compBlob, job.outName, job.compBlob.type), i * 300);
+  });
 });
 
-// Global error handler — OMI Foundation Sprint 1
-window.addEventListener('error', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.error || e.message, 'Runtime');
-  }
-});
-window.addEventListener('unhandledrejection', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.reason, 'Promise');
-  }
-  e.preventDefault();
-});
+// ── Global error handling ─────────────────────────────────────────────
+window.addEventListener('error', e => OMI.error.handle(e.error || e.message, 'Runtime'));
+window.addEventListener('unhandledrejection', e => { OMI.error.handle(e.reason, 'Promise'); e.preventDefault(); });
 </script>
-</body>
-</html>
+</body></html>

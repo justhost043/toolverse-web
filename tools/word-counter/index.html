@@ -2,121 +2,254 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Word & Character Counter Online | OMIToolKit</title>
-<meta name="description" content="Count words, characters, sentences, paragraphs and reading time instantly. Free online word counter — no sign-up, runs in your browser.">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Word Counter — Count Words, Characters & Reading Time | OMIToolKit</title>
+<meta name="description" content="Count words, characters, sentences, paragraphs and reading time instantly. Keyword density, flesch readability score, and text statistics — all in real time.">
 <link rel="canonical" href="../../tools/word-counter/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Word & Character Counter","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free browser-based word, character, sentence and paragraph counter with reading time estimate."}</script>
-<style>
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
-.stat-box{background:#F4F3FE;border-radius:var(--radius-sm);padding:16px;text-align:center}
-.stat-num{font-size:28px;font-weight:600;color:var(--color-primary);line-height:1}
-.stat-lbl{font-size:12px;color:var(--color-text-muted);margin-top:4px}
-textarea.field-input{resize:vertical;min-height:220px;font-family:var(--font-mono);font-size:14px;line-height:1.6}
-.keyword-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
-.keyword-table th{text-align:left;padding:8px 10px;background:#F4F3FE;font-weight:500}
-.keyword-table td{padding:8px 10px;border-bottom:1px solid var(--color-border)}
-
-@media(max-width:600px){
-  .tool-panel{padding:16px}
-  .site-header .inner{padding:0 16px}
-  .container{padding:0 16px}
-}
-</style>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Word Counter","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px 12px;text-align:center;transition:all .15s}
+.stat-card:hover{border-color:var(--color-primary);background:#F4F3FE}
+.stat-val{font-size:28px;font-weight:700;color:var(--color-primary);font-family:var(--font-display);line-height:1}
+.stat-lbl{font-size:11.5px;color:var(--color-text-muted);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.editor-area{width:100%;min-height:220px;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:16px;font-size:15px;line-height:1.7;resize:vertical;font-family:inherit;color:var(--color-text);transition:border-color .15s;outline:none;background:#fff}
+.editor-area:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(79,70,229,.08)}
+.editor-area::placeholder{color:var(--color-text-muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.toolbar .btn{padding:7px 14px;font-size:13px}
+.limit-bar-wrap{height:5px;background:var(--color-border);border-radius:3px;overflow:hidden;margin-top:4px}
+.limit-bar{height:100%;border-radius:3px;transition:width .2s,background .2s}
+.keyword-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.keyword-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--color-border);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted)}
+.keyword-table td{padding:8px 10px;border-bottom:1px solid var(--color-border)}
+.keyword-table tr:last-child td{border-bottom:none}
+.kw-bar{display:inline-block;height:6px;background:var(--color-primary);border-radius:3px;vertical-align:middle;margin-right:6px;opacity:.7}
+.target-row{display:flex;align-items:center;gap:10px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;flex-wrap:wrap}
+.readability-score{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-weight:600;font-size:13px}
+@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-val{font-size:22px}.tool-panel{padding:16px}.container{padding:0 14px}}
+@media(max-width:400px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Text Tools</a> / Word Counter</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text</a> / Word Counter</div>
 <div class="container tool-page-header">
-  <h1>Word &amp; Character Counter</h1>
-  <p>Paste or type your text below — stats update in real time.</p>
+  <h1>Word Counter</h1>
+  <p>Real-time word count, character count, reading time, readability score, and keyword density.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:760px">
-    <div class="stats-grid">
-      <div class="stat-box"><div class="stat-num" id="s-words">0</div><div class="stat-lbl">Words</div></div>
-      <div class="stat-box"><div class="stat-num" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
-      <div class="stat-box"><div class="stat-num" id="s-chars-no">0</div><div class="stat-lbl">Chars (no spaces)</div></div>
-      <div class="stat-box"><div class="stat-num" id="s-sent">0</div><div class="stat-lbl">Sentences</div></div>
-      <div class="stat-box"><div class="stat-num" id="s-para">0</div><div class="stat-lbl">Paragraphs</div></div>
-      <div class="stat-box"><div class="stat-num" id="s-read">0m</div><div class="stat-lbl">Read time</div></div>
-    </div>
-    <div class="field-row">
-      <textarea id="txt" class="field-input" placeholder="Start typing or paste your text here…"></textarea>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:4px">
-      <button class="btn btn-outline" id="btn-clear">Clear</button>
-      <button class="btn btn-outline" id="btn-copy">Copy text</button>
-    </div>
-    <div style="margin-top:22px;border-top:1px solid var(--color-border);padding-top:18px">
-      <div class="field-label" style="margin-bottom:10px">Top keywords</div>
-      <table class="keyword-table"><thead><tr><th>Word</th><th>Count</th><th>Density</th></tr></thead>
-      <tbody id="kw-body"></tbody></table>
+<div class="container"><div class="tool-panel" style="max-width:860px">
+
+  <!-- Stats grid -->
+  <div class="stats-grid" aria-label="Text statistics" role="region">
+    <div class="stat-card"><div class="stat-val" id="s-words">0</div><div class="stat-lbl">Words</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-chars-nsp">0</div><div class="stat-lbl">No spaces</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-sentences">0</div><div class="stat-lbl">Sentences</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-paras">0</div><div class="stat-lbl">Paragraphs</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-read">0 min</div><div class="stat-lbl">Read time</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-speak">0 min</div><div class="stat-lbl">Speak time</div></div>
+    <div class="stat-card"><div class="stat-val" id="s-lines">0</div><div class="stat-lbl">Lines</div></div>
+  </div>
+
+  <!-- Word limit / target -->
+  <div class="target-row">
+    <span style="font-size:13.5px;font-weight:500;white-space:nowrap">Word limit:</span>
+    <input type="number" id="word-limit" class="field-input" placeholder="e.g. 500" min="0" style="max-width:100px;padding:7px 10px;font-size:13px">
+    <div style="flex:1;min-width:80px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span id="limit-pct" style="color:var(--color-text-muted)">No limit set</span>
+        <span id="limit-rem" style="color:var(--color-text-muted)"></span>
+      </div>
+      <div class="limit-bar-wrap"><div class="limit-bar" id="limit-bar" style="width:0%"></div></div>
     </div>
   </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="btn btn-outline" id="clear-btn" aria-label="Clear all text">Clear</button>
+    <button class="btn btn-outline" id="copy-btn" aria-label="Copy text to clipboard">Copy</button>
+    <button class="btn btn-outline" id="paste-btn" aria-label="Paste from clipboard">Paste</button>
+    <button class="btn btn-outline" id="upper-btn" aria-label="Convert to uppercase">UPPER</button>
+    <button class="btn btn-outline" id="lower-btn" aria-label="Convert to lowercase">lower</button>
+    <button class="btn btn-outline" id="title-btn" aria-label="Convert to title case">Title Case</button>
+  </div>
+
+  <!-- Text area -->
+  <textarea id="text-area" class="editor-area"
+    placeholder="Paste or type your text here — statistics update in real time..."
+    aria-label="Text input area for word counting"
+    spellcheck="true"></textarea>
+
+  <!-- Readability -->
+  <div style="margin-top:16px;padding:14px 16px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-md)">
+    <div style="font-weight:600;font-size:14px;margin-bottom:10px">Readability Analysis</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div id="readability-badge" class="readability-score" style="background:#F4F3FE;color:var(--color-primary)">—</div>
+      <div id="readability-desc" style="font-size:13px;color:var(--color-text-muted)">Type text to see readability score</div>
+    </div>
+  </div>
+
+  <!-- Keyword Density -->
+  <div style="margin-top:16px">
+    <div style="font-weight:600;font-size:14px;margin-bottom:8px">Top Keywords</div>
+    <table class="keyword-table" aria-label="Keyword frequency">
+      <thead><tr><th>#</th><th>Keyword</th><th>Count</th><th>Density</th><th></th></tr></thead>
+      <tbody id="kw-tbody"><tr><td colspan="5" style="text-align:center;color:var(--color-text-muted);padding:16px">Type text to see keyword density</td></tr></tbody>
+    </table>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
 <article class="article container">
-  <h2>Why use a word counter?</h2>
-  <p>Whether you're writing a blog post, a college essay, a product description, or a tweet, knowing your word and character count matters. SEO articles typically target specific lengths, academic submissions enforce word limits, and social platforms cap character counts. This tool gives you all those numbers at once — plus a reading time estimate so you can match your content length to your audience's attention span.</p>
-  <h2>How reading time is calculated</h2>
-  <p>The reading time shown assumes an average adult reading speed of 200 words per minute, which is the widely-used standard for general web content. For technical or complex writing, the real reading time is typically higher; for simple, scannable content, it may be lower.</p>
-  <h2>What is keyword density?</h2>
-  <p>Keyword density shows how often a particular word appears as a percentage of total words. SEO writers track this to avoid "keyword stuffing" — overusing the same word to the point where search engines flag the content as low quality. Most guidelines recommend keeping any single keyword below 2–3% of total content.</p>
+  <h2>Why does word count matter?</h2>
+  <p>Word count requirements exist across many contexts: academic essays and assignments have minimum or maximum requirements; SEO content typically needs 1,500+ words for competitive topics; LinkedIn posts perform best under 300 words; Twitter limits posts to 280 characters; email subject lines should stay under 50 characters for mobile visibility. This tool helps you hit your target precisely.</p>
+  <h2>What is Flesch readability?</h2>
+  <p>The Flesch Reading Ease score measures how easy text is to read, based on average sentence length and average word length (syllables per word). A score of 90–100 means very easy (5th grade level — think children's books). A score of 0–30 means very difficult (university graduate level — academic papers). For most web content, aim for 60–70 (8th–9th grade level) to reach the widest audience.</p>
+  <h2>How is reading time calculated?</h2>
+  <p>Reading time uses 238 words per minute — the average silent reading speed for adults reading non-fiction content. Speaking time uses 150 words per minute — the typical pace for presentations and voice-overs. Both are approximations; technical content with complex terminology will take longer.</p>
 </article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit. All tools run locally in your browser.</div></footer>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. Text is never uploaded or stored.</div></footer>
 <script>
-document.getElementById('year').textContent=new Date().getFullYear();
-const txt=document.getElementById('txt');
-const stopwords=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','it','as','be','was','are','were','this','that','i','you','he','she','we','they','not','have','has','had','do','did','will','can','would','could','should','may','might','their','there','then','than','so','if','my','your','his','her','our','its']);
+document.getElementById("yr").textContent=new Date().getFullYear();
 
-function update(){
-  const v=txt.value;
-  const words=v.trim()===''?[]:v.trim().split(/\s+/);
-  const wc=words.length;
-  document.getElementById('s-words').textContent=wc.toLocaleString();
-  document.getElementById('s-chars').textContent=v.length.toLocaleString();
-  document.getElementById('s-chars-no').textContent=v.replace(/\s/g,'').length.toLocaleString();
-  const sent=(v.match(/[.!?]+/g)||[]).length;
-  document.getElementById('s-sent').textContent=sent;
-  const para=v.trim()===''?0:v.trim().split(/\n\s*\n/).filter(p=>p.trim()).length||1;
-  document.getElementById('s-para').textContent=para;
-  const mins=Math.ceil(wc/200);
-  document.getElementById('s-read').textContent=mins<1?'<1m':mins+'m';
-  // keyword density
-  const freq={};
-  words.forEach(w=>{const k=w.toLowerCase().replace(/[^a-z]/g,'');if(k.length>2&&!stopwords.has(k))freq[k]=(freq[k]||0)+1;});
-  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const tbody=document.getElementById('kw-body');
-  tbody.innerHTML=sorted.map(([w,c])=>`<tr><td>${w}</td><td>${c}</td><td>${wc?((c/wc)*100).toFixed(1)+'%':'—'}</td></tr>`).join('');
+const textarea = document.getElementById("text-area");
+
+function countSyllables(word){
+  word=word.toLowerCase().replace(/[^a-z]/g,"");
+  if(!word.length)return 0;
+  const vowels=word.match(/[aeiouy]+/g);
+  let count=vowels?vowels.length:1;
+  if(word.endsWith("e")&&count>1)count--;
+  return Math.max(1,count);
 }
-txt.addEventListener('input',update);
-document.getElementById('btn-clear').addEventListener('click',()=>{txt.value='';update();});
-document.getElementById('btn-copy').addEventListener('click',()=>navigator.clipboard.writeText(txt.value));
-update();
 
-// Global error handler — OMI Foundation Sprint 1
-window.addEventListener('error', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.error || e.message, 'Runtime');
+function analyze(text){
+  const words=text.trim()?text.trim().split(/\s+/).filter(w=>w.length>0):[];
+  const chars=text.length;
+  const charsNoSpace=text.replace(/\s/g,"").length;
+  const sentences=(text.match(/[.!?]+/g)||[]).length;
+  const paras=text.trim()?(text.split(/
+\s*
+/).filter(p=>p.trim().length>0).length||1):0;
+  const lines=text?text.split(/
+/).length:0;
+  const wc=words.length;
+  const readMin=wc>0?Math.ceil(wc/238):0;
+  const speakMin=wc>0?Math.ceil(wc/150):0;
+
+  // Flesch Reading Ease
+  let flesch=0,readLabel="—",readColor="#6B7280",readDesc="Type text to see readability score";
+  if(wc>0&&sentences>0){
+    const totalSyl=words.reduce((a,w)=>a+countSyllables(w),0);
+    const asl=wc/sentences; // avg sentence length
+    const asw=totalSyl/wc;  // avg syllables per word
+    flesch=Math.max(0,Math.min(100,206.835-(1.015*asl)-(84.6*asw)));
+    if(flesch>=90){readLabel="Very Easy";readColor="#16A34A";readDesc="5th grade level — very accessible";}
+    else if(flesch>=70){readLabel="Easy";readColor="#22C55E";readDesc="6th grade level — easy to read";}
+    else if(flesch>=60){readLabel="Standard";readColor="#F59E0B";readDesc="8th grade level — good for web";}
+    else if(flesch>=50){readLabel="Fairly Hard";readColor="#F97316";readDesc="High school level";}
+    else if(flesch>=30){readLabel="Difficult";readColor="#EF4444";readDesc="College level";}
+    else{readLabel="Very Difficult";readColor="#991B1B";readDesc="Graduate level — consider simplifying";}
   }
+
+  // Keyword density — ignore stop words
+  const stopWords=new Set(["the","a","an","and","or","but","in","on","at","to","for","of","is","it","its","be","as","was","are","by","this","that","with","from","not","we","he","she","they","i","you","have","has","had","do","does","will","can","all","one","more","also","so","if","about","their","which","who","what","than","then","when","there","your","our","into","out","up","no","my","his","her","been","would","could","should","may","might"]);
+  const wordFreq={};
+  words.forEach(w=>{const clean=w.toLowerCase().replace(/[^a-z']/g,"");if(clean.length>2&&!stopWords.has(clean))wordFreq[clean]=(wordFreq[clean]||0)+1;});
+  const topKW=Object.entries(wordFreq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  return{wc,chars,charsNoSpace,sentences,paras,lines,readMin,speakMin,flesch,readLabel,readColor,readDesc,topKW};
+}
+
+let debounceTimer=null;
+textarea.addEventListener("input",()=>{
+  clearTimeout(debounceTimer);
+  debounceTimer=setTimeout(()=>updateStats(textarea.value),80);
 });
-window.addEventListener('unhandledrejection', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.reason, 'Promise');
+
+function updateStats(text){
+  const r=analyze(text);
+  document.getElementById("s-words").textContent=r.wc.toLocaleString();
+  document.getElementById("s-chars").textContent=r.chars.toLocaleString();
+  document.getElementById("s-chars-nsp").textContent=r.charsNoSpace.toLocaleString();
+  document.getElementById("s-sentences").textContent=r.sentences.toLocaleString();
+  document.getElementById("s-paras").textContent=r.paras.toLocaleString();
+  document.getElementById("s-read").textContent=r.readMin<1?"< 1 min":r.readMin+" min";
+  document.getElementById("s-speak").textContent=r.speakMin<1?"< 1 min":r.speakMin+" min";
+  document.getElementById("s-lines").textContent=r.lines.toLocaleString();
+
+  // Readability
+  const badge=document.getElementById("readability-badge");
+  if(r.wc>0){
+    badge.textContent=r.readLabel+" ("+Math.round(r.flesch)+")";
+    badge.style.background=r.readColor+"22";badge.style.color=r.readColor;
+    document.getElementById("readability-desc").textContent=r.readDesc;
+  }else{
+    badge.textContent="—";badge.style.background="#F4F3FE";badge.style.color="var(--color-primary)";
+    document.getElementById("readability-desc").textContent="Type text to see readability score";
   }
-  e.preventDefault();
+
+  // Word limit
+  const limit=parseInt(document.getElementById("word-limit").value)||0;
+  if(limit>0){
+    const pct=Math.min(100,Math.round((r.wc/limit)*100));
+    const rem=limit-r.wc;
+    const bar=document.getElementById("limit-bar");
+    bar.style.width=pct+"%";
+    bar.style.background=pct>=100?"#EF4444":pct>=80?"#F97316":"var(--color-primary)";
+    document.getElementById("limit-pct").textContent=pct+"% of limit";
+    document.getElementById("limit-pct").style.color=pct>=100?"#EF4444":"var(--color-text-muted)";
+    document.getElementById("limit-rem").textContent=rem>=0?rem+" words remaining":Math.abs(rem)+" words over limit";
+    document.getElementById("limit-rem").style.color=rem<0?"#EF4444":"var(--color-text-muted)";
+  }else{
+    document.getElementById("limit-bar").style.width="0%";
+    document.getElementById("limit-pct").textContent="No limit set";
+    document.getElementById("limit-rem").textContent="";
+  }
+
+  // Keywords
+  const tbody=document.getElementById("kw-tbody");
+  if(!r.topKW.length){
+    tbody.innerHTML="<tr><td colspan='5' style='text-align:center;color:var(--color-text-muted);padding:16px'>Type text to see keyword density</td></tr>";
+  }else{
+    const maxCount=r.topKW[0][1];
+    tbody.innerHTML=r.topKW.map(([kw,cnt],i)=>{
+      const density=r.wc>0?((cnt/r.wc)*100).toFixed(1):0;
+      const barW=Math.round((cnt/maxCount)*80);
+      return"<tr><td style='color:var(--color-text-muted)'>"+(i+1)+"</td><td style='font-weight:600'>"+OMI.safe.text(kw)+"</td><td style='font-family:monospace'>"+cnt+"</td><td style='font-family:monospace'>"+density+"%</td><td><span class='kw-bar' style='width:"+barW+"px'></span></td></tr>";
+    }).join("");
+  }
+}
+
+// Word limit input
+document.getElementById("word-limit").addEventListener("input",()=>updateStats(textarea.value));
+
+// Toolbar actions
+document.getElementById("clear-btn").addEventListener("click",()=>{textarea.value="";textarea.focus();updateStats("");});
+document.getElementById("copy-btn").addEventListener("click",()=>OMI.clipboard.copy(textarea.value,document.getElementById("copy-btn")));
+document.getElementById("paste-btn").addEventListener("click",async()=>{
+  try{const t=await navigator.clipboard.readText();textarea.value+=t;textarea.dispatchEvent(new Event("input"));}
+  catch{OMI.error.toast("Paste failed — use Ctrl+V in the text area","warning",3000);}
 });
+document.getElementById("upper-btn").addEventListener("click",()=>{textarea.value=textarea.value.toUpperCase();updateStats(textarea.value);});
+document.getElementById("lower-btn").addEventListener("click",()=>{textarea.value=textarea.value.toLowerCase();updateStats(textarea.value);});
+document.getElementById("title-btn").addEventListener("click",()=>{
+  textarea.value=textarea.value.replace(/\w\S*/g,t=>t[0].toUpperCase()+t.slice(1).toLowerCase());
+  updateStats(textarea.value);
+});
+
+// Init
+updateStats("");
+window.addEventListener("error",e=>OMI.error.handle(e.error||e.message,"Runtime"));
+window.addEventListener("unhandledrejection",e=>{OMI.error.handle(e.reason,"Promise");e.preventDefault();});
 </script>
-</body>
-</html>
+</body></html>
