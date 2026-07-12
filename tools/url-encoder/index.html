@@ -2,95 +2,299 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free URL Encoder & Decoder Online | OMIToolKit</title>
-<meta name="description" content="Encode and decode URLs online instantly. Supports full URL and component encoding. Free browser-based URL encoder — nothing is uploaded.">
+<meta name="description" content="Encode and decode URLs instantly. Parse URL into components. Build query strings. Component vs full URI encoding. Free browser-based URL encoder.">
 <link rel="canonical" href="../../tools/url-encoder/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<style>textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:140px}
-@media(max-width:600px){
-  .tool-panel{padding:16px}
-  .site-header .inner{padding:0 16px}
-  .container{padding:0 16px}
-}
-#url-stats{margin-top:8px;min-height:20px}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Url Encoder","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Encode and decode URLs online instantly. Supports full URL and component encoding. Free browser-based URL encoder — nothing is uploaded."}</script>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"URL Encoder & Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.mode-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.mode-tab{padding:8px 18px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.code-area{font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.65;resize:vertical;min-height:120px;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px;width:100%;box-sizing:border-box;outline:none;transition:border-color .15s;color:var(--color-text)}
+.code-area:focus{border-color:var(--color-primary)}
+.code-area.readonly{background:#F9F9F9;cursor:default}
+/* URL parser table */
+.parse-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.parse-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--color-border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted)}
+.parse-table td{padding:8px 10px;border-bottom:1px solid var(--color-border);vertical-align:top}
+.parse-table td:first-child{font-weight:600;white-space:nowrap;color:var(--color-text-muted);font-size:12px;width:100px}
+.parse-table td:last-child{font-family:"JetBrains Mono",monospace;font-size:13px;word-break:break-all}
+.parse-table tr:last-child td{border-bottom:none}
+/* Query builder */
+.param-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
+.param-row input{padding:8px 12px;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);font-size:13px;width:100%;box-sizing:border-box;outline:none}
+.param-row input:focus{border-color:var(--color-primary)}
+.remove-param{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--color-border);background:#fff;color:var(--color-text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.remove-param:hover{background:#FEE2E2;border-color:#EF4444;color:#EF4444}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.param-row{grid-template-columns:1fr auto;}.param-row input:nth-child(2){display:none}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / URL Encoder</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / URL Encoder</div>
 <div class="container tool-page-header">
   <h1>URL Encoder &amp; Decoder</h1>
-  <p>Encode special characters in URLs or decode encoded URLs back to plain text.</p>
+  <p>Encode, decode, parse, and build URLs — query string builder included.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:700px">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
-      <select id="mode-sel" class="field-select" style="width:auto">
-        <option value="encode-component">Encode (component)</option>
-        <option value="decode-component">Decode (component)</option>
-        <option value="encode-full">Encode (full URI)</option>
-        <option value="decode-full">Decode (full URI)</option>
-      </select>
-      <button class="btn btn-primary" id="convert-btn">Convert</button>
-      <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
+<div class="container"><div class="tool-panel" style="max-width:800px">
+
+  <div class="mode-tabs" role="tablist" aria-label="URL tool mode">
+    <button class="mode-tab active" data-mode="encode" role="tab" aria-selected="true">⬆ Encode</button>
+    <button class="mode-tab" data-mode="decode" role="tab">⬇ Decode</button>
+    <button class="mode-tab" data-mode="parse" role="tab">🔍 Parse URL</button>
+    <button class="mode-tab" data-mode="build" role="tab">🔧 Build Query</button>
+  </div>
+
+  <!-- ENCODE -->
+  <div id="panel-encode">
+    <div style="margin-bottom:12px">
+      <label class="field-label" style="margin-bottom:8px">Encoding mode</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer">
+          <input type="radio" name="enc-mode" value="component" checked style="accent-color:var(--color-primary)">
+          Component (encode parameter values)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer">
+          <input type="radio" name="enc-mode" value="full" style="accent-color:var(--color-primary)">
+          Full URI (preserve URL structure)
+        </label>
+      </div>
+      <div id="enc-mode-hint" style="font-size:12px;color:var(--color-text-muted);margin-top:6px">
+        Component: encodes everything including &amp; = / — use for parameter values
+      </div>
     </div>
-    <div class="field-row"><label class="field-label">Input</label><textarea id="inp" class="field-input code-area" placeholder="Paste text or URL here…"></textarea></div>
-    <div class="field-row"><label class="field-label">Output</label><textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea></div>
-    <div id="url-stats"></div>
-    <div style="display:flex;gap:10px;margin-top:10px">
-      <button class="btn btn-primary" id="copy-btn">Copy output</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+    <label class="field-label" for="enc-in">Input</label>
+    <textarea id="enc-in" class="code-area" placeholder="Paste text or URL to encode…" aria-label="Text to encode" style="min-height:100px"></textarea>
+    <label class="field-label" style="margin-top:14px">Encoded output</label>
+    <textarea id="enc-out" class="code-area readonly" readonly aria-label="Encoded URL output" style="min-height:100px"></textarea>
+    <div class="stats-row" id="enc-stats" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-enc" aria-label="Copy encoded output">📋 Copy</button>
+      <button class="btn btn-outline" id="swap-enc" aria-label="Swap input and output">↕ Swap</button>
+      <button class="btn btn-outline" id="clear-enc">Clear</button>
     </div>
   </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
+
+  <!-- DECODE -->
+  <div id="panel-decode" style="display:none">
+    <div style="margin-bottom:12px">
+      <label class="field-label" style="margin-bottom:8px">Decoding mode</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer">
+          <input type="radio" name="dec-mode" value="component" checked style="accent-color:var(--color-primary)">
+          Component
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer">
+          <input type="radio" name="dec-mode" value="full" style="accent-color:var(--color-primary)">
+          Full URI
+        </label>
+      </div>
+    </div>
+    <label class="field-label" for="dec-in">Encoded input</label>
+    <textarea id="dec-in" class="code-area" placeholder="Paste encoded URL or text…" aria-label="Encoded text to decode" style="min-height:100px"></textarea>
+    <div id="dec-err" style="font-size:13px;color:#991B1B;min-height:18px;margin-top:4px"></div>
+    <label class="field-label" style="margin-top:10px">Decoded output</label>
+    <textarea id="dec-out" class="code-area readonly" readonly aria-label="Decoded URL output" style="min-height:100px"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-dec" aria-label="Copy decoded output">📋 Copy</button>
+      <button class="btn btn-outline" id="swap-dec" aria-label="Swap input and output">↕ Swap</button>
+      <button class="btn btn-outline" id="clear-dec">Clear</button>
+    </div>
+  </div>
+
+  <!-- PARSE URL -->
+  <div id="panel-parse" style="display:none">
+    <label class="field-label" for="parse-in">URL to parse</label>
+    <input type="url" id="parse-in" class="field-input"
+      placeholder="https://example.com/path?key=value&other=test#section"
+      aria-label="URL to parse into components"
+      style="font-family:'JetBrains Mono',monospace;font-size:13.5px">
+    <div id="parse-result" style="margin-top:14px">
+      <div style="font-size:13px;color:var(--color-text-muted);text-align:center;padding:20px">Enter a URL above to see its components</div>
+    </div>
+  </div>
+
+  <!-- QUERY STRING BUILDER -->
+  <div id="panel-build" style="display:none">
+    <div style="margin-bottom:12px">
+      <label class="field-label" for="base-url">Base URL</label>
+      <input type="text" id="base-url" class="field-input"
+        placeholder="https://example.com/api/endpoint"
+        aria-label="Base URL"
+        style="font-family:'JetBrains Mono',monospace;font-size:13px">
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div class="field-label" style="margin:0">Query parameters</div>
+      <button class="btn btn-outline" id="add-param" style="padding:7px 14px;font-size:13px" aria-label="Add new query parameter">+ Add parameter</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;padding:0 12px">Key</div>
+      <div style="font-size:12px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;padding:0 12px">Value</div>
+      <div style="width:30px"></div>
+    </div>
+    <div id="params-list"></div>
+    <div style="margin-top:14px">
+      <label class="field-label">Generated URL</label>
+      <textarea id="built-url" class="code-area readonly" readonly aria-label="Generated URL with query string" style="min-height:80px"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-built" aria-label="Copy generated URL">📋 Copy URL</button>
+      <button class="btn btn-outline" id="clear-build">Clear all</button>
+    </div>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
 <article class="article container">
-  <h2>What is URL encoding?</h2>
-  <p>URLs can only contain certain safe ASCII characters. Special characters — spaces, ampersands, equals signs, non-English letters — must be converted to a percent-encoded format (like %20 for a space) before being used in a URL. URL encoding ensures the URL is valid and correctly interpreted by web servers and browsers.</p>
-  <h2>Component vs full URI encoding</h2>
-  <p>Use <strong>component encoding</strong> when encoding a single query parameter value — it encodes everything including characters like &amp;, =, and /. Use <strong>full URI encoding</strong> when encoding an entire URL — it preserves structural characters like ://, /, ?, and &amp; while still encoding unsafe characters.</p>
+  <h2>URL encoding explained</h2>
+  <p>URLs can only contain certain safe ASCII characters. Special characters like spaces, ampersands, equals signs, and non-ASCII letters must be percent-encoded (e.g. space becomes <code>%20</code>, ü becomes <code>%C3%BC</code>) before being placed in a URL. This ensures the URL is correctly interpreted by web servers, browsers, and APIs across all systems.</p>
+  <h2>Component encoding vs full URI encoding</h2>
+  <p><strong>Component encoding</strong> (<code>encodeURIComponent</code>) encodes everything — including <code>&</code>, <code>=</code>, <code>/</code>, <code>?</code>. Use this when encoding a single query parameter value, like a search term. <strong>Full URI encoding</strong> (<code>encodeURI</code>) preserves structural URL characters like <code>://</code>, <code>/</code>, <code>?</code>, and <code>&</code>. Use this when encoding an entire URL while keeping its structure intact.</p>
+  <h2>Query string builder use cases</h2>
+  <p>API developers use the query builder to construct URLs for REST endpoints without manually typing percent-encoded characters. Each key-value pair is automatically encoded and concatenated correctly. The result is a valid URL ready to use in Postman, curl, or a browser.</p>
 </article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
-function convert(){
-  const mode=document.getElementById('mode-sel').value;
-  const v=document.getElementById('inp').value.trim();
-  try{
-    let res;
-    if(mode==='encode-component') res=encodeURIComponent(v);
-    else if(mode==='decode-component') res=decodeURIComponent(v);
-    else if(mode==='encode-full') res=encodeURI(v);
-    else res=decodeURI(v);
-    document.getElementById('out').value=res;
-    showStats(v,res);
-  } catch(e){document.getElementById('out').value='Error: '+e.message;}
-}
-document.getElementById('convert-btn').addEventListener('click',convert);
+document.getElementById("yr").textContent = new Date().getFullYear();
 
-// Show stats
-function showStats(input, output) {
-  const stats = document.getElementById('url-stats');
-  if (!input) { stats.textContent = ''; return; }
-  const pct = input.length ? Math.round((output.length/input.length-1)*100) : 0;
-  stats.innerHTML = `<span class="chip">${input.length} chars input</span><span class="chip">${output.length} chars output</span>${pct>0?`<span class="chip">+${pct}% size</span>`:''}`;
-}
+// ── Mode switching ────────────────────────────────────────────────────
+const allModes = ["encode","decode","parse","build"];
+document.querySelectorAll(".mode-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".mode-tab").forEach(t => { t.classList.remove("active"); t.setAttribute("aria-selected","false"); });
+    tab.classList.add("active"); tab.setAttribute("aria-selected","true");
+    allModes.forEach(m => document.getElementById("panel-"+m).style.display = "none");
+    document.getElementById("panel-"+tab.dataset.mode).style.display = "";
+  });
+});
 
-document.getElementById('inp').addEventListener('input',convert);
-document.getElementById('swap-btn').addEventListener('click',()=>{const t=document.getElementById('inp').value;document.getElementById('inp').value=document.getElementById('out').value;document.getElementById('out').value=t;});
-document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
-document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';});
+// ── ENCODE ────────────────────────────────────────────────────────────
+const encIn = document.getElementById("enc-in"), encOut = document.getElementById("enc-out");
+const HINTS = {
+  component: "Component: encodes everything including & = / — use for parameter values",
+  full:      "Full URI: preserves URL structure characters (://, /, ?, &)"
+};
+document.querySelectorAll("input[name=enc-mode]").forEach(r => {
+  r.addEventListener("change", () => {
+    document.getElementById("enc-mode-hint").textContent = HINTS[r.value];
+    doEncode();
+  });
+});
+encIn.addEventListener("input", doEncode);
+function doEncode() {
+  const text = encIn.value, mode = document.querySelector("input[name=enc-mode]:checked").value;
+  if (!text) { encOut.value = ""; document.getElementById("enc-stats").innerHTML = ""; return; }
+  try {
+    const out = mode === "component" ? encodeURIComponent(text) : encodeURI(text);
+    encOut.value = out;
+    const diff = out.length - text.length;
+    document.getElementById("enc-stats").innerHTML =
+      `<span class="omi-chip">${text.length} chars in</span>` +
+      `<span class="omi-chip">${out.length} chars out</span>` +
+      (diff > 0 ? `<span class="omi-chip">+${diff} chars added</span>` : "");
+  } catch(e) { encOut.value = "Error: " + e.message; }
+}
+document.getElementById("copy-enc").addEventListener("click", () => OMI.clipboard.copy(encOut.value, document.getElementById("copy-enc")));
+document.getElementById("swap-enc").addEventListener("click", () => { encIn.value = encOut.value; doEncode(); });
+document.getElementById("clear-enc").addEventListener("click", () => { encIn.value = ""; encOut.value = ""; document.getElementById("enc-stats").innerHTML = ""; });
+
+// ── DECODE ────────────────────────────────────────────────────────────
+const decIn = document.getElementById("dec-in"), decOut = document.getElementById("dec-out");
+decIn.addEventListener("input", doDecode);
+document.querySelectorAll("input[name=dec-mode]").forEach(r => r.addEventListener("change", doDecode));
+function doDecode() {
+  const text = decIn.value.trim(), mode = document.querySelector("input[name=dec-mode]:checked").value;
+  const errEl = document.getElementById("dec-err");
+  if (!text) { decOut.value = ""; errEl.textContent = ""; return; }
+  try {
+    decOut.value = mode === "component" ? decodeURIComponent(text) : decodeURI(text);
+    errEl.textContent = "";
+  } catch(e) { decOut.value = ""; errEl.textContent = "⚠ " + e.message; }
+}
+document.getElementById("copy-dec").addEventListener("click", () => OMI.clipboard.copy(decOut.value, document.getElementById("copy-dec")));
+document.getElementById("swap-dec").addEventListener("click", () => { decIn.value = decOut.value; doDecode(); });
+document.getElementById("clear-dec").addEventListener("click", () => { decIn.value = ""; decOut.value = ""; document.getElementById("dec-err").textContent = ""; });
+
+// ── PARSE URL ─────────────────────────────────────────────────────────
+document.getElementById("parse-in").addEventListener("input", function() {
+  const raw = this.value.trim();
+  const result = document.getElementById("parse-result");
+  if (!raw) { result.innerHTML = "<div style='font-size:13px;color:var(--color-text-muted);text-align:center;padding:20px'>Enter a URL above to see its components</div>"; return; }
+  try {
+    const u = new URL(raw.startsWith("http") ? raw : "https://" + raw);
+    const params = [];
+    u.searchParams.forEach((v, k) => params.push({ k, v }));
+    const rows = [
+      ["Protocol",  u.protocol.replace(":",  "")],
+      ["Host",      u.hostname],
+      ["Port",      u.port || "(default)"],
+      ["Path",      u.pathname],
+      ["Query",     u.search || "(none)"],
+      ["Fragment",  u.hash || "(none)"],
+    ];
+    result.innerHTML = `<table class="parse-table">
+      <thead><tr><th>Part</th><th>Value</th></tr></thead>
+      <tbody>${rows.map(([k,v]) => `<tr><td>${k}</td><td>${OMI.safe.text(v)}</td></tr>`).join("")}</tbody>
+    </table>
+    ${params.length ? `<div style="margin-top:14px"><div class="field-label" style="margin-bottom:8px">Query parameters (${params.length})</div>
+    <table class="parse-table"><thead><tr><th>Key</th><th>Value</th><th>Decoded</th></tr></thead>
+    <tbody>${params.map(p => `<tr><td>${OMI.safe.text(p.k)}</td><td>${OMI.safe.text(p.v)}</td><td>${OMI.safe.text(decodeURIComponent(p.v))}</td></tr>`).join("")}</tbody>
+    </table></div>` : ""}`;
+  } catch(e) {
+    result.innerHTML = `<div style="color:#991B1B;font-size:13px;padding:10px">⚠ Invalid URL: ${OMI.safe.text(e.message)}</div>`;
+  }
+});
+
+// ── QUERY BUILDER ─────────────────────────────────────────────────────
+let paramCount = 0;
+function addParam(k = "", v = "") {
+  paramCount++;
+  const id = "p" + paramCount;
+  const row = document.createElement("div");
+  row.className = "param-row"; row.id = id;
+  row.innerHTML = `
+    <input type="text" placeholder="key" value="${OMI.safe.text(k)}" aria-label="Parameter key" class="param-key">
+    <input type="text" placeholder="value" value="${OMI.safe.text(v)}" aria-label="Parameter value" class="param-val">
+    <button class="remove-param" onclick="document.getElementById('${id}').remove();buildURL()" aria-label="Remove parameter">×</button>`;
+  row.querySelectorAll("input").forEach(inp => inp.addEventListener("input", buildURL));
+  document.getElementById("params-list").appendChild(row);
+  buildURL();
+}
+document.getElementById("add-param").addEventListener("click", () => { addParam(); });
+function buildURL() {
+  const base = document.getElementById("base-url").value.trim();
+  const rows = document.querySelectorAll(".param-row");
+  const params = [];
+  rows.forEach(r => {
+    const k = r.querySelector(".param-key").value.trim();
+    const v = r.querySelector(".param-val").value;
+    if (k) params.push(encodeURIComponent(k) + "=" + encodeURIComponent(v));
+  });
+  const query = params.length ? "?" + params.join("&") : "";
+  document.getElementById("built-url").value = (base || "") + query;
+}
+document.getElementById("base-url").addEventListener("input", buildURL);
+document.getElementById("copy-built").addEventListener("click", () => OMI.clipboard.copy(document.getElementById("built-url").value, document.getElementById("copy-built")));
+document.getElementById("clear-build").addEventListener("click", () => {
+  document.getElementById("base-url").value = "";
+  document.getElementById("params-list").innerHTML = "";
+  document.getElementById("built-url").value = "";
+});
+
+// Init with 2 params
+addParam("q", "hello world");
+addParam("lang", "en");
+
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
-</body>
-</html>
+</body></html>

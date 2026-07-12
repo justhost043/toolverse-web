@@ -2,108 +2,248 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Text Case Converter — UPPERCASE, lowercase, Title Case & More | OMIToolKit</title>
-<meta name="description" content="Convert text to uppercase, lowercase, title case, sentence case, camelCase, snake_case and more. Free online text converter.">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free Text Case Converter — UPPER, lower, camelCase, snake_case & More | OMIToolKit</title>
+<meta name="description" content="Convert text between all case styles: UPPERCASE, lowercase, Title Case, Sentence case, camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE, and more. Free and instant.">
 <link rel="canonical" href="../../tools/text-case-converter/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<style>
-.case-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
-.case-btn{padding:11px 8px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
-.case-btn.active,.case-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-textarea.field-input{resize:vertical;min-height:160px;font-size:15px}
-
-@media(max-width:600px){
-  .tool-panel{padding:16px}
-  .site-header .inner{padding:0 16px}
-  .container{padding:0 16px}
-}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Case Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert text to uppercase, lowercase, title case, sentence case, camelCase, snake_case and more. Free online text converter."}</script>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Case Converter","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.input-area{width:100%;min-height:130px;border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px;font-size:15px;line-height:1.7;resize:vertical;font-family:inherit;color:var(--color-text);transition:border-color .15s;outline:none;box-sizing:border-box}
+.input-area:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(79,70,229,.08)}
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0}
+.case-card{border:1.5px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:#fff;transition:all .15s;cursor:pointer}
+.case-card:hover{border-color:var(--color-primary);box-shadow:0 2px 12px rgba(79,70,229,.1)}
+.case-card.active{border-color:var(--color-primary);background:#F4F3FE}
+.case-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--color-border);background:rgba(0,0,0,.02)}
+.case-name{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-muted)}
+.copy-case-btn{font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid var(--color-border);background:#fff;cursor:pointer;transition:all .15s;white-space:nowrap}
+.copy-case-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.case-output{padding:10px 12px;font-size:13.5px;font-family:"JetBrains Mono",monospace;color:var(--color-text);word-break:break-all;line-height:1.5;min-height:42px}
+.stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.input-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+@media(max-width:600px){.cases-grid{grid-template-columns:1fr}.tool-panel{padding:16px}.container{padding:0 14px}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text Tools</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Text Tools</a> / Text Case Converter</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-text">Text</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-text">Text</a> / Text Case Converter</div>
 <div class="container tool-page-header">
   <h1>Text Case Converter</h1>
-  <p>Transform your text into any case style instantly.</p>
+  <p>Convert text to any case instantly — all 10 case styles shown simultaneously, click any to copy.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:700px">
-    <div class="field-row">
-      <label class="field-label">Input text</label>
-      <textarea id="input-text" class="field-input" placeholder="Type or paste your text here…"></textarea>
-    </div>
-    <div class="field-label" style="margin-bottom:10px">Choose case</div>
-    <div class="case-grid" id="case-grid"></div>
-    <div class="field-row">
-      <label class="field-label">Output</label>
-      <textarea id="output-text" class="field-input" readonly style="background:#F9F9F9"></textarea>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-primary" id="copy-btn">Copy output</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
-      <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
-    </div>
-  </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
-<article class="article container">
-  <h2>When to use each case type</h2>
-  <p><strong>UPPERCASE</strong> is used for acronyms, emphasis, or headings in some design styles. <strong>lowercase</strong> is common in brand names and informal writing. <strong>Title Case</strong> capitalises the first letter of each major word — standard for headlines and book titles. <strong>Sentence case</strong> only capitalises the first letter of the first word, matching how a normal sentence is written.</p>
-  <p><strong>camelCase</strong> and <strong>PascalCase</strong> are used in programming — variables and functions in JavaScript often use camelCase, while class names use PascalCase. <strong>snake_case</strong> is common in Python and database column names. <strong>kebab-case</strong> is standard for URL slugs and CSS class names.</p>
-</article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
-<script>
-document.getElementById('year').textContent=new Date().getFullYear();
-const CASES=[
-  {label:'UPPERCASE',fn:s=>s.toUpperCase()},
-  {label:'lowercase',fn:s=>s.toLowerCase()},
-  {label:'Title Case',fn:s=>s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())},
-  {label:'Sentence case',fn:s=>s.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g,c=>c.toUpperCase())},
-  {label:'camelCase',fn:s=>s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g,(_,c)=>c.toUpperCase())},
-  {label:'PascalCase',fn:s=>s.toLowerCase().replace(/(^|[^a-zA-Z0-9])(.)/g,(_,a,c)=>c.toUpperCase())},
-  {label:'snake_case',fn:s=>s.toLowerCase().trim().replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'')},
-  {label:'kebab-case',fn:s=>s.toLowerCase().trim().replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'')},
-];
-let activeFn=CASES[0].fn;
-const grid=document.getElementById('case-grid');
-const inp=document.getElementById('input-text');
-const out=document.getElementById('output-text');
-grid.innerHTML=CASES.map((c,i)=>`<button class="case-btn${i===0?' active':''}" data-i="${i}">${c.label}</button>`).join('');
-grid.querySelectorAll('.case-btn').forEach(b=>b.addEventListener('click',()=>{
-  grid.querySelectorAll('.case-btn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  activeFn=CASES[+b.dataset.i].fn;
-  run();
-}));
-function run(){out.value=activeFn(inp.value);}
-inp.addEventListener('input',run);
-document.getElementById('copy-btn').addEventListener('click',()=>navigator.clipboard.writeText(out.value).then(()=>{const btn=document.getElementById('copy-btn');btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy output',1200);}));
-document.getElementById('clear-btn').addEventListener('click',()=>{inp.value='';out.value='';});
-document.getElementById('swap-btn').addEventListener('click',()=>{inp.value=out.value;run();});
+<div class="container"><div class="tool-panel" style="max-width:900px">
 
-// Global error handler — OMI Foundation Sprint 1
-window.addEventListener('error', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.error || e.message, 'Runtime');
+  <!-- Input toolbar -->
+  <div class="input-toolbar">
+    <button class="btn btn-outline" id="btn-paste" aria-label="Paste from clipboard" style="padding:7px 14px;font-size:13px">Paste</button>
+    <button class="btn btn-outline" id="btn-clear" aria-label="Clear input" style="padding:7px 14px;font-size:13px">Clear</button>
+    <button class="btn btn-outline" id="btn-sample" style="padding:7px 14px;font-size:13px">Sample text</button>
+  </div>
+
+  <!-- Input -->
+  <textarea id="text-input" class="input-area"
+    placeholder="Type or paste text here — all case conversions update in real time…"
+    aria-label="Input text for case conversion"
+    spellcheck="false"></textarea>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row" style="margin-top:8px">
+    <span class="omi-chip" id="st-words">0 words</span>
+    <span class="omi-chip" id="st-chars">0 chars</span>
+    <span class="omi-chip" id="st-lines">0 lines</span>
+  </div>
+
+  <!-- All case cards -->
+  <div class="cases-grid" id="cases-grid" role="list" aria-label="Case conversion results"></div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>When to use each case style</h2>
+  <p><strong>UPPERCASE</strong> — acronyms, buttons, emphasis, form labels in some design systems. <strong>lowercase</strong> — brand names (facebook, airbnb), informal writing, email addresses. <strong>Title Case</strong> — headlines, book titles, article headings. <strong>Sentence case</strong> — standard for body text and most written content.</p>
+  <p><strong>camelCase</strong> — JavaScript variables, functions (<code>getUserName</code>). <strong>PascalCase</strong> — class names in OOP languages (<code>UserProfile</code>). <strong>snake_case</strong> — Python variables, database columns (<code>user_name</code>). <strong>CONSTANT_CASE</strong> — environment variables, constants (<code>MAX_RETRY_COUNT</code>). <strong>kebab-case</strong> — URL slugs, CSS classes, HTML attributes. <strong>dot.case</strong> — configuration keys, package names (<code>com.example.app</code>).</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+// ── Case conversion functions ─────────────────────────────────────────
+const CASES = [
+  {
+    id: "upper",
+    name: "UPPERCASE",
+    description: "ABC DEF",
+    fn: s => s.toUpperCase()
+  },
+  {
+    id: "lower",
+    name: "lowercase",
+    description: "abc def",
+    fn: s => s.toLowerCase()
+  },
+  {
+    id: "title",
+    name: "Title Case",
+    description: "Abc Def",
+    fn: s => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+  },
+  {
+    id: "sentence",
+    name: "Sentence case",
+    description: "Abc def.",
+    fn: s => {
+      if (!s) return s;
+      return s.toLowerCase()
+        .replace(/(^|[.!?\n]\s*)([a-z])/g, (m, sep, c) => sep + c.toUpperCase());
+    }
+  },
+  {
+    id: "camel",
+    name: "camelCase",
+    description: "abcDef",
+    fn: s => s.trim().toLowerCase()
+      .replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase())
+      .replace(/^[A-Z]/, c => c.toLowerCase())
+  },
+  {
+    id: "pascal",
+    name: "PascalCase",
+    description: "AbcDef",
+    fn: s => s.trim().toLowerCase()
+      .replace(/(^|[^a-zA-Z0-9])([a-z])/g, (_, sep, c) => c.toUpperCase())
+  },
+  {
+    id: "snake",
+    name: "snake_case",
+    description: "abc_def",
+    fn: s => s.trim()
+      .replace(/([A-Z])/g, " $1")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+  },
+  {
+    id: "constant",
+    name: "CONSTANT_CASE",
+    description: "ABC_DEF",
+    fn: s => s.trim()
+      .replace(/([A-Z])/g, " $1")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+  },
+  {
+    id: "kebab",
+    name: "kebab-case",
+    description: "abc-def",
+    fn: s => s.trim()
+      .replace(/([A-Z])/g, " $1")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+  },
+  {
+    id: "dot",
+    name: "dot.case",
+    description: "abc.def",
+    fn: s => s.trim()
+      .replace(/([A-Z])/g, " $1")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ".")
+      .replace(/^\.+|\.+$/g, "")
   }
+];
+
+// ── Build case cards ──────────────────────────────────────────────────
+const grid = document.getElementById("cases-grid");
+CASES.forEach(c => {
+  const card = document.createElement("div");
+  card.className = "case-card";
+  card.id = "card-" + c.id;
+  card.setAttribute("role", "listitem");
+  card.innerHTML = `
+    <div class="case-header">
+      <span class="case-name">${c.name}</span>
+      <button class="copy-case-btn" data-id="${c.id}" aria-label="Copy ${c.name} result">Copy</button>
+    </div>
+    <div class="case-output" id="out-${c.id}" aria-label="${c.name} output"></div>`;
+
+  // Click card to select
+  card.addEventListener("click", e => {
+    if (e.target.classList.contains("copy-case-btn")) return;
+    document.querySelectorAll(".case-card").forEach(x => x.classList.remove("active"));
+    card.classList.add("active");
+  });
+
+  // Copy button
+  card.querySelector(".copy-case-btn").addEventListener("click", e => {
+    e.stopPropagation();
+    const text = document.getElementById("out-" + c.id).textContent;
+    if (text) OMI.clipboard.copy(text, e.currentTarget);
+  });
+
+  grid.appendChild(card);
 });
-window.addEventListener('unhandledrejection', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.reason, 'Promise');
-  }
-  e.preventDefault();
+
+// ── Update all cases ──────────────────────────────────────────────────
+const textInput = document.getElementById("text-input");
+
+function updateAll() {
+  const text = textInput.value;
+
+  // Stats
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById("st-words").textContent = words + " word" + (words !== 1 ? "s" : "");
+  document.getElementById("st-chars").textContent = text.length + " char" + (text.length !== 1 ? "s" : "");
+  document.getElementById("st-lines").textContent = (text ? text.split("\n").length : 0) + " lines";
+
+  // Convert all cases
+  CASES.forEach(c => {
+    const el = document.getElementById("out-" + c.id);
+    if (!text.trim()) {
+      el.textContent = "";
+      el.style.color = "var(--color-text-muted)";
+      el.textContent = c.description;
+    } else {
+      el.textContent = c.fn(text);
+      el.style.color = "";
+    }
+  });
+}
+
+textInput.addEventListener("input", updateAll);
+
+// ── Toolbar ───────────────────────────────────────────────────────────
+document.getElementById("btn-paste").addEventListener("click", async () => {
+  try {
+    textInput.value = await navigator.clipboard.readText();
+    updateAll(); textInput.focus();
+  } catch { OMI.error.toast("Paste failed — use Ctrl+V in the input.", "warning", 3000); }
 });
+
+document.getElementById("btn-clear").addEventListener("click", () => {
+  textInput.value = "";
+  updateAll();
+  textInput.focus();
+});
+
+document.getElementById("btn-sample").addEventListener("click", () => {
+  textInput.value = "the quick brown fox jumps over the lazy dog";
+  updateAll();
+});
+
+// Init
+updateAll();
+
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
-</body>
-</html>
+</body></html>

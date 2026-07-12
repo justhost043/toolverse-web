@@ -2,125 +2,256 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free Base64 Encoder & Decoder Online | OMIToolKit</title>
-<meta name="description" content="Encode and decode Base64 strings instantly. Also encode images and files to Base64. Free, browser-based, nothing is uploaded.">
+<meta name="description" content="Encode text or files to Base64. Decode Base64 to text or file. URL-safe Base64. Image preview. Supports any file type. 100% browser-based.">
 <link rel="canonical" href="../../tools/base64-encoder/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<style>
-.mode-row{display:flex;gap:10px;margin-bottom:20px}
-.mode-btn{flex:1;padding:11px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:#fff;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s}
-.mode-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-textarea.field-input{resize:vertical;min-height:150px;font-family:var(--font-mono);font-size:13.5px}
-.file-drop{border:2px dashed var(--color-border);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;color:var(--color-text-muted);font-size:14px;transition:border-color .15s}
-.file-drop:hover,.file-drop.drag{border-color:var(--color-primary);color:var(--color-primary)}
-.error-msg{color:#E24B4A;font-size:13px;margin-top:8px}
-
-@media(max-width:600px){
-  .tool-panel{padding:16px}
-  .site-header .inner{padding:0 16px}
-  .container{padding:0 16px}
-}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Base64 Encoder","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Encode and decode Base64 strings instantly. Also encode images and files to Base64. Free, browser-based, nothing is uploaded."}</script>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Base64 Encoder & Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.mode-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.mode-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.code-box{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.65;resize:vertical;min-height:160px;background:#1A1827;color:#E8E6F8;border:1.5px solid #2E2B4A;border-radius:var(--radius-md);padding:14px;width:100%;box-sizing:border-box;outline:none}
+.code-box::placeholder{color:#4E4B6A}
+.code-box:focus{border-color:var(--color-primary)}
+.code-box.readonly{background:#0F0E1A;cursor:default}
+.dz-file{border:2px dashed var(--color-border);border-radius:var(--radius-md);padding:32px 24px;text-align:center;cursor:pointer;transition:all .15s}
+.dz-file:hover,.dz-file.drag{border-color:var(--color-primary);background:#F4F3FE}
+.stats-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.img-preview{max-width:100%;max-height:200px;border-radius:var(--radius-sm);border:1px solid var(--color-border);display:block;margin-top:10px}
+.option-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / Base64 Encoder</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Base64 Encoder</div>
 <div class="container tool-page-header">
   <h1>Base64 Encoder &amp; Decoder</h1>
-  <p>Encode text or files to Base64, or decode Base64 strings back to plain text.</p>
+  <p>Encode text or any file to Base64, decode back to text or downloadable file — URL-safe mode included.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:700px">
-    <div class="mode-row">
-      <button class="mode-btn active" id="btn-encode">Encode → Base64</button>
-      <button class="mode-btn" id="btn-decode">Decode ← Base64</button>
-      <button class="mode-btn" id="btn-file">File → Base64</button>
-    </div>
+<div class="container"><div class="tool-panel" style="max-width:760px">
 
-    <div id="panel-encode">
-      <div class="field-row">
-        <label class="field-label">Plain text input</label>
-        <textarea id="enc-input" class="field-input" placeholder="Enter text to encode…"></textarea>
-      </div>
-      <div class="field-row">
-        <label class="field-label">Base64 output</label>
-        <textarea id="enc-output" class="field-input" readonly style="background:#F9F9F9"></textarea>
-      </div>
-      <button class="btn btn-primary" id="copy-enc">Copy Base64</button>
-    </div>
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" data-mode="encode" role="tab" aria-selected="true">📝 Text → Base64</button>
+    <button class="mode-tab" data-mode="decode" role="tab">🔓 Base64 → Text</button>
+    <button class="mode-tab" data-mode="file" role="tab">📁 File → Base64</button>
+    <button class="mode-tab" data-mode="decode-file" role="tab">⬇ Base64 → File</button>
+  </div>
 
-    <div id="panel-decode" style="display:none">
-      <div class="field-row">
-        <label class="field-label">Base64 input</label>
-        <textarea id="dec-input" class="field-input" placeholder="Paste Base64 string to decode…"></textarea>
-      </div>
-      <div id="dec-error" class="error-msg"></div>
-      <div class="field-row" style="margin-top:10px">
-        <label class="field-label">Decoded output</label>
-        <textarea id="dec-output" class="field-input" readonly style="background:#F9F9F9"></textarea>
-      </div>
-      <button class="btn btn-primary" id="copy-dec">Copy decoded</button>
+  <!-- ENCODE TEXT -->
+  <div id="panel-encode">
+    <div class="option-row">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer">
+        <input type="checkbox" id="url-safe-enc" style="accent-color:var(--color-primary)">
+        URL-safe Base64 (replace +/ with -_)
+      </label>
     </div>
-
-    <div id="panel-file" style="display:none">
-      <div class="file-drop" id="file-drop">
-        <div style="font-size:28px;margin-bottom:8px">📁</div>
-        Drop any file here, or click to select
-        <input type="file" id="file-input" style="display:none">
-      </div>
-      <div class="field-row" style="margin-top:16px">
-        <label class="field-label">Base64 output (data URI)</label>
-        <textarea id="file-output" class="field-input" readonly style="background:#F9F9F9;min-height:100px"></textarea>
-      </div>
-      <button class="btn btn-primary" id="copy-file">Copy Base64</button>
+    <label class="field-label" for="enc-in">Plain text input</label>
+    <textarea id="enc-in" class="code-box" placeholder="Type or paste text to encode…" aria-label="Text to encode to Base64" style="min-height:140px"></textarea>
+    <div class="stats-row" id="enc-stats"></div>
+    <label class="field-label" style="margin-top:14px" for="enc-out">Base64 output</label>
+    <textarea id="enc-out" class="code-box readonly" readonly aria-label="Base64 encoded output" style="min-height:140px"></textarea>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-enc" aria-label="Copy Base64 output">📋 Copy Base64</button>
+      <button class="btn btn-outline" id="clear-enc">Clear</button>
     </div>
   </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
+
+  <!-- DECODE TEXT -->
+  <div id="panel-decode" style="display:none">
+    <label class="field-label" for="dec-in">Base64 input</label>
+    <textarea id="dec-in" class="code-box" placeholder="Paste Base64 string to decode…" aria-label="Base64 string to decode" style="min-height:140px"></textarea>
+    <div id="dec-err" style="font-size:13px;color:#991B1B;min-height:20px;margin-top:4px"></div>
+    <label class="field-label" style="margin-top:10px" for="dec-out">Decoded text</label>
+    <textarea id="dec-out" class="code-box readonly" readonly aria-label="Decoded text output" style="min-height:140px"></textarea>
+    <div class="stats-row" id="dec-stats"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-dec" aria-label="Copy decoded text">📋 Copy text</button>
+      <button class="btn btn-outline" id="clear-dec">Clear</button>
+    </div>
+  </div>
+
+  <!-- FILE → BASE64 -->
+  <div id="panel-file" style="display:none">
+    <div class="dz-file" id="file-dz" role="button" tabindex="0" aria-label="Upload file to encode as Base64">
+      <div style="font-size:32px;margin-bottom:8px">📁</div>
+      <div style="font-size:15px;font-weight:600">Drop any file here or click to select</div>
+      <div style="font-size:13px;color:var(--color-text-muted);margin-top:4px">Images, PDFs, documents — any file type</div>
+      <input type="file" id="file-inp" style="display:none" aria-label="Select file to encode">
+    </div>
+    <div id="file-preview-wrap" style="display:none;margin-top:12px">
+      <div style="background:#F4F3FE;border-radius:var(--radius-sm);padding:10px 14px;font-size:13.5px;margin-bottom:10px">
+        <strong id="file-name"></strong>
+        <span id="file-meta" style="color:var(--color-text-muted);margin-left:8px"></span>
+      </div>
+      <img id="file-img-preview" class="img-preview" style="display:none" alt="File preview" loading="lazy">
+    </div>
+    <label class="field-label" style="margin-top:14px">Base64 output (data URI)</label>
+    <textarea id="file-out" class="code-box readonly" readonly placeholder="Base64 data URI appears here…" style="min-height:120px"></textarea>
+    <div class="stats-row" id="file-stats"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="copy-file" aria-label="Copy Base64 data URI">📋 Copy Base64</button>
+      <button class="btn btn-outline" id="copy-raw" aria-label="Copy raw Base64 without data URI prefix">Copy raw (no prefix)</button>
+    </div>
+  </div>
+
+  <!-- BASE64 → FILE DOWNLOAD -->
+  <div id="panel-decode-file" style="display:none">
+    <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:14px">
+      💡 Paste a complete data URI (<code>data:image/png;base64,...</code>) or raw Base64 to download as a file.
+    </div>
+    <label class="field-label" for="df-in">Base64 or data URI input</label>
+    <textarea id="df-in" class="code-box" placeholder="data:image/png;base64,iVBORw0KGgo…" style="min-height:160px" aria-label="Base64 or data URI to decode to file"></textarea>
+    <div id="df-preview" style="margin-top:10px"></div>
+    <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="df-filename" class="field-input" placeholder="output.png" style="max-width:200px" aria-label="Output filename">
+      <button class="btn btn-primary" id="df-download" aria-label="Download decoded file">⬇ Download File</button>
+    </div>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
 <article class="article container">
   <h2>What is Base64 encoding?</h2>
-  <p>Base64 is a way of converting binary data (images, files, bytes) into a plain text string made up of 64 safe characters. It's used widely in web development to embed images directly into HTML or CSS without a separate file request, and in APIs to transmit binary data as JSON strings.</p>
-  <h2>Common use cases</h2>
-  <p>Developers use Base64 to embed small images or icons directly in HTML emails (preventing broken image links), to pass binary data through systems that only handle text (like JSON APIs), and to encode authentication credentials in HTTP headers.</p>
+  <p>Base64 converts binary data into a string of 64 printable ASCII characters. It is used wherever binary data needs to be transmitted or stored in a text-only format — HTTP headers, JSON APIs, CSS data URIs, HTML embedded images, and email attachments.</p>
+  <h2>When to use URL-safe Base64</h2>
+  <p>Standard Base64 uses the characters <code>+</code> and <code>/</code>, which have special meaning in URLs. URL-safe Base64 replaces these with <code>-</code> and <code>_</code>, making the encoded string safe to include in URLs, query parameters, and JWT tokens without percent-encoding.</p>
+  <h2>How to embed an image in HTML/CSS</h2>
+  <p>Use the File → Base64 tab to encode an image. Copy the output and use it directly in HTML as <code>src="data:image/png;base64,..."</code> or in CSS as <code>background-image: url("data:image/png;base64,...")</code>. This eliminates an HTTP request for the image but increases file size by ~33%.</p>
 </article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
 <script>
-document.getElementById('year').textContent=new Date().getFullYear();
-const panels={encode:document.getElementById('panel-encode'),decode:document.getElementById('panel-decode'),file:document.getElementById('panel-file')};
-const modeBtns={encode:document.getElementById('btn-encode'),decode:document.getElementById('btn-decode'),file:document.getElementById('btn-file')};
-function switchMode(m){Object.values(panels).forEach(p=>p.style.display='none');Object.values(modeBtns).forEach(b=>b.classList.remove('active'));panels[m].style.display='';modeBtns[m].classList.add('active');}
-Object.keys(modeBtns).forEach(m=>modeBtns[m].addEventListener('click',()=>switchMode(m)));
+document.getElementById("yr").textContent = new Date().getFullYear();
 
-// Encode
-const encIn=document.getElementById('enc-input'),encOut=document.getElementById('enc-output');
-encIn.addEventListener('input',()=>{try{encOut.value=btoa(unescape(encodeURIComponent(encIn.value)));}catch(e){encOut.value='Error encoding';}});
-document.getElementById('copy-enc').addEventListener('click',()=>navigator.clipboard.writeText(encOut.value));
+// Mode switching
+const modes = ["encode","decode","file","decode-file"];
+document.querySelectorAll(".mode-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".mode-tab").forEach(t => { t.classList.remove("active"); t.setAttribute("aria-selected","false"); });
+    tab.classList.add("active"); tab.setAttribute("aria-selected","true");
+    modes.forEach(m => document.getElementById("panel-"+m).style.display = "none");
+    document.getElementById("panel-"+tab.dataset.mode).style.display = "";
+  });
+});
 
-// Decode
-const decIn=document.getElementById('dec-input'),decOut=document.getElementById('dec-output'),decErr=document.getElementById('dec-error');
-decIn.addEventListener('input',()=>{try{decOut.value=decodeURIComponent(escape(atob(decIn.value.trim())));decErr.textContent='';}catch(e){decOut.value='';decErr.textContent='Invalid Base64 string';}});
-document.getElementById('copy-dec').addEventListener('click',()=>navigator.clipboard.writeText(decOut.value));
+// ── ENCODE TEXT ────────────────────────────────────────────────────────
+const encIn = document.getElementById("enc-in"), encOut = document.getElementById("enc-out");
+encIn.addEventListener("input", doEncode);
+document.getElementById("url-safe-enc").addEventListener("change", doEncode);
 
-// File
-const fileDrop=document.getElementById('file-drop'),fileInput=document.getElementById('file-input'),fileOut=document.getElementById('file-output');
-fileDrop.addEventListener('click',()=>fileInput.click());
-fileDrop.addEventListener('dragover',e=>{e.preventDefault();fileDrop.classList.add('drag');});
-fileDrop.addEventListener('dragleave',()=>fileDrop.classList.remove('drag'));
-fileDrop.addEventListener('drop',e=>{e.preventDefault();fileDrop.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)readFile(f);});
-fileInput.addEventListener('change',()=>{if(fileInput.files[0])readFile(fileInput.files[0]);});
-function readFile(f){const r=new FileReader();r.onload=()=>{fileOut.value=r.result;};r.readAsDataURL(f);}
-document.getElementById('copy-file').addEventListener('click',()=>navigator.clipboard.writeText(fileOut.value));
+function doEncode() {
+  const text = encIn.value;
+  if (!text) { encOut.value = ""; document.getElementById("enc-stats").innerHTML = ""; return; }
+  try {
+    let b64 = btoa(unescape(encodeURIComponent(text)));
+    if (document.getElementById("url-safe-enc").checked) b64 = b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"");
+    encOut.value = b64;
+    const ratio = ((b64.length / text.length - 1) * 100).toFixed(0);
+    document.getElementById("enc-stats").innerHTML =
+      `<span class="omi-chip">${text.length} chars in</span><span class="omi-chip">${b64.length} chars out</span><span class="omi-chip">+${ratio}% size</span>`;
+  } catch(e) { encOut.value = "Encoding error: " + e.message; }
+}
+
+document.getElementById("copy-enc").addEventListener("click", () => OMI.clipboard.copy(encOut.value, document.getElementById("copy-enc")));
+document.getElementById("clear-enc").addEventListener("click", () => { encIn.value = ""; encOut.value = ""; document.getElementById("enc-stats").innerHTML = ""; encIn.focus(); });
+
+// ── DECODE TEXT ────────────────────────────────────────────────────────
+const decIn = document.getElementById("dec-in"), decOut = document.getElementById("dec-out");
+decIn.addEventListener("input", () => {
+  const raw = decIn.value.trim().replace(/-/g,"+").replace(/_/g,"/");
+  const errEl = document.getElementById("dec-err");
+  if (!raw) { decOut.value = ""; errEl.textContent = ""; document.getElementById("dec-stats").innerHTML = ""; return; }
+  try {
+    decOut.value = decodeURIComponent(escape(atob(raw)));
+    errEl.textContent = "";
+    document.getElementById("dec-stats").innerHTML =
+      `<span class="omi-chip">${raw.length} chars in</span><span class="omi-chip">${decOut.value.length} chars out</span>`;
+  } catch(e) { decOut.value = ""; errEl.textContent = "⚠ Invalid Base64: " + e.message; document.getElementById("dec-stats").innerHTML = ""; }
+});
+
+document.getElementById("copy-dec").addEventListener("click", () => OMI.clipboard.copy(decOut.value, document.getElementById("copy-dec")));
+document.getElementById("clear-dec").addEventListener("click", () => { decIn.value = ""; decOut.value = ""; document.getElementById("dec-err").textContent = ""; });
+
+// ── FILE → BASE64 ──────────────────────────────────────────────────────
+const fileDZ = document.getElementById("file-dz"), fileInp = document.getElementById("file-inp");
+fileDZ.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fileInp.click(); });
+fileDZ.addEventListener("click", () => fileInp.click());
+fileDZ.addEventListener("dragover", e => { e.preventDefault(); fileDZ.classList.add("drag"); });
+fileDZ.addEventListener("dragleave", () => fileDZ.classList.remove("drag"));
+fileDZ.addEventListener("drop", e => { e.preventDefault(); fileDZ.classList.remove("drag"); if (e.dataTransfer.files[0]) encodeFile(e.dataTransfer.files[0]); });
+fileInp.addEventListener("change", () => { if (fileInp.files[0]) encodeFile(fileInp.files[0]); fileInp.value = ""; });
+
+function encodeFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataURI = reader.result;
+    document.getElementById("file-out").value = dataURI;
+    document.getElementById("file-name").textContent = file.name;
+    document.getElementById("file-meta").textContent = OMI.file.formatSize(file.size) + " · " + (file.type || "unknown type");
+    document.getElementById("file-preview-wrap").style.display = "";
+    document.getElementById("file-stats").innerHTML =
+      `<span class="omi-chip">${OMI.file.formatSize(file.size)} original</span><span class="omi-chip">${OMI.file.formatSize(dataURI.length)} encoded</span><span class="omi-chip">+${Math.round((dataURI.length/file.size-1)*100)}% size</span>`;
+    // Image preview
+    const imgPrev = document.getElementById("file-img-preview");
+    if (file.type.startsWith("image/")) { imgPrev.src = dataURI; imgPrev.style.display = "block"; }
+    else imgPrev.style.display = "none";
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("copy-file").addEventListener("click", () => OMI.clipboard.copy(document.getElementById("file-out").value, document.getElementById("copy-file")));
+document.getElementById("copy-raw").addEventListener("click", () => {
+  const full = document.getElementById("file-out").value;
+  const comma = full.indexOf(",");
+  const raw = comma > 0 ? full.slice(comma + 1) : full;
+  OMI.clipboard.copy(raw, document.getElementById("copy-raw"));
+});
+
+// ── BASE64 → FILE DOWNLOAD ─────────────────────────────────────────────
+document.getElementById("df-in").addEventListener("input", () => {
+  const val = document.getElementById("df-in").value.trim();
+  const preview = document.getElementById("df-preview");
+  if (val.startsWith("data:image/")) {
+    preview.innerHTML = `<img src="${OMI.safe.attr(val)}" class="img-preview" alt="Preview" loading="lazy">`;
+    // Auto-set filename
+    const mimeMatch = val.match(/data:([^;]+)/);
+    if (mimeMatch) {
+      const ext = mimeMatch[1].split("/")[1] || "bin";
+      if (!document.getElementById("df-filename").value) document.getElementById("df-filename").value = "decoded." + ext;
+    }
+  } else preview.innerHTML = "";
+});
+
+document.getElementById("df-download").addEventListener("click", () => {
+  const val = document.getElementById("df-in").value.trim();
+  if (!val) { OMI.error.toast("Paste a Base64 string first.", "warning"); return; }
+  try {
+    let mime = "application/octet-stream", b64 = val;
+    if (val.startsWith("data:")) {
+      const parts = val.match(/data:([^;]+);base64,(.+)/s);
+      if (!parts) { OMI.error.toast("Invalid data URI format.", "error"); return; }
+      mime = parts[1]; b64 = parts[2];
+    }
+    b64 = b64.replace(/-/g,"+").replace(/_/g,"/");
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const filename = document.getElementById("df-filename").value || "decoded." + (mime.split("/")[1] || "bin");
+    OMI.file.download(new Blob([bytes], { type: mime }), filename, mime);
+    OMI.error.toast("File downloaded: " + filename, "success");
+  } catch(e) { OMI.error.handle(e, "Base64 Decode"); }
+});
+
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
-</body>
-</html>
+</body></html>

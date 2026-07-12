@@ -27,3 +27,5 @@ Batch 1 — Tool Enhancement (5 tools) ✅ COMPLETE
 | Batch | Tools | Status |
 |-------|-------|--------|
 | 1     | image-compressor, pdf-merger, qr-code-generator, password-generator, word-counter | ✅ COMPLETE |
+
+| 2     | json-formatter, image-resizer, base64-encoder, text-case-converter, url-encoder | ✅ COMPLETE |

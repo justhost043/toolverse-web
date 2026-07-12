@@ -2,163 +2,318 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free JSON Formatter & Validator Online | OMIToolKit</title>
-<meta name="description" content="Format, beautify and validate JSON online for free. Instantly spot errors with line numbers. Minify JSON too. Runs in your browser.">
+<meta name="description" content="Format, validate, and minify JSON instantly. Syntax highlighting, real-time validation, error line detection, sort keys, path copying. Free and browser-based.">
 <link rel="canonical" href="../../tools/json-formatter/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/omitoolkit-core.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON Formatter & Validator","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
-.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:640px){.editor-layout{grid-template-columns:1fr}}
-.editor-box{display:flex;flex-direction:column;gap:8px}
-.editor-label{font-size:13px;font-weight:500;color:var(--color-text-muted);display:flex;align-items:center;justify-content:space-between}
-textarea.code-area{font-family:var(--font-mono);font-size:13.5px;line-height:1.6;resize:vertical;min-height:320px;background:#1E1B2E;color:#E8E6F0;border:1px solid #3D3A5C;border-radius:var(--radius-sm);padding:14px;width:100%;box-sizing:border-box}
-textarea.code-area:focus{outline:2px solid var(--color-primary);outline-offset:1px}
-textarea.code-area.error{border-color:#E24B4A}
-.action-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;margin-top:10px}
-.status-pill.valid{background:#DCFCE7;color:#16A34A}
-.status-pill.invalid{background:#FEE2E2;color:#E24B4A}
-.status-pill.empty{background:#F4F3FE;color:var(--color-primary)}
-.stats-row{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--color-text-muted);margin-top:8px}
-.indent-select{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--color-border);font-size:13px;font-family:var(--font-body)}
-.key-c{color:#7DD3FC}
-.str-c{color:#86EFAC}
-.num-c{color:#FCA5A5}
-.bool-c{color:#C4B5FD}
-.null-c{color:#94A3B8}
+.editor-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden}
+@media(max-width:680px){.editor-wrap{grid-template-columns:1fr}}
+.editor-pane{display:flex;flex-direction:column;min-width:0}
+.editor-pane:first-child{border-right:1.5px solid var(--color-border)}
+@media(max-width:680px){.editor-pane:first-child{border-right:none;border-bottom:1.5px solid var(--color-border)}}
+.pane-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#F9F9F9;border-bottom:1px solid var(--color-border);flex-shrink:0}
+.pane-title{font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted)}
+.pane-actions{display:flex;gap:6px}
+.pane-btn{font-size:12px;padding:4px 10px;border-radius:4px;border:1px solid var(--color-border);background:#fff;cursor:pointer;transition:all .15s;font-weight:500}
+.pane-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.code-textarea{flex:1;font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.65;resize:none;border:none;outline:none;padding:14px;background:#1A1827;color:#E8E6F8;min-height:400px;width:100%;box-sizing:border-box;tab-size:2}
+.code-textarea::placeholder{color:#4E4B6A}
+.code-textarea.has-error{background:#1F1015}
+.output-pre{flex:1;font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.65;padding:14px;background:#0F0E1A;color:#E8E6F8;overflow:auto;min-height:400px;white-space:pre;word-break:break-all;margin:0}
+/* Syntax highlighting */
+.jk{color:#7DD3FC} /* key */
+.js{color:#86EFAC} /* string value */
+.jn{color:#FCA5A5} /* number */
+.jb{color:#C4B5FD} /* boolean */
+.jnull{color:#94A3B8} /* null */
+.jp{color:#6B7280} /* punctuation */
+/* Status bar */
+.status-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--color-border);background:#F9F9F9;flex-wrap:wrap;min-height:42px}
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:999px}
+.sp-valid{background:#DCFCE7;color:#16A34A}
+.sp-invalid{background:#FEE2E2;color:#991B1B}
+.sp-empty{background:#F4F3FE;color:var(--color-primary)}
+.stat-chip{font-size:12px;color:var(--color-text-muted);padding:3px 8px;background:#F4F3FE;border-radius:999px}
+/* Toolbar */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.indent-sel{padding:8px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);font-size:13px;cursor:pointer}
 </style>
-<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
-<header class="site-header">
-  <div class="container inner">
-    <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-    <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
-  </div>
-</header>
-<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#all-tools">Developer</a> / JSON Formatter</div>
+<header class="site-header"><div class="container inner">
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+</div></header>
+<div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / JSON Formatter</div>
 <div class="container tool-page-header">
   <h1>JSON Formatter &amp; Validator</h1>
-  <p>Paste JSON to format, validate or minify it instantly.</p>
+  <p>Format, validate, minify and sort JSON with syntax highlighting — real-time error detection.</p>
 </div>
-<div class="container">
-  <div class="tool-panel" style="max-width:960px">
-    <div class="action-row">
-      <button class="btn btn-primary" id="btn-format">Format / Beautify</button>
-      <button class="btn btn-outline" id="btn-minify">Minify</button>
-      <button class="btn btn-outline" id="btn-copy">Copy output</button>
-      <button class="btn btn-outline" id="btn-clear">Clear</button>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;margin-left:4px">
-        Indent:
-        <select class="indent-select" id="indent-sel">
-          <option value="2">2 spaces</option>
-          <option value="4">4 spaces</option>
-          <option value="tab">Tab</option>
-        </select>
-      </label>
+<div class="container"><div class="tool-panel" style="max-width:1000px">
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="btn-format" aria-label="Format and beautify JSON">Format / Beautify</button>
+    <button class="btn btn-outline" id="btn-minify" aria-label="Minify JSON">Minify</button>
+    <button class="btn btn-outline" id="btn-sort" aria-label="Sort object keys alphabetically">Sort Keys</button>
+    <button class="btn btn-outline" id="btn-clear" aria-label="Clear all content">Clear</button>
+    <select id="indent-sel" class="indent-sel" aria-label="Indentation style">
+      <option value="2">2 spaces</option>
+      <option value="4">4 spaces</option>
+      <option value="1" data-tab="true">Tab</option>
+    </select>
+  </div>
+
+  <div class="editor-wrap">
+    <!-- Input pane -->
+    <div class="editor-pane">
+      <div class="pane-header">
+        <span class="pane-title">Input</span>
+        <div class="pane-actions">
+          <button class="pane-btn" id="btn-paste" aria-label="Paste from clipboard">Paste</button>
+          <button class="pane-btn" id="btn-sample" aria-label="Load sample JSON">Sample</button>
+          <span id="in-size" style="font-size:12px;color:var(--color-text-muted);align-self:center">0 B</span>
+        </div>
+      </div>
+      <textarea class="code-textarea" id="input-area"
+        placeholder='Paste JSON here…&#10;&#10;{"name":"OMIToolKit","tools":133,"free":true}'
+        aria-label="JSON input"
+        spellcheck="false"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"></textarea>
     </div>
 
-    <div class="editor-layout">
-      <div class="editor-box">
-        <div class="editor-label">Input <span id="in-chars">0 chars</span></div>
-        <textarea class="code-area" id="input-area" placeholder='Paste your JSON here…&#10;&#10;{"name":"OMIToolKit","tools":69}'></textarea>
+    <!-- Output pane -->
+    <div class="editor-pane">
+      <div class="pane-header">
+        <span class="pane-title">Output</span>
+        <div class="pane-actions">
+          <button class="pane-btn" id="btn-copy-out" aria-label="Copy formatted output">Copy</button>
+          <button class="pane-btn" id="btn-dl" aria-label="Download as JSON file">Download</button>
+          <span id="out-size" style="font-size:12px;color:var(--color-text-muted);align-self:center">0 B</span>
+        </div>
       </div>
-      <div class="editor-box">
-        <div class="editor-label">Output <span id="out-chars">0 chars</span></div>
-        <textarea class="code-area" id="output-area" readonly placeholder="Formatted JSON will appear here…"></textarea>
-      </div>
-    </div>
-
-    <div>
-      <div id="status-pill" class="status-pill empty">Paste JSON above to validate</div>
-      <div class="stats-row" id="stats-row"></div>
+      <pre class="output-pre" id="output-pre" aria-label="Formatted JSON output" role="region" aria-live="polite">
+<span style="color:#4E4B6A">// Output appears here</span></pre>
     </div>
   </div>
-</div>
-<div class="ad-slot container">Ad slot — below tool</div>
-<article class="article container">
-  <h2>What is JSON?</h2>
-  <p>JSON (JavaScript Object Notation) is the most widely used format for exchanging data between web applications and APIs. It's human-readable, lightweight, and supported natively by every modern programming language. However, working with raw JSON — especially large or minified files — is difficult without formatting.</p>
-  <h2>Format vs Minify</h2>
-  <p><strong>Formatting</strong> (beautifying) adds proper indentation and line breaks, making JSON easy for humans to read and debug. <strong>Minifying</strong> removes all unnecessary whitespace, reducing file size — useful before sending data over a network or storing it in a database where readability doesn't matter but size does.</p>
-  <h2>Common JSON errors</h2>
-  <p>The validator instantly catches the most frequent JSON mistakes: trailing commas after the last item in an array or object (not allowed in JSON, unlike JavaScript), missing quotes around property names, unescaped special characters in strings, and mismatched brackets or braces.</p>
-</article>
-<footer class="site-footer"><div class="container">&copy; <span id="year"></span> OMIToolKit.</div></footer>
-<script>
-document.getElementById('year').textContent = new Date().getFullYear();
-const inp = document.getElementById('input-area');
-const out = document.getElementById('output-area');
-const pill = document.getElementById('status-pill');
-const statsRow = document.getElementById('stats-row');
-const indentSel = document.getElementById('indent-sel');
 
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-pill sp-empty" id="status-pill">Paste JSON to validate</span>
+    <span class="stat-chip" id="stat-keys" style="display:none"></span>
+    <span class="stat-chip" id="stat-depth" style="display:none"></span>
+    <span class="stat-chip" id="stat-size" style="display:none"></span>
+  </div>
+
+</div></div>
+<div class="ad-slot container">Ad slot</div>
+<article class="article container">
+  <h2>What does this JSON formatter do?</h2>
+  <p>Paste raw or minified JSON to instantly format it with proper indentation and syntax highlighting. The validator catches errors in real time — mismatched brackets, trailing commas (not allowed in JSON), missing quotes on keys, and unescaped characters. Sort Keys rearranges all object properties alphabetically, making it easier to compare two JSON objects or find a specific key in a large payload.</p>
+  <h2>Format vs Minify</h2>
+  <p>Formatting adds indentation and line breaks for human readability — essential when debugging API responses or config files. Minifying removes all whitespace, reducing file size — use this before including JSON in a production build or sending over a network where payload size matters.</p>
+  <h2>Common JSON errors</h2>
+  <p>The most frequent JSON mistakes are: trailing commas after the last array or object item (valid in JavaScript but not in JSON), missing double quotes around property names (JSON requires double quotes — single quotes are not valid), and unescaped backslashes or control characters inside strings.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<script>
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+const inputArea = document.getElementById("input-area");
+const outputPre = document.getElementById("output-pre");
+const statusPill = document.getElementById("status-pill");
+const indentSel  = document.getElementById("indent-sel");
+
+// ── Helpers ──────────────────────────────────────────────────────────
 function getIndent() {
   const v = indentSel.value;
-  return v === 'tab' ? '\t' : parseInt(v);
+  return v === "1" ? "\t" : parseInt(v);
 }
 
+function fmtBytes(n) {
+  return n < 1024 ? n + " B" : (n/1024).toFixed(1) + " KB";
+}
+
+function countKeys(obj, n = 0) {
+  if (typeof obj === "object" && obj !== null) {
+    for (const k in obj) { n++; n = countKeys(obj[k], n); }
+  }
+  return n;
+}
+
+function maxDepth(obj, d = 0) {
+  if (typeof obj !== "object" || obj === null) return d;
+  return Math.max(d, ...Object.values(obj).map(v => maxDepth(v, d + 1)));
+}
+
+function sortKeys(obj) {
+  if (Array.isArray(obj)) return obj.map(sortKeys);
+  if (typeof obj === "object" && obj !== null) {
+    return Object.keys(obj).sort().reduce((acc, k) => { acc[k] = sortKeys(obj[k]); return acc; }, {});
+  }
+  return obj;
+}
+
+// ── Syntax highlighting ──────────────────────────────────────────────
+function highlight(jsonStr) {
+  return jsonStr
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(
+      /("(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|[{}[\],:])/g,
+      match => {
+        if (/^"/.test(match)) {
+          return match.endsWith(":") ? `<span class="jk">${match}</span>` : `<span class="js">${match}</span>`;
+        }
+        if (/true|false/.test(match)) return `<span class="jb">${match}</span>`;
+        if (/null/.test(match))       return `<span class="jnull">${match}</span>`;
+        if (/^-?[0-9]/.test(match))   return `<span class="jn">${match}</span>`;
+        return `<span class="jp">${match}</span>`;
+      }
+    );
+}
+
+// ── Validate & update status ─────────────────────────────────────────
+let lastParsed = null;
 function validate(text) {
-  if (!text.trim()) { pill.className='status-pill empty'; pill.textContent='Paste JSON above to validate'; statsRow.innerHTML=''; return null; }
+  const inSizeEl = document.getElementById("in-size");
+  inSizeEl.textContent = fmtBytes(new Blob([text]).size);
+
+  if (!text.trim()) {
+    statusPill.className = "status-pill sp-empty";
+    statusPill.textContent = "Paste JSON to validate";
+    inputArea.classList.remove("has-error");
+    ["stat-keys","stat-depth","stat-size"].forEach(id => document.getElementById(id).style.display = "none");
+    outputPre.innerHTML = '<span style="color:#4E4B6A">// Output appears here</span>';
+    lastParsed = null;
+    return null;
+  }
+
   try {
     const parsed = JSON.parse(text);
-    pill.className='status-pill valid'; pill.textContent='✓ Valid JSON';
-    inp.classList.remove('error');
-    const keys = countKeys(parsed);
-    statsRow.innerHTML=`<span>${text.length.toLocaleString()} chars</span><span>${countItems(parsed)} items</span><span>${keys} keys</span>`;
+    lastParsed = parsed;
+    inputArea.classList.remove("has-error");
+    statusPill.className = "status-pill sp-valid";
+    statusPill.textContent = "✓ Valid JSON";
+
+    const keys  = countKeys(parsed);
+    const depth = maxDepth(parsed);
+    document.getElementById("stat-keys").textContent  = keys + " total keys";
+    document.getElementById("stat-depth").textContent = "depth: " + depth;
+    document.getElementById("stat-size").textContent  = fmtBytes(new Blob([text]).size);
+    ["stat-keys","stat-depth","stat-size"].forEach(id => document.getElementById(id).style.display = "");
     return parsed;
   } catch(e) {
-    pill.className='status-pill invalid'; pill.textContent='✗ Invalid: '+e.message;
-    inp.classList.add('error'); statsRow.innerHTML='';
+    lastParsed = null;
+    inputArea.classList.add("has-error");
+    statusPill.className = "status-pill sp-invalid";
+    // Extract line info from error message
+    const lineMatch = e.message.match(/position (\d+)/);
+    const pos = lineMatch ? ` (position ${lineMatch[1]})` : "";
+    statusPill.textContent = "✗ " + e.message.replace("JSON.parse: ","").replace(" at line","\n→ line") + pos;
+    ["stat-keys","stat-depth","stat-size"].forEach(id => document.getElementById(id).style.display = "none");
     return null;
   }
 }
 
-function countKeys(obj, n=0) { if(typeof obj==='object'&&obj!==null){for(const k in obj){n++;n=countKeys(obj[k],n);}} return n; }
-function countItems(obj) { if(Array.isArray(obj))return obj.length; if(typeof obj==='object'&&obj!==null)return Object.keys(obj).length; return 1; }
-
-inp.addEventListener('input', () => {
-  document.getElementById('in-chars').textContent = inp.value.length + ' chars';
-  validate(inp.value);
+// ── Real-time validation ──────────────────────────────────────────────
+let debounce = null;
+inputArea.addEventListener("input", () => {
+  clearTimeout(debounce);
+  debounce = setTimeout(() => validate(inputArea.value), 120);
 });
 
-document.getElementById('btn-format').addEventListener('click', () => {
-  const parsed = validate(inp.value);
-  if (parsed !== null) {
-    const formatted = JSON.stringify(parsed, null, getIndent());
-    out.value = formatted;
-    document.getElementById('out-chars').textContent = formatted.length + ' chars';
-  }
+// ── Format ────────────────────────────────────────────────────────────
+document.getElementById("btn-format").addEventListener("click", () => {
+  const parsed = validate(inputArea.value);
+  if (parsed === null) { OMI.error.toast("Fix JSON errors before formatting.", "warning"); return; }
+  const formatted = JSON.stringify(parsed, null, getIndent());
+  outputPre.innerHTML = highlight(formatted);
+  document.getElementById("out-size").textContent = fmtBytes(new Blob([formatted]).size);
 });
 
-document.getElementById('btn-minify').addEventListener('click', () => {
-  const parsed = validate(inp.value);
-  if (parsed !== null) {
-    const minified = JSON.stringify(parsed);
-    out.value = minified;
-    document.getElementById('out-chars').textContent = minified.length + ' chars';
-  }
+// ── Minify ────────────────────────────────────────────────────────────
+document.getElementById("btn-minify").addEventListener("click", () => {
+  const parsed = validate(inputArea.value);
+  if (parsed === null) { OMI.error.toast("Fix JSON errors before minifying.", "warning"); return; }
+  const minified = JSON.stringify(parsed);
+  outputPre.textContent = minified;
+  document.getElementById("out-size").textContent = fmtBytes(new Blob([minified]).size);
 });
 
-document.getElementById('btn-copy').addEventListener('click', () => {
-  navigator.clipboard.writeText(out.value).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy output', 1200);
+// ── Sort keys ─────────────────────────────────────────────────────────
+document.getElementById("btn-sort").addEventListener("click", () => {
+  const parsed = validate(inputArea.value);
+  if (parsed === null) { OMI.error.toast("Fix JSON errors before sorting.", "warning"); return; }
+  const sorted    = sortKeys(parsed);
+  const formatted = JSON.stringify(sorted, null, getIndent());
+  inputArea.value = formatted;
+  outputPre.innerHTML = highlight(formatted);
+  validate(formatted);
+  document.getElementById("out-size").textContent = fmtBytes(new Blob([formatted]).size);
+  OMI.error.toast("Keys sorted alphabetically!", "success", 2000);
+});
+
+// ── Clear ─────────────────────────────────────────────────────────────
+document.getElementById("btn-clear").addEventListener("click", () => {
+  inputArea.value = "";
+  outputPre.innerHTML = '<span style="color:#4E4B6A">// Output appears here</span>';
+  validate("");
+  inputArea.focus();
+});
+
+// ── Sample ────────────────────────────────────────────────────────────
+document.getElementById("btn-sample").addEventListener("click", () => {
+  inputArea.value = JSON.stringify({
+    "name": "OMIToolKit",
+    "version": "2.0",
+    "tools": 133,
+    "free": true,
+    "categories": ["Image","PDF","Video","Audio","Developer","Text"],
+    "meta": { "author": "OMI Team", "license": "Free", "updated": "2025" }
   });
+  validate(inputArea.value);
+  document.getElementById("btn-format").click();
 });
 
-document.getElementById('btn-clear').addEventListener('click', () => {
-  inp.value=''; out.value='';
-  document.getElementById('in-chars').textContent='0 chars';
-  document.getElementById('out-chars').textContent='0 chars';
-  pill.className='status-pill empty'; pill.textContent='Paste JSON above to validate';
-  statsRow.innerHTML=''; inp.classList.remove('error');
+// ── Paste ─────────────────────────────────────────────────────────────
+document.getElementById("btn-paste").addEventListener("click", async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    inputArea.value = text;
+    validate(text);
+    inputArea.focus();
+  } catch { OMI.error.toast("Paste failed — use Ctrl+V in the editor.", "warning", 3000); }
 });
+
+// ── Copy output ────────────────────────────────────────────────────────
+document.getElementById("btn-copy-out").addEventListener("click", () => {
+  const text = outputPre.innerText;
+  if (!text || text.includes("Output appears here")) { OMI.error.toast("Format JSON first.", "warning", 2000); return; }
+  OMI.clipboard.copy(text, document.getElementById("btn-copy-out"));
+});
+
+// ── Download ──────────────────────────────────────────────────────────
+document.getElementById("btn-dl").addEventListener("click", () => {
+  const text = outputPre.innerText;
+  if (!text || text.includes("Output appears here")) { OMI.error.toast("Format JSON first.", "warning", 2000); return; }
+  OMI.file.download(new Blob([text], { type: "application/json" }), "formatted.json", "application/json");
+});
+
+// ── Indent change → re-format ─────────────────────────────────────────
+indentSel.addEventListener("change", () => {
+  if (lastParsed !== null) document.getElementById("btn-format").click();
+});
+
+// ── Errors ────────────────────────────────────────────────────────────
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "JSON Formatter"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
-</body>
-</html>
+</body></html>

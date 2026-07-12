@@ -40,7 +40,7 @@ Last Updated: Foundation Sprint 1 Complete
 ### Developer (31)
 | Tool | Status | Score |
 |------|--------|-------|
-| base64-encoder | ⬜ | — |
+| base64-encoder | ✅ | 91/100 |
 | base64-encoder-decoder | ⬜ | — |
 | binary-converter | ⬜ | — |
 | code-to-image | ⬜ | — |
@@ -57,7 +57,7 @@ Last Updated: Foundation Sprint 1 Complete
 | html-encoder | ⬜ | — |
 | html-minifier | ⬜ | — |
 | http-status-codes | ⬜ | — |
-| json-formatter | ⬜ | — |
+| json-formatter | ✅ | 92/100 |
 | json-to-csv | ⬜ | — |
 | jwt-decoder | ⬜ | — |
 | markdown-editor | ⬜ | — |
@@ -68,7 +68,7 @@ Last Updated: Foundation Sprint 1 Complete
 | sql-formatter | ⬜ | — |
 | svg-converter | ⬜ | — |
 | timestamp-converter | ⬜ | — |
-| url-encoder | ⬜ | — |
+| url-encoder | ✅ | 91/100 |
 | uuid-generator | ⬜ | — |
 | text-diff | ⬜ | — |
 
@@ -84,7 +84,7 @@ Last Updated: Foundation Sprint 1 Complete
 | number-sorter | ⬜ | — |
 | readability-checker | ⬜ | — |
 | roman-numeral-converter | ⬜ | — |
-| text-case-converter | ⬜ | — |
+| text-case-converter | ✅ | 89/100 |
 | text-cleaner | ⬜ | — |
 | text-repeater | ⬜ | — |
 | text-to-handwriting | ⬜ | — |
@@ -101,7 +101,7 @@ Last Updated: Foundation Sprint 1 Complete
 | image-compressor | 🔄 | — |
 | image-converter | ⬜ | — |
 | image-cropper | ⬜ | — |
-| image-resizer | ⬜ | — |
+| image-resizer | ✅ | 90/100 |
 | image-rotator | ⬜ | — |
 | image-to-base64 | ⬜ | — |
 | jpg-to-png | ⬜ | — |
