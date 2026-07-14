@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free Bulk Image Converter — Convert Multiple Images at Once | OMIToolKit</title>
-<meta name="description" content="Convert dozens of images to JPG, PNG, or WebP in one go. Bulk batch converter — no upload, runs entirely in your browser.">
+<meta name="description" content="Convert dozens of images to JPEG, PNG, or WebP in one go. Batch converter with quality control, per-file download and download all. Runs in your browser.">
 <link rel="canonical" href="../../tools/bulk-image-converter/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/omitoolkit-core.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Bulk Image Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
-.fmt-tabs{display:flex;gap:8px;margin:12px 0}
-.fmt-tab{padding:8px 20px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.fmt-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.fmt-tab{padding:9px 22px;border-radius:999px;border:1.5px solid var(--color-border);background:#fff;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s}
 .fmt-tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-.file-list{display:flex;flex-direction:column;gap:5px;max-height:340px;overflow-y:auto;margin:12px 0}
-.file-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:#F9F9F9;border:1px solid var(--color-border);border-radius:8px}
-.file-row.done{background:#F0FDF4;border-color:#86EFAC}
-.file-row.err{background:#FEF2F2;border-color:#FCA5A5}
-.fr-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fr-sz{font-size:11.5px;color:var(--color-text-muted);white-space:nowrap;font-family:monospace}
-.fr-st{font-size:12px;font-weight:600;min-width:70px;text-align:right}
-@media(max-width:500px){.fmt-tabs{flex-wrap:wrap}}
+.file-list{display:flex;flex-direction:column;gap:6px;margin:14px 0;max-height:400px;overflow-y:auto}
+.file-row{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:10px;padding:11px 14px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);transition:border-color .2s,background .2s}
+.file-row.done{border-color:#86EFAC;background:#F0FDF4}
+.file-row.converting{border-color:var(--color-primary);background:#F4F3FE;animation:pulse .8s ease infinite alternate}
+@keyframes pulse{from{opacity:.85}to{opacity:1}}
+.file-row.error{border-color:#FCA5A5;background:#FEF2F2}
+.fr-icon{font-size:20px;flex-shrink:0}
+.fr-info{min-width:0}
+.fr-name{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-meta{font-size:12px;color:var(--color-text-muted);font-family:"JetBrains Mono",monospace;margin-top:1px}
+.fr-status{font-size:12.5px;font-weight:600;white-space:nowrap;min-width:80px;text-align:right}
+.prog-outer{height:6px;background:var(--color-border);border-radius:3px;overflow:hidden;margin:10px 0;display:none}
+.prog-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:3px;transition:width .3s}
+.summary-bar{background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-md);padding:12px 16px;margin-top:12px;display:none;align-items:center;gap:12px;flex-wrap:wrap}
+.sb-stat{display:flex;flex-direction:column;align-items:center}
+.sb-val{font-size:20px;font-weight:700;color:#166534}
+.sb-lbl{font-size:11px;color:#4B7A5A}
+@media(max-width:600px){.tool-panel{padding:16px}.container{padding:0 14px}.file-row{grid-template-columns:auto 1fr auto auto}}
 </style>
-<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -32,108 +46,188 @@
 <div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-image">Image</a> / Bulk Image Converter</div>
 <div class="container tool-page-header">
   <h1>Bulk Image Converter</h1>
-  <p>Convert dozens of images to JPG, PNG, or WebP in one go — all processed locally in your browser.</p>
+  <p>Convert any number of images to JPEG, PNG, or WebP in one click — per-file download or download all.</p>
 </div>
-<div class="container"><div class="tool-panel" style="max-width:700px">
-  <div class="dz" id="dz">
-    <div style="font-size:40px;margin-bottom:10px">&#128194;</div>
-    <div style="font-size:15px;font-weight:600">Drop images here or click to select</div>
-    <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">JPG, PNG, WebP, GIF — any number of files</div>
-    <input type="file" id="fi" accept="image/*" multiple style="display:none">
+<div class="container"><div class="tool-panel" style="max-width:800px">
+
+  <div class="dz" id="dz" role="button" tabindex="0" aria-label="Upload images">
+    <div style="font-size:40px;margin-bottom:10px">📁</div>
+    <div style="font-size:16px;font-weight:600">Drop images here or click to select</div>
+    <div style="font-size:13px;color:var(--color-text-muted);margin-top:6px">JPEG, PNG, WebP, GIF, BMP — any number of files</div>
+    <input type="file" id="fi" accept="image/*" multiple style="display:none" aria-label="Select image files">
   </div>
-  <div id="editor" style="display:none;margin-top:16px">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+
+  <div id="editor" style="display:none;margin-top:18px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:4px">
       <div>
-        <div class="field-label" style="margin-bottom:6px">Convert to</div>
-        <div class="fmt-tabs">
-          <button class="fmt-tab active" data-f="jpeg">JPG</button>
-          <button class="fmt-tab" data-f="png">PNG</button>
-          <button class="fmt-tab" data-f="webp">WebP</button>
+        <div class="field-label" style="margin-bottom:6px">Convert to format</div>
+        <div class="fmt-tabs" role="group" aria-label="Output format">
+          <button class="fmt-tab active" data-f="jpeg" aria-pressed="true">JPEG</button>
+          <button class="fmt-tab" data-f="png" aria-pressed="false">PNG</button>
+          <button class="fmt-tab" data-f="webp" aria-pressed="false">WebP</button>
         </div>
       </div>
-      <div id="q-wrap" style="display:flex;align-items:center;gap:10px">
-        <label class="field-label" style="margin:0;white-space:nowrap">Quality: <strong id="q-val" style="color:var(--color-primary)">90%</strong></label>
-        <input type="range" id="quality" min="10" max="100" value="90" style="width:110px;accent-color:var(--color-primary)">
+      <div id="q-wrap" style="min-width:200px">
+        <label class="field-label">Quality — <strong id="q-val" style="color:var(--color-primary)">90%</strong></label>
+        <input type="range" id="quality" min="10" max="100" value="90"
+          style="width:100%;accent-color:var(--color-primary)" aria-label="Output quality">
       </div>
     </div>
-    <div style="margin:10px 0" id="stats-row"></div>
+
+    <div id="file-stats" style="font-size:13px;color:var(--color-text-muted);margin-bottom:6px"></div>
     <div class="file-list" id="file-list"></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-      <button class="btn btn-primary" id="convert-btn">Convert All</button>
-      <button class="btn btn-outline" id="dl-all-btn" disabled>Download All</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+
+    <div class="prog-outer" id="prog-outer"><div class="prog-inner" id="prog-inner"></div></div>
+    <div id="prog-status" style="font-size:13px;color:var(--color-text-muted);text-align:center;min-height:18px"></div>
+
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="convert-btn" style="flex:1;justify-content:center;padding:13px" aria-label="Convert all images">⚡ Convert All</button>
+      <button class="btn btn-outline" id="dl-all-btn" disabled style="padding:13px 18px" aria-label="Download all converted images">⬇ Download All</button>
+      <button class="btn btn-outline" id="clear-btn" style="padding:13px 18px">Clear</button>
     </div>
-    <div id="prog" style="margin-top:12px;font-size:13.5px;color:var(--color-text-muted);text-align:center"></div>
+
+    <div class="summary-bar" id="summary-bar">
+      <div style="font-size:18px">🎉</div>
+      <div class="sb-stat"><div class="sb-val" id="sum-files">0</div><div class="sb-lbl">Converted</div></div>
+      <div class="sb-stat"><div class="sb-val" id="sum-orig">0</div><div class="sb-lbl">Before</div></div>
+      <div class="sb-stat"><div class="sb-val" id="sum-after">0</div><div class="sb-lbl">After</div></div>
+      <div class="sb-stat"><div class="sb-val" id="sum-saved">—</div><div class="sb-lbl">Change</div></div>
+    </div>
   </div>
+
 </div></div>
 <div class="ad-slot container">Ad slot</div>
 <article class="article container">
-  <h2>Batch convert images in seconds</h2>
-  <p>Converting images one at a time is tedious when you have a batch of product photos, screenshots, or design exports. Bulk Image Converter processes your entire selection at once. Use <strong>JPG</strong> for photographs, <strong>PNG</strong> when transparency or pixel-perfect quality is needed, and <strong>WebP</strong> for modern web usage — it achieves 25-35% better compression than both JPG and PNG.</p>
+  <h2>Which format should I convert to?</h2>
+  <p><strong>JPEG</strong> — best for photographs and images with many colors. Produces small files with good visual quality. Does not support transparency. <strong>PNG</strong> — lossless format best for screenshots, logos, and images with sharp edges or transparency. Larger files than JPEG. <strong>WebP</strong> — modern format supported by all current browsers. Produces 25–35% smaller files than JPEG at equal quality, and supports transparency like PNG. Ideal for websites and apps.</p>
+  <h2>How many images can I convert at once?</h2>
+  <p>There is no hard limit — the tool processes images sequentially to avoid running out of memory. However, very large batches (100+ high-resolution images) may take a few minutes. Each image is drawn onto an HTML5 Canvas and re-encoded in your browser. The process uses your CPU and RAM, not a server.</p>
 </article>
-<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. Images never leave your browser.</div></footer>
 <script>
-document.getElementById("yr").textContent=new Date().getFullYear();
-let files=[],fmt="jpeg",blobs=[];
-const dz=document.getElementById("dz"),fi=document.getElementById("fi");
-dz.addEventListener("click",()=>fi.click());
-dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
-dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
-dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");addFiles([...e.dataTransfer.files])});
-fi.addEventListener("change",()=>addFiles([...fi.files]));
-document.getElementById("quality").addEventListener("input",e=>document.getElementById("q-val").textContent=e.target.value+"%");
-document.querySelectorAll(".fmt-tab").forEach(t=>t.addEventListener("click",()=>{
-  document.querySelectorAll(".fmt-tab").forEach(x=>x.classList.remove("active"));
-  t.classList.add("active");fmt=t.dataset.f;
-  document.getElementById("q-wrap").style.display=fmt==="png"?"none":"flex";
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+let files = [], fmt = "jpeg", blobs = [];
+
+const dz = document.getElementById("dz"), fi = document.getElementById("fi");
+dz.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fi.click(); });
+dz.addEventListener("click", () => fi.click());
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag"); });
+dz.addEventListener("dragleave", e => { if (!dz.contains(e.relatedTarget)) dz.classList.remove("drag"); });
+dz.addEventListener("drop", e => { e.preventDefault(); dz.classList.remove("drag"); addFiles([...e.dataTransfer.files]); });
+fi.addEventListener("change", () => { addFiles([...fi.files]); fi.value = ""; });
+
+document.getElementById("quality").addEventListener("input", e => {
+  document.getElementById("q-val").textContent = e.target.value + "%";
+});
+document.querySelectorAll(".fmt-tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".fmt-tab").forEach(x => { x.classList.remove("active"); x.setAttribute("aria-pressed","false"); });
+  t.classList.add("active"); t.setAttribute("aria-pressed","true");
+  fmt = t.dataset.f;
+  document.getElementById("q-wrap").style.opacity = fmt === "png" ? ".5" : "1";
 }));
-function addFiles(nf){files=[...files,...nf.filter(f=>f.type.startsWith("image/"))];blobs=[];render();}
-function render(){
-  const total=(files.reduce((a,f)=>a+f.size,0)/1024/1024).toFixed(1);
-  document.getElementById("stats-row").innerHTML=`<span class="stat-chip">${files.length} files</span><span class="stat-chip">${total} MB total</span>`;
-  document.getElementById("file-list").innerHTML=files.map((f,i)=>`
-    <div class="file-row" id="row-${i}">
-      <span>&#128444;</span>
-      <span class="fr-name" title="${f.name}">${f.name}</span>
-      <span class="fr-sz">${(f.size/1024).toFixed(0)}KB</span>
-      <span class="fr-st" id="st-${i}">Pending</span>
-      <span id="dl-${i}"></span>
-      <button onclick="files.splice(${i},1);blobs=[];render()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px;line-height:1">x</button>
-    </div>`).join("");
-  document.getElementById("editor").style.display=files.length?"":"none";
+
+function addFiles(newFiles) {
+  const imgs = newFiles.filter(f => f.type.startsWith("image/"));
+  if (!imgs.length) { OMI.error.toast("Please select image files only.", "warning"); return; }
+  imgs.forEach(f => { if (!files.some(x => x.name === f.name && x.size === f.size)) files.push(f); });
+  blobs = []; render();
 }
-document.getElementById("convert-btn").addEventListener("click",async()=>{
-  if(!files.length)return;
-  blobs=[];document.getElementById("convert-btn").disabled=true;
-  const q=parseInt(document.getElementById("quality").value)/100;
-  const ext=fmt==="jpeg"?"jpg":fmt;
-  for(let i=0;i<files.length;i++){
-    document.getElementById("st-"+i).textContent="...";
-    try{
-      const url=URL.createObjectURL(files[i]);
-      const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url});
-      const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;
-      const ctx=c.getContext("2d");
-      if(fmt==="jpeg"){ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
-      ctx.drawImage(img,0,0);
-      const blob=await new Promise(res=>c.toBlob(res,"image/"+fmt,q));
-      const outName=files[i].name.replace(/\.[^.]+$/,".")+ext;
-      const outUrl=URL.createObjectURL(blob);
-      blobs.push({name:outName,url:outUrl});
-      document.getElementById("st-"+i).innerHTML=`<span style="color:#16A34A">done ${(blob.size/1024).toFixed(0)}KB</span>`;
-      document.getElementById("dl-"+i).innerHTML=`<a href="${outUrl}" download="${outName}" style="font-size:12px;padding:3px 10px;border-radius:5px;background:var(--color-primary);color:#fff;text-decoration:none">Save</a>`;
-      document.getElementById("row-"+i).classList.add("done");
+
+function render() {
+  const totalSize = files.reduce((a, f) => a + f.size, 0);
+  document.getElementById("file-stats").textContent = files.length + " image" + (files.length !== 1 ? "s" : "") + " · " + OMI.file.formatSize(totalSize);
+  document.getElementById("file-list").innerHTML = files.map((f, i) => `
+    <div class="file-row" id="row-${i}" role="listitem">
+      <span class="fr-icon">🖼️</span>
+      <div class="fr-info">
+        <div class="fr-name" title="${OMI.safe.attr(f.name)}">${OMI.safe.text(f.name)}</div>
+        <div class="fr-meta">${OMI.file.formatSize(f.size)}</div>
+      </div>
+      <div class="fr-status" id="st-${i}" style="color:var(--color-text-muted)">Pending</div>
+      <div id="dl-${i}"></div>
+      <button onclick="files.splice(${i},1);blobs=[];render()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px" aria-label="Remove ${OMI.safe.attr(f.name)}">×</button>
+    </div>`).join("");
+  document.getElementById("editor").style.display = files.length ? "" : "none";
+  document.getElementById("dl-all-btn").disabled = true;
+  document.getElementById("summary-bar").style.display = "none";
+}
+
+document.getElementById("clear-btn").addEventListener("click", () => { files = []; blobs = []; render(); });
+
+document.getElementById("convert-btn").addEventListener("click", async () => {
+  if (!files.length) return;
+  blobs = [];
+  const btn = document.getElementById("convert-btn");
+  OMI.ui.setLoading(btn, true, "⏳ Converting…");
+  document.getElementById("prog-outer").style.display = "";
+  document.getElementById("dl-all-btn").disabled = true;
+  document.getElementById("summary-bar").style.display = "none";
+
+  const q = parseInt(document.getElementById("quality").value) / 100;
+  const ext = fmt === "jpeg" ? "jpg" : fmt;
+  const mimeType = "image/" + fmt;
+  let totalOrig = 0, totalComp = 0, doneCount = 0;
+
+  for (let i = 0; i < files.length; i++) {
+    document.getElementById("prog-inner").style.width = Math.round((i / files.length) * 90) + "%";
+    document.getElementById("prog-status").textContent = "Converting " + (i+1) + "/" + files.length + "…";
+    document.getElementById("row-" + i).className = "file-row converting";
+    document.getElementById("st-" + i).textContent = "Converting…";
+
+    try {
+      const url = URL.createObjectURL(files[i]);
+      const img = await new Promise((res, rej) => {
+        const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = url;
+      });
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (fmt === "jpeg") { ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+      ctx.drawImage(img, 0, 0);
       URL.revokeObjectURL(url);
-    }catch(e){document.getElementById("st-"+i).innerHTML=`<span style="color:#EF4444">Error</span>`;document.getElementById("row-"+i).classList.add("err");}
-    document.getElementById("prog").textContent="Converting "+( i+1)+" / "+files.length+"...";
+
+      const blob = await new Promise(res => canvas.toBlob(res, mimeType, fmt === "png" ? undefined : q));
+      const outName = OMI.file.base(files[i].name) + "." + ext;
+      const outUrl = URL.createObjectURL(blob);
+      blobs.push({ name: outName, url: outUrl, size: blob.size });
+
+      totalOrig += files[i].size; totalComp += blob.size; doneCount++;
+      const diff = Math.round((blob.size / files[i].size - 1) * 100);
+      const diffStr = diff <= 0 ? `<span style="color:#16A34A">${diff}%</span>` : `<span style="color:#F97316">+${diff}%</span>`;
+
+      document.getElementById("row-" + i).className = "file-row done";
+      document.getElementById("st-" + i).innerHTML = OMI.file.formatSize(blob.size) + " " + diffStr;
+      document.getElementById("dl-" + i).innerHTML =
+        `<a href="${outUrl}" download="${outName}" class="btn btn-primary" style="padding:5px 12px;font-size:12px;white-space:nowrap" aria-label="Download ${outName}">⬇</a>`;
+    } catch(err) {
+      document.getElementById("row-" + i).className = "file-row error";
+      document.getElementById("st-" + i).textContent = "Error";
+      OMI.error.handle(err, "Image Converter");
+    }
   }
-  document.getElementById("convert-btn").disabled=false;
-  document.getElementById("dl-all-btn").disabled=false;
-  document.getElementById("prog").textContent="All "+files.length+" images converted!";
+
+  document.getElementById("prog-inner").style.width = "100%";
+  document.getElementById("prog-status").textContent = `Done — ${doneCount} image${doneCount !== 1 ? "s" : ""} converted!`;
+
+  const savedPct = totalOrig ? Math.round((1 - totalComp / totalOrig) * 100) : 0;
+  document.getElementById("sum-files").textContent = doneCount;
+  document.getElementById("sum-orig").textContent = OMI.file.formatSize(totalOrig);
+  document.getElementById("sum-after").textContent = OMI.file.formatSize(totalComp);
+  document.getElementById("sum-saved").textContent = (savedPct >= 0 ? "-" : "+") + Math.abs(savedPct) + "%";
+  document.getElementById("summary-bar").style.display = "flex";
+  document.getElementById("dl-all-btn").disabled = false;
+  OMI.ui.setLoading(btn, false);
+  if (doneCount > 0) OMI.error.toast(`${doneCount} images converted to ${fmt.toUpperCase()}!`, "success");
 });
-document.getElementById("dl-all-btn").addEventListener("click",()=>{
-  blobs.forEach((b,i)=>setTimeout(()=>{const a=document.createElement("a");a.href=b.url;a.download=b.name;a.click()},i*350));
+
+document.getElementById("dl-all-btn").addEventListener("click", () => {
+  blobs.forEach((b, i) => setTimeout(() => {
+    const a = document.createElement("a"); a.href = b.url; a.download = b.name; a.click();
+  }, i * 350));
 });
-document.getElementById("clear-btn").addEventListener("click",()=>{files=[];blobs=[];render();fi.value="";document.getElementById("prog").textContent="";});
+
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
 </body></html>

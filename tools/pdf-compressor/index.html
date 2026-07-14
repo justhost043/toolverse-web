@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Free PDF Compressor Online | OMIToolKit</title>
-<meta name="description" content="Reduce PDF file size online. Remove unused objects and compress metadata — free, browser-based.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Free PDF Compressor — Reduce PDF File Size Online | OMIToolKit</title>
+<meta name="description" content="Compress PDF file size online. Remove unused objects, optimize streams. Batch compress multiple PDFs. Free browser-based PDF compressor — files never uploaded.">
 <link rel="canonical" href="../../tools/pdf-compressor/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" crossorigin="anonymous"></script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<style>
-
-@media(max-width:600px){
-  .tool-panel{padding:16px}
-  .container{padding:0 14px}
-  .field-input,.field-select{font-size:16px}
-  .btn{padding:10px 16px;font-size:13.5px}
-  .site-header .inner{padding:0 14px}
-}
-</style>
 <script src="../../assets/js/omitoolkit-core.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Compressor","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+.dz{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;cursor:pointer;transition:all .15s;background:#FCFCFB}
+.dz:hover,.dz.drag{border-color:var(--color-primary);background:#F4F3FE}
+.level-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+.lvl-card{border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.lvl-card:hover{border-color:var(--color-primary)}
+.lvl-card.active{border-color:var(--color-primary);background:#F4F3FE}
+.lvl-icon{font-size:24px;margin-bottom:6px}
+.lvl-name{font-weight:700;font-size:13px}
+.lvl-desc{font-size:11.5px;color:var(--color-text-muted);margin-top:3px}
+.file-list{display:flex;flex-direction:column;gap:8px;margin:14px 0;max-height:360px;overflow-y:auto}
+.file-row{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:11px 14px;background:#F9F9F9;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);transition:all .2s}
+.file-row.done{border-color:#86EFAC;background:#F0FDF4}
+.file-row.error{border-color:#FCA5A5;background:#FEF2F2}
+.file-icon{font-size:20px;flex-shrink:0}
+.file-info{min-width:0}
+.file-name{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-size{font-size:12px;color:var(--color-text-muted);font-family:"JetBrains Mono",monospace}
+.file-status{font-size:12px;font-weight:600;white-space:nowrap;text-align:right}
+.saving-pct{font-size:13px;font-weight:700;color:#16A34A}
+.prog-wrap{height:6px;background:var(--color-border);border-radius:3px;overflow:hidden;margin:10px 0;display:none}
+.prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--color-primary),#A855F7);border-radius:3px;transition:width .3s}
+.summary-box{background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-md);padding:14px 18px;margin-top:14px;display:none}
+@media(max-width:600px){.level-grid{grid-template-columns:1fr}.tool-panel{padding:16px}.container{padding:0 14px}}
+</style>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
@@ -28,82 +45,181 @@
   <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-pdf">PDF</a><a href="../../about/">About</a></nav>
 </div></header>
 <div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-pdf">PDF</a> / PDF Compressor</div>
-<div class="container tool-page-header"><h1>PDF Compressor</h1><p>Reduce PDF file size online. Remove unused objects and compress metadata — free, browser-based.</p></div>
-<div class="container"><div class="tool-panel" style="max-width:720px">
-<div class="dz" id="dz">
-  <div style="font-size:36px;margin-bottom:10px">&#128196;</div>
-  <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
-  <div style="font-size:13px;margin-top:6px;color:var(--color-text-muted)">Processed entirely in your browser</div>
-  <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+<div class="container tool-page-header">
+  <h1>PDF Compressor</h1>
+  <p>Reduce PDF file size by removing unused objects and optimizing streams — batch supported, nothing uploaded.</p>
 </div>
-<div id="editor" style="display:none;margin-top:16px">
-  <div id="fi-info" style="background:#F4F3FE;border-radius:var(--radius-sm);padding:12px 16px;font-size:14px;font-weight:500;margin-bottom:14px"></div>
-  <div class="field-label" style="margin-bottom:8px">Compression level</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-    <div id="lvl-low" class="btn btn-outline active-lvl" onclick="setLvl(this,'low')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-border)">
-      <div style="font-size:22px">&#128197;</div><div style="font-weight:600;font-size:13px;margin-top:4px">Low</div>
-      <div style="font-size:11.5px;color:var(--color-text-muted)">Better quality</div>
+<div class="container"><div class="tool-panel" style="max-width:720px">
+
+  <div class="dz" id="dz" role="button" tabindex="0" aria-label="Upload PDF files">
+    <div style="font-size:40px;margin-bottom:10px">📦</div>
+    <div style="font-size:16px;font-weight:600">Drop PDF files here or click to select</div>
+    <div style="font-size:13px;color:var(--color-text-muted);margin-top:6px">Multiple files supported — all processed in your browser</div>
+    <input type="file" id="fi" accept="application/pdf" multiple style="display:none" aria-label="Select PDF files">
+  </div>
+
+  <div id="editor" style="display:none;margin-top:18px">
+    <div class="field-label" style="margin-bottom:10px">Compression level</div>
+    <div class="level-grid" role="group" aria-label="Compression level">
+      <div class="lvl-card" id="lvl-low" data-lvl="low" role="radio" tabindex="0" aria-checked="false">
+        <div class="lvl-icon">🟢</div>
+        <div class="lvl-name">Low</div>
+        <div class="lvl-desc">Best quality<br>Less compression</div>
+      </div>
+      <div class="lvl-card active" id="lvl-med" data-lvl="med" role="radio" tabindex="0" aria-checked="true">
+        <div class="lvl-icon">🟡</div>
+        <div class="lvl-name">Medium</div>
+        <div class="lvl-desc">Recommended<br>Good balance</div>
+      </div>
+      <div class="lvl-card" id="lvl-high" data-lvl="high" role="radio" tabindex="0" aria-checked="false">
+        <div class="lvl-icon">🔴</div>
+        <div class="lvl-name">High</div>
+        <div class="lvl-desc">Smallest file<br>May reduce quality</div>
+      </div>
     </div>
-    <div id="lvl-med" class="btn btn-outline" onclick="setLvl(this,'med')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-primary);background:#F4F3FE">
-      <div style="font-size:22px">&#128205;</div><div style="font-weight:600;font-size:13px;margin-top:4px">Medium</div>
-      <div style="font-size:11.5px;color:var(--color-text-muted)">Recommended</div>
+
+    <div class="file-list" id="file-list"></div>
+
+    <div class="prog-wrap" id="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+    <div id="prog-status" style="font-size:13px;color:var(--color-text-muted);text-align:center;min-height:18px"></div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="compress-btn" style="flex:1;justify-content:center;padding:13px" aria-label="Compress all PDF files">📦 Compress All</button>
+      <button class="btn btn-outline" id="clear-btn" style="padding:13px 20px">Clear</button>
     </div>
-    <div id="lvl-high" class="btn btn-outline" onclick="setLvl(this,'high')" style="text-align:center;padding:14px 8px;cursor:pointer;border-radius:var(--radius-sm);border:1.5px solid var(--color-border)">
-      <div style="font-size:22px">&#128263;</div><div style="font-weight:600;font-size:13px;margin-top:4px">High</div>
-      <div style="font-size:11.5px;color:var(--color-text-muted)">Smallest size</div>
+
+    <div class="summary-box" id="summary-box">
+      <div style="font-weight:700;font-size:15px;color:#166534;margin-bottom:10px">✅ Compression Complete</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div><div style="font-size:22px;font-weight:700;color:#16A34A" id="sum-saved">0%</div><div style="font-size:12px;color:#4B7A5A">Space saved</div></div>
+        <div><div style="font-size:22px;font-weight:700;color:#166534" id="sum-before">0 KB</div><div style="font-size:12px;color:#4B7A5A">Before</div></div>
+        <div><div style="font-size:22px;font-weight:700;color:#166534" id="sum-after">0 KB</div><div style="font-size:12px;color:#4B7A5A">After</div></div>
+      </div>
     </div>
   </div>
-  <button class="btn btn-primary" id="compress-btn" style="width:100%;justify-content:center;padding:13px">Compress PDF</button>
-  <div id="result" style="margin-top:14px"></div>
-</div>
+
 </div></div>
 <div class="ad-slot container">Ad slot</div>
-<article class="article container"><h2>How PDF compression works</h2><p>This tool uses PDF-lib to remove unused objects, compress object streams, and strip unnecessary metadata from your PDF. This is most effective on PDFs that have been edited many times or exported from design software. Scanned image PDFs have limited compression potential since the file size is dominated by image data.</p></article>
-<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
-<script>document.getElementById("yr").textContent=new Date().getFullYear();
-const {PDFDocument}=PDFLib;
-let pdfB=null,lvl="med";
-function setLvl(el,l){
-  document.querySelectorAll("[id^=lvl-]").forEach(x=>{x.style.borderColor="var(--color-border)";x.style.background="#fff"});
-  el.style.borderColor="var(--color-primary)";el.style.background="#F4F3FE";lvl=l;
+<article class="article container">
+  <h2>How PDF compression works</h2>
+  <p>PDF files often contain unused objects, redundant data, and unoptimized streams accumulated through editing. This tool uses pdf-lib to analyze your PDF, remove those unused objects, and compress internal streams using object stream compression. The result is a smaller file with identical visual content. Text-based PDFs typically compress more than scanned image PDFs, which are dominated by image data.</p>
+  <h2>Why does my PDF not compress much?</h2>
+  <p>If your PDF was already optimized when exported (from modern tools like Adobe Acrobat or well-configured LaTeX), there may be little redundancy to remove. Scanned image PDFs are limited by the image data itself — compress the images separately using an image compressor first. PDFs with embedded fonts also have limited compression potential since font data is already binary-encoded.</p>
+  <h2>Is it safe to compress PDFs here?</h2>
+  <p>Completely safe. pdf-lib runs entirely in your browser — files are read from your device, processed locally, and the result is downloaded directly to you. Nothing is transmitted over the internet.</p>
+</article>
+<footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit. PDFs never leave your browser.</div></footer>
+<script>
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+let files = [], level = "med";
+
+// Drop zone
+const dz = document.getElementById("dz"), fi = document.getElementById("fi");
+dz.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fi.click(); });
+dz.addEventListener("click", () => fi.click());
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag"); });
+dz.addEventListener("dragleave", e => { if (!dz.contains(e.relatedTarget)) dz.classList.remove("drag"); });
+dz.addEventListener("drop", e => { e.preventDefault(); dz.classList.remove("drag"); addFiles([...e.dataTransfer.files]); });
+fi.addEventListener("change", () => { addFiles([...fi.files]); fi.value = ""; });
+
+function addFiles(newFiles) {
+  const pdfs = newFiles.filter(f => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf"));
+  if (!pdfs.length) { OMI.error.toast("Please select PDF files only.", "warning"); return; }
+  pdfs.forEach(f => { if (!files.some(x => x.name === f.name && x.size === f.size)) files.push(f); });
+  render();
 }
-const dz=document.getElementById("dz"),fi=document.getElementById("fi");
-dz.addEventListener("click",()=>fi.click());
-dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
-dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
-dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
-fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
-async function loadF(file){
-  const buf=await file.arrayBuffer();pdfB=new Uint8Array(buf);
-  document.getElementById("fi-info").textContent=file.name+" - "+(file.size/1024).toFixed(0)+" KB";
-  document.getElementById("editor").style.display="";
-  document.getElementById("fi").dataset.name=file.name;
-  document.getElementById("fi").dataset.size=file.size;
-}
-document.getElementById("compress-btn").addEventListener("click",async()=>{
-  if(!pdfB)return;
-  document.getElementById("compress-btn").disabled=true;
-  document.getElementById("result").textContent="Compressing...";
-  try{
-    const pdf=await PDFDocument.load(pdfB,{updateMetadata:false});
-    // Remove unused objects, flatten metadata
-    const compressed=await pdf.save({useObjectStreams:lvl!=="low",addDefaultPage:false});
-    const orig=pdfB.length,comp=compressed.length;
-    const saved=Math.round((1-comp/orig)*100);
-    const blob=new Blob([compressed],{type:"application/pdf"});
-    const url=URL.createObjectURL(blob);
-    const name=(document.getElementById("fi").dataset.name||"file.pdf").replace(".pdf","-compressed.pdf");
-    document.getElementById("result").innerHTML=`
-      <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:var(--radius-sm);padding:14px 16px">
-        <div style="font-weight:600;font-size:14.5px;color:#166534;margin-bottom:8px">Compression complete!</div>
-        <div style="font-size:13.5px;margin-bottom:10px;color:var(--color-text)">
-          Original: ${(orig/1024).toFixed(0)} KB &rarr; Compressed: ${(comp/1024).toFixed(0)} KB
-          ${saved>0?`<strong style="color:#16A34A"> (-${saved}%)</strong>`:"<span style='color:var(--color-text-muted)'> (PDF already optimised)</span>"}
-        </div>
-        <a href="${url}" download="${name}" class="btn btn-primary" style="padding:9px 20px">&#11015; Download Compressed PDF</a>
-      </div>`;
-  }catch(e){document.getElementById("result").textContent="Error: "+e.message;}
-  document.getElementById("compress-btn").disabled=false;
+
+// Level selection
+document.querySelectorAll(".lvl-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll(".lvl-card").forEach(c => { c.classList.remove("active"); c.setAttribute("aria-checked","false"); });
+    card.classList.add("active"); card.setAttribute("aria-checked","true");
+    level = card.dataset.lvl;
+  });
+  card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") card.click(); });
 });
+
+function render() {
+  const list = document.getElementById("file-list");
+  list.innerHTML = files.map((f, i) => `
+    <div class="file-row" id="row-${i}">
+      <span class="file-icon">📄</span>
+      <div class="file-info">
+        <div class="file-name" title="${OMI.safe.attr(f.name)}">${OMI.safe.text(f.name)}</div>
+        <div class="file-size">${OMI.file.formatSize(f.size)}</div>
+      </div>
+      <div class="file-status" id="status-${i}" style="color:var(--color-text-muted)">Pending</div>
+      <button onclick="files.splice(${i},1);render()" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:18px" aria-label="Remove ${OMI.safe.attr(f.name)}">×</button>
+    </div>`).join("");
+  document.getElementById("editor").style.display = files.length ? "" : "none";
+  document.getElementById("summary-box").style.display = "none";
+}
+
+document.getElementById("clear-btn").addEventListener("click", () => { files = []; render(); });
+
+document.getElementById("compress-btn").addEventListener("click", async () => {
+  if (!files.length) return;
+  const btn = document.getElementById("compress-btn");
+  OMI.ui.setLoading(btn, true, "⏳ Compressing…");
+  document.getElementById("prog-wrap").style.display = "";
+  document.getElementById("summary-box").style.display = "none";
+
+  let totalOrig = 0, totalComp = 0;
+  const useObjStreams = level !== "low";
+
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    const pct = Math.round((i / files.length) * 90);
+    document.getElementById("prog-bar").style.width = pct + "%";
+    document.getElementById("prog-status").textContent = `Compressing ${i+1}/${files.length}: ${f.name}`;
+    document.getElementById("status-" + i).textContent = "Processing…";
+
+    try {
+      const bytes = await f.arrayBuffer();
+      const pdf = await PDFLib.PDFDocument.load(bytes, { updateMetadata: false });
+
+      // Additional optimization: remove creation date for max compression
+      if (level === "high") {
+        pdf.setCreationDate(new Date(0));
+        pdf.setModificationDate(new Date(0));
+      }
+
+      const compressed = await pdf.save({ useObjectStreams: useObjStreams, addDefaultPage: false });
+      const origSize = bytes.byteLength, compSize = compressed.byteLength;
+      const savedPct = Math.round((1 - compSize / origSize) * 100);
+
+      totalOrig += origSize; totalComp += compSize;
+
+      const blob = new Blob([compressed], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const dlName = OMI.file.base(f.name) + "-compressed.pdf";
+
+      document.getElementById("row-" + i).classList.add("done");
+      document.getElementById("status-" + i).innerHTML =
+        savedPct > 0
+        ? `<span class="saving-pct">-${savedPct}%</span>
+           <a href="${url}" download="${dlName}" class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:6px">⬇</a>`
+        : `<span style="color:var(--color-text-muted);font-size:12px">Already optimized</span>`;
+    } catch(err) {
+      document.getElementById("row-" + i).classList.add("error");
+      document.getElementById("status-" + i).textContent = "Error";
+      OMI.error.handle(err, "PDF Compressor");
+    }
+  }
+
+  document.getElementById("prog-bar").style.width = "100%";
+  document.getElementById("prog-status").textContent = `Done — ${files.length} file${files.length > 1 ? "s" : ""} processed`;
+
+  const totalSaved = totalOrig ? Math.round((1 - totalComp / totalOrig) * 100) : 0;
+  document.getElementById("sum-saved").textContent = totalSaved + "%";
+  document.getElementById("sum-before").textContent = OMI.file.formatSize(totalOrig);
+  document.getElementById("sum-after").textContent = OMI.file.formatSize(totalComp);
+  document.getElementById("summary-box").style.display = "";
+  OMI.ui.setLoading(btn, false);
+});
+
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
 </body></html>

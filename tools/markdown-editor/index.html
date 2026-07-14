@@ -1,162 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Free Markdown Editor Online — Live Preview | OMIToolKit</title>
-<meta name="description" content="Free online Markdown editor with live HTML preview. Write Markdown on the left, see rendered HTML on the right. Export as HTML or download .md file.">
+<meta name="description" content="Free online Markdown editor with live HTML preview, syntax toolbar, word count, export as HTML or .md file. Supports GFM, tables, and code blocks.">
 <link rel="canonical" href="../../tools/markdown-editor/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/omitoolkit-core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js" crossorigin="anonymous"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Markdown Editor","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <style>
-.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
-@media(max-width:640px){.editor-layout{grid-template-columns:1fr}}
-.editor-pane{display:flex;flex-direction:column}
-.pane-header{background:#F4F3FE;padding:10px 16px;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-primary);border-bottom:1px solid var(--color-border)}
-#md-input{border:none;border-right:1.5px solid var(--color-border);border-radius:0;font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.7;padding:16px;min-height:480px;resize:none;outline:none;background:#FAFAFA}
-#md-preview{padding:20px;min-height:480px;overflow-y:auto;font-size:14.5px;line-height:1.8}
-#md-preview h1,#md-preview h2,#md-preview h3{margin:1em 0 .4em;font-weight:700}
-#md-preview h1{font-size:1.8em;border-bottom:2px solid var(--color-border);padding-bottom:.3em}
-#md-preview h2{font-size:1.4em;border-bottom:1px solid var(--color-border);padding-bottom:.2em}
-#md-preview code{background:#F4F3FE;padding:1px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:13px}
-#md-preview pre{background:#1E1B2E;padding:16px;border-radius:8px;overflow-x:auto}
-#md-preview pre code{background:transparent;color:#E2E8F0;padding:0}
-#md-preview blockquote{border-left:4px solid var(--color-primary);padding-left:16px;color:var(--color-text-muted);margin:1em 0}
-#md-preview table{width:100%;border-collapse:collapse}
-#md-preview th,#md-preview td{padding:8px 12px;border:1px solid var(--color-border)}
-#md-preview th{background:#F4F3FE;font-weight:600}
-#md-preview a{color:var(--color-primary)}
-.toolbar{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--color-border);background:#fff}
-.tb-btn{padding:5px 10px;border-radius:5px;border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;font-family:monospace;transition:all .12s}
+.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;min-height:520px}
+@media(max-width:640px){.editor-layout{grid-template-columns:1fr;min-height:auto}}
+.editor-pane{display:flex;flex-direction:column;min-width:0}
+.pane-header{background:#F4F3FE;padding:10px 16px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-primary);border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+#md-input{border:none;border-right:1.5px solid var(--color-border);border-radius:0;font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.75;padding:16px;flex:1;resize:none;outline:none;background:#FAFAFA;color:var(--color-text);tab-size:2}
+.preview-area{padding:20px;flex:1;overflow-y:auto;font-size:14.5px;line-height:1.8;color:var(--color-text)}
+.preview-area h1{font-size:1.75em;border-bottom:2px solid var(--color-border);padding-bottom:.3em;margin:0 0 .6em}
+.preview-area h2{font-size:1.4em;border-bottom:1px solid var(--color-border);padding-bottom:.2em;margin:.8em 0 .4em}
+.preview-area h3{font-size:1.15em;margin:.7em 0 .3em}
+.preview-area code{background:#F0EFF9;padding:2px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:13px;color:#6D28D9}
+.preview-area pre{background:#1E1B2E;padding:16px;border-radius:8px;overflow-x:auto;margin:.8em 0}
+.preview-area pre code{background:transparent;color:#E2E8F0;padding:0;font-size:13px}
+.preview-area blockquote{border-left:4px solid var(--color-primary);padding:.5em 1em;color:var(--color-text-muted);margin:.8em 0;background:#F4F3FE;border-radius:0 6px 6px 0}
+.preview-area table{width:100%;border-collapse:collapse;margin:.8em 0}
+.preview-area th,.preview-area td{padding:8px 12px;border:1px solid var(--color-border)}
+.preview-area th{background:#F4F3FE;font-weight:600}
+.preview-area a{color:var(--color-primary);text-decoration:underline}
+.preview-area ul,.preview-area ol{padding-left:1.5em}
+.preview-area img{max-width:100%;border-radius:6px}
+.preview-area hr{border:none;border-top:2px solid var(--color-border);margin:1em 0}
+/* Toolbar */
+.toolbar{display:flex;gap:5px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--color-border);background:#fff;align-items:center}
+.tb-btn{padding:5px 10px;border-radius:5px;border:1px solid var(--color-border);background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;font-family:"JetBrains Mono",monospace;transition:all .12s;line-height:1;flex-shrink:0}
 .tb-btn:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
-.stats-row{display:flex;gap:10px;padding:8px 16px;background:#F9F9F9;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)}
+.tb-sep{width:1px;background:var(--color-border);height:22px;flex-shrink:0;margin:0 3px}
+/* Stats */
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;padding:8px 16px;background:#F9F9F9;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted);flex-shrink:0}
+.stat-item{display:flex;align-items:center;gap:4px}
+/* Action row */
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 </style>
-<script src="../../assets/js/omitoolkit-core.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="container inner">
-<a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
-<nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
+  <a href="../../" class="logo"><span class="mark">O</span>OMIToolKit</a>
+  <nav class="nav-links"><a href="../../#all-tools">All Tools</a><a href="../../#cat-developer">Developer</a><a href="../../about/">About</a></nav>
 </div></header>
 <div class="container breadcrumb"><a href="../../">Home</a> / <a href="../../#cat-developer">Developer</a> / Markdown Editor</div>
 <div class="container tool-page-header">
-<h1>Markdown Editor</h1>
-<p>Write Markdown on the left — see live HTML preview on the right. Export as HTML or download .md.</p>
+  <h1>Markdown Editor</h1>
+  <p>Write Markdown on the left, see live HTML preview on the right — export as .md or HTML.</p>
 </div>
-<div class="container"><div class="tool-panel" style="max-width:1000px;padding:0">
-  <div class="toolbar">
-    <button class="tb-btn" onclick="insert('**','**')"><b>B</b></button>
-    <button class="tb-btn" onclick="insert('*','*')"><i>I</i></button>
-    <button class="tb-btn" onclick="insert('# ','')">H1</button>
-    <button class="tb-btn" onclick="insert('## ','')">H2</button>
-    <button class="tb-btn" onclick="insert('### ','')">H3</button>
-    <button class="tb-btn" onclick="insert('[text](',')')">🔗</button>
-    <button class="tb-btn" onclick="insert('`','`')">code</button>
-    <button class="tb-btn" onclick="insert('\`\`\`\n','\n\`\`\`')">```</button>
-    <button class="tb-btn" onclick="insert('> ','')">❝</button>
-    <button class="tb-btn" onclick="insert('- ','')">• List</button>
-    <button class="tb-btn" onclick="insert('1. ','')">1. List</button>
-    <button class="tb-btn" onclick="insert('---\n','')">HR</button>
-    <button class="tb-btn" onclick="insert('| Col1 | Col2 |\n|------|------|\n| Cell | Cell |\n','')">Table</button>
+<div class="container"><div class="tool-panel" style="max-width:1060px;padding:0">
+
+  <!-- Toolbar -->
+  <div class="toolbar" role="toolbar" aria-label="Markdown formatting toolbar">
+    <button class="tb-btn" onclick="ins('**','**')" title="Bold" aria-label="Bold"><b>B</b></button>
+    <button class="tb-btn" onclick="ins('*','*')" title="Italic" aria-label="Italic"><i>I</i></button>
+    <button class="tb-btn" onclick="ins('~~','~~')" title="Strikethrough" aria-label="Strikethrough"><s>S</s></button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" onclick="insLine('# ')" title="Heading 1" aria-label="Heading 1">H1</button>
+    <button class="tb-btn" onclick="insLine('## ')" title="Heading 2" aria-label="Heading 2">H2</button>
+    <button class="tb-btn" onclick="insLine('### ')" title="Heading 3" aria-label="Heading 3">H3</button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" onclick="ins('\`','\`')" title="Inline code" aria-label="Inline code">code</button>
+    <button class="tb-btn" onclick="ins('\`\`\`\n','\n\`\`\`')" title="Code block" aria-label="Code block">```</button>
+    <button class="tb-btn" onclick="insLine('> ')" title="Blockquote" aria-label="Blockquote">❝</button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" onclick="insLine('- ')" title="Bullet list" aria-label="Bullet list">• List</button>
+    <button class="tb-btn" onclick="insLine('1. ')" title="Numbered list" aria-label="Numbered list">1. List</button>
+    <button class="tb-btn" onclick="ins('[','](url)')" title="Link" aria-label="Link">🔗</button>
+    <button class="tb-btn" onclick="ins('![alt](',')')" title="Image" aria-label="Image">🖼</button>
+    <button class="tb-btn" onclick="insertTable()" title="Table" aria-label="Table">⊞ Table</button>
+    <button class="tb-btn" onclick="insLine('---\n')" title="Horizontal rule" aria-label="Horizontal rule">─ HR</button>
     <div style="flex:1"></div>
-    <button class="tb-btn" id="dl-md-btn">⬇ .md</button>
-    <button class="tb-btn" id="dl-html-btn">⬇ HTML</button>
-    <button class="tb-btn" id="copy-html-btn">Copy HTML</button>
+    <label style="font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Upload .md file">
+      <input type="file" id="md-upload" accept=".md,.txt,text/markdown" style="display:none" aria-label="Upload Markdown file">
+      <button class="tb-btn" onclick="document.getElementById('md-upload').click()" aria-label="Upload .md file">⬆ Open</button>
+    </label>
   </div>
+
+  <!-- Editor split -->
   <div class="editor-layout">
     <div class="editor-pane">
-      <div class="pane-header">✏️ Markdown Input</div>
-      <textarea id="md-input" placeholder="# Hello World&#10;&#10;Start writing Markdown here...&#10;&#10;**Bold**, *italic*, `code`&#10;&#10;- List item&#10;- Another item&#10;&#10;> Blockquote&#10;&#10;[Link](https://example.com)"></textarea>
+      <div class="pane-header">
+        <span>✏️ Markdown</span>
+        <span id="char-count" style="font-size:11px;color:var(--color-text-muted)">0 chars</span>
+      </div>
+      <textarea id="md-input"
+        placeholder="# Hello World&#10;&#10;Start writing Markdown here…&#10;&#10;**Bold**, *italic*, \`code\`&#10;&#10;- List item&#10;- Another item&#10;&#10;> Blockquote&#10;&#10;[Link](https://omitoolkit.com)"
+        aria-label="Markdown input"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="off"></textarea>
     </div>
     <div class="editor-pane">
-      <div class="pane-header">👁️ Preview</div>
-      <div id="md-preview"></div>
+      <div class="pane-header"><span>👁️ Preview</span></div>
+      <div id="md-preview" class="preview-area" role="region" aria-label="Rendered preview" aria-live="polite"></div>
     </div>
   </div>
+
+  <!-- Stats bar -->
   <div class="stats-row">
-    <span id="s-words">0 words</span>
-    <span id="s-chars">0 chars</span>
-    <span id="s-lines">0 lines</span>
-    <span id="s-read">~0 min read</span>
+    <span class="stat-item">📝 <strong id="s-words">0</strong> words</span>
+    <span class="stat-item">📊 <strong id="s-chars">0</strong> chars</span>
+    <span class="stat-item">📄 <strong id="s-lines">0</strong> lines</span>
+    <span class="stat-item">⏱ <strong id="s-read">~0</strong> min read</span>
   </div>
+
+  <!-- Actions -->
+  <div class="action-row" style="padding:14px 16px;border-top:1px solid var(--color-border)">
+    <button class="btn btn-primary" id="dl-md" aria-label="Download as Markdown file">⬇ Download .md</button>
+    <button class="btn btn-outline" id="dl-html" aria-label="Download as HTML file">⬇ Download HTML</button>
+    <button class="btn btn-outline" id="copy-html" aria-label="Copy HTML to clipboard">Copy HTML</button>
+    <button class="btn btn-outline" id="clear-btn" aria-label="Clear editor">Clear</button>
+  </div>
+
 </div></div>
 <div class="ad-slot container">Ad slot</div>
 <article class="article container">
-<h2>Markdown syntax quick reference</h2>
-<p>Markdown is a lightweight markup language that converts plain text to formatted HTML. <code># Heading</code> creates an H1, <code>**bold**</code> makes text bold, <code>*italic*</code> makes it italic, and backticks create <code>inline code</code>. Hyphens create bullet lists, and you can create links with <code>[text](URL)</code>. Triple backticks create code blocks. Markdown is widely used in README files, blogs, documentation, and messaging apps like Slack and Discord.</p>
+  <h2>Markdown syntax quick reference</h2>
+  <p>Markdown is a lightweight markup language that converts to formatted HTML. Use <code># H1</code>, <code>## H2</code>, <code>### H3</code> for headings. <code>**bold**</code> for bold, <code>*italic*</code> for italic. Backticks for <code>inline code</code> and triple backticks for code blocks. Hyphens for bullet lists, <code>1.</code> for numbered lists. <code>[text](url)</code> for links. Markdown is used in README files, GitHub, GitLab, Notion, Obsidian, and most documentation platforms.</p>
+  <h2>GitHub Flavored Markdown (GFM)</h2>
+  <p>This editor supports GFM — the Markdown superset used on GitHub. It adds: fenced code blocks with ``` language hints, tables with pipe syntax, ~~strikethrough~~ with tildes, task lists with <code>- [ ]</code>, and autolinked URLs. GFM is also supported by GitLab, Bitbucket, Jira, and most developer tools.</p>
 </article>
 <footer class="site-footer"><div class="container">&copy; <span id="yr"></span> OMIToolKit.</div></footer>
 <script>
-document.getElementById("yr").textContent=new Date().getFullYear();
-const inp=document.getElementById("md-input"), preview=document.getElementById("md-preview");
-marked.setOptions({breaks:true,gfm:true});
-function render(){
-  const t=inp.value;
-  preview.innerHTML=marked.parse(t);
-  const words=t.trim()?t.trim().split(/\s+/).length:0;
-  document.getElementById("s-words").textContent=words+" words";
-  document.getElementById("s-chars").textContent=t.length+" chars";
-  document.getElementById("s-lines").textContent=t.split("\n").length+" lines";
-  document.getElementById("s-read").textContent="~"+Math.max(1,Math.ceil(words/200))+" min read";
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+marked.use({ breaks: true, gfm: true });
+
+const inp = document.getElementById("md-input");
+const preview = document.getElementById("md-preview");
+
+// ── Render ─────────────────────────────────────────────────────────────
+function render() {
+  const t = inp.value;
+  // Use marked — output is HTML, set via innerHTML
+  // marked v9 strips dangerous elements by default (no script, no event handlers)
+  try {
+    preview.innerHTML = marked.parse(t);
+    // Extra safety: remove any remaining script tags
+    preview.querySelectorAll("script").forEach(s => s.remove());
+    preview.querySelectorAll("[onclick],[onload],[onerror]").forEach(el => {
+      ["onclick","onload","onerror","onmouseover"].forEach(ev => el.removeAttribute(ev));
+    });
+  } catch(e) {
+    preview.textContent = "Preview error: " + e.message;
+  }
+
+  const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+  document.getElementById("s-words").textContent = words;
+  document.getElementById("s-chars").textContent = t.length;
+  document.getElementById("s-lines").textContent = t ? t.split("\n").length : 0;
+  document.getElementById("s-read").textContent = "~" + Math.max(1, Math.ceil(words / 200));
+  document.getElementById("char-count").textContent = t.length + " chars";
 }
-inp.addEventListener("input",render);
-function insert(before,after){
-  const s=inp.selectionStart,e=inp.selectionEnd,t=inp.value;
-  const sel=t.substring(s,e);
-  inp.value=t.substring(0,s)+before+sel+after+t.substring(e);
-  inp.selectionStart=s+before.length;
-  inp.selectionEnd=s+before.length+sel.length;
-  inp.focus();render();
+
+inp.addEventListener("input", render);
+
+// ── Toolbar helpers ────────────────────────────────────────────────────
+function ins(before, after) {
+  const s = inp.selectionStart, e = inp.selectionEnd, t = inp.value;
+  const sel = t.substring(s, e);
+  inp.value = t.substring(0, s) + before + sel + after + t.substring(e);
+  inp.selectionStart = s + before.length;
+  inp.selectionEnd   = s + before.length + sel.length;
+  inp.focus(); render();
 }
-document.getElementById("dl-md-btn").addEventListener("click",()=>{
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([inp.value],{type:"text/markdown"}));a.download="document.md";a.click();
+
+function insLine(prefix) {
+  const s = inp.selectionStart, t = inp.value;
+  const lineStart = t.lastIndexOf("\n", s - 1) + 1;
+  inp.value = t.substring(0, lineStart) + prefix + t.substring(lineStart);
+  inp.selectionStart = inp.selectionEnd = s + prefix.length;
+  inp.focus(); render();
+}
+
+function insertTable() {
+  ins("| Col 1 | Col 2 | Col 3 |\n|-------|-------|-------|\n| Cell  | Cell  | Cell  |\n", "");
+}
+
+// ── File upload ────────────────────────────────────────────────────────
+document.getElementById("md-upload").addEventListener("change", function() {
+  if (!this.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => { inp.value = e.target.result; render(); };
+  reader.readAsText(this.files[0]);
+  this.value = "";
 });
-document.getElementById("dl-html-btn").addEventListener("click",()=>{
-  const html="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Markdown Export</title></head><body>"+preview.innerHTML+"</body></html>";
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="document.html";a.click();
+
+// ── Export ─────────────────────────────────────────────────────────────
+document.getElementById("dl-md").addEventListener("click", () => {
+  OMI.file.download(new Blob([inp.value], { type: "text/markdown" }), "document.md", "text/markdown");
 });
-document.getElementById("copy-html-btn").addEventListener("click",()=>{
-  navigator.clipboard.writeText(preview.innerHTML).then(()=>{const b=document.getElementById("copy-html-btn");b.textContent="Copied!";setTimeout(()=>b.textContent="Copy HTML",1200)});
+
+document.getElementById("dl-html").addEventListener("click", () => {
+  const html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>Markdown Export</title>\n<style>body{font-family:system-ui,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.7;color:#1a1a2e}h1,h2{border-bottom:1px solid #e5e7eb;padding-bottom:.3em}code{background:#f3f4f6;padding:2px 5px;border-radius:3px}pre{background:#1e1b2e;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto}blockquote{border-left:4px solid #7c3aed;padding:.5em 1em;background:#f5f3ff;margin:1em 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #e5e7eb;padding:8px 12px}th{background:#f9fafb}</style>\n</head>\n<body>\n${preview.innerHTML}\n</body>\n</html>`;
+  OMI.file.download(new Blob([html], { type: "text/html" }), "document.html", "text/html");
 });
-// Demo content
-inp.value=`# Welcome to Markdown Editor
+
+document.getElementById("copy-html").addEventListener("click", () => {
+  OMI.clipboard.copy(preview.innerHTML, document.getElementById("copy-html"));
+});
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+  inp.value = ""; render(); inp.focus();
+});
+
+// ── Sample content ─────────────────────────────────────────────────────
+inp.value = `# Welcome to Markdown Editor
 
 This is a **live preview** Markdown editor. Type on the left, see rendered HTML on the right.
 
 ## Features
-- Bold, *italic*, and \`inline code\`
-- Lists, blockquotes, tables
-- Code blocks with syntax hints
-- Export as .md or HTML
+
+- **Bold**, *italic*, and \`inline code\`
+- Lists, blockquotes, and tables
+- Code blocks, links, and images
+- Export as .md or full HTML
 
 ## Code Example
-\`\`\`
+
+\`\`\`javascript
 const greet = (name) => \`Hello, \${name}!\`;
 console.log(greet("World"));
 \`\`\`
 
-> **Tip:** Use the toolbar buttons above to insert formatting quickly.
+> **Tip:** Use the toolbar buttons above to insert formatting quickly without remembering syntax.
 
-| Format | Syntax |
-|--------|--------|
-| Bold | **text** |
-| Italic | *text* |
-| Code | \`text\` |`;
+| Format | Syntax | Result |
+|--------|--------|--------|
+| Bold | \`**text**\` | **text** |
+| Italic | \`*text*\` | *text* |
+| Code | \` \`text\` \` | \`text\` |
+| Link | \`[label](url)\` | [label](url) |`;
 render();
 
-// Global error handler — OMI Foundation Sprint 1
-window.addEventListener('error', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.error || e.message, 'Runtime');
-  }
-});
-window.addEventListener('unhandledrejection', function(e) {
-  if (window.OMI && window.OMI.error) {
-    OMI.error.handle(e.reason, 'Promise');
-  }
-  e.preventDefault();
-});
+window.addEventListener("error", e => OMI.error.handle(e.error || e.message, "Runtime"));
+window.addEventListener("unhandledrejection", e => { OMI.error.handle(e.reason, "Promise"); e.preventDefault(); });
 </script>
 </body></html>

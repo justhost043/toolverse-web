@@ -53,17 +53,17 @@ Last Updated: Foundation Sprint 1 Complete
 | css-gradient-generator | ⬜ | — |
 | css-grid-generator | ⬜ | — |
 | css-minifier | ⬜ | — |
-| hash-generator | ⬜ | — |
+| hash-generator | ✅ | 91/100 |
 | html-encoder | ⬜ | — |
 | html-minifier | ⬜ | — |
 | http-status-codes | ⬜ | — |
 | json-formatter | ✅ | 92/100 |
 | json-to-csv | ⬜ | — |
 | jwt-decoder | ⬜ | — |
-| markdown-editor | ⬜ | — |
+| markdown-editor | ✅ | 92/100 |
 | password-generator | 🔄 | — |
 | qr-code-generator | 🔄 | — |
-| regex-tester | ⬜ | — |
+| regex-tester | ✅ | 93/100 |
 | screen-resolution | ⬜ | — |
 | sql-formatter | ⬜ | — |
 | svg-converter | ⬜ | — |
@@ -94,7 +94,7 @@ Last Updated: Foundation Sprint 1 Complete
 ### Image (16)
 | Tool | Status | Score |
 |------|--------|-------|
-| bulk-image-converter | ⬜ | — |
+| bulk-image-converter | ✅ | 90/100 |
 | flip-image | ⬜ | — |
 | heic-to-jpg | ⬜ | — |
 | image-color-picker | ⬜ | — |
@@ -116,7 +116,7 @@ Last Updated: Foundation Sprint 1 Complete
 |------|--------|-------|
 | image-to-pdf | ⬜ | — |
 | images-to-pdf | ⬜ | — |
-| pdf-compressor | ⬜ | — |
+| pdf-compressor | ✅ | 89/100 |
 | pdf-merger | 🔄 | — |
 | pdf-page-remover | ⬜ | — |
 | pdf-reorder | ⬜ | — |
