@@ -61,21 +61,23 @@
     <div id="panel-to-date">
       <div class="field-row">
         <label class="field-label">Unix timestamp (seconds or milliseconds)</label>
-        <input type="text" id="inp-epoch" class="field-input" placeholder="e.g. 1700000000" style="font-family:var(--font-mono);font-size:16px;font-weight:500">
+        <input type="text" id="inp-epoch" aria-label="Unix timestamp to convert" class="field-input" placeholder="e.g. 1700000000" style="font-family:var(--font-mono);font-size:16px;font-weight:500">
       </div>
       <div class="result-grid" id="epoch-result" style="display:none">
         <div class="result-box"><div class="r-val" id="r-utc">—</div><div class="r-lbl">UTC</div></div>
         <div class="result-box"><div class="r-val" id="r-local">—</div><div class="r-lbl">Your local time</div></div>
         <div class="result-box"><div class="r-val" id="r-iso">—</div><div class="r-lbl">ISO 8601</div></div>
         <div class="result-box"><div class="r-val" id="r-relative">—</div><div class="r-lbl">Relative time</div></div>
+        <div class="result-box"><div class="r-val" id="r-ms">—</div><div class="r-lbl">Milliseconds</div></div>
+        <div class="result-box"><div class="r-val" id="r-day">—</div><div class="r-lbl">Day of week</div></div>
       </div>
     </div>
 
     <!-- Panel: date → timestamp -->
     <div id="panel-to-epoch" style="display:none">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="field-row"><label class="field-label">Date</label><input type="date" id="inp-date" class="field-input"></div>
-        <div class="field-row"><label class="field-label">Time</label><input type="time" id="inp-time" class="field-input" step="1" value="00:00:00"></div>
+        <div class="field-row"><label class="field-label">Date</label><input type="date" id="inp-date" aria-label="Date to convert to timestamp" class="field-input"></div>
+        <div class="field-row"><label class="field-label">Time</label><input type="time" id="inp-time" aria-label="Time to convert to timestamp" class="field-input" step="1" value="00:00:00"></div>
       </div>
       <div class="result-grid" id="date-result" style="display:none">
         <div class="result-box"><div class="r-val" id="r-epoch-s">—</div><div class="r-lbl">Unix (seconds)</div></div>
@@ -107,9 +109,7 @@ setInterval(updateLive, 100);
 updateLive();
 
 document.getElementById('copy-live').addEventListener('click', () => {
-  navigator.clipboard.writeText(Math.floor(Date.now()/1000).toString()).then(() => {
-    const b = document.getElementById('copy-live'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy timestamp',1200);
-  });
+  OMI.clipboard.copy(Math.floor(Date.now()/1000).toString(), document.getElementById('copy-live'));
 });
 
 // Mode toggle
@@ -156,9 +156,16 @@ function convertEpoch() {
   document.getElementById('r-local').textContent = d.toLocaleString();
   document.getElementById('r-iso').textContent = d.toISOString();
   document.getElementById('r-relative').textContent = relativeTime(num);
+  document.getElementById('r-ms').textContent = num.toLocaleString() + ' ms';
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('r-day').textContent = days[d.getDay()] + ', week ' + getWeekNumber(d);
   document.getElementById('epoch-result').style.display='grid';
 }
 
+function getWeekNumber(d) {
+  const onejan = new Date(d.getFullYear(),0,1);
+  return Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+}
 // Date → timestamp
 function convertDate() {
   const d = document.getElementById('inp-date').value;

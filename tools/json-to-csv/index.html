@@ -46,7 +46,7 @@ textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-he
   <div class="tool-panel" style="max-width:900px">
     <div class="options-row">
       <label style="font-size:13.5px;font-weight:500">Delimiter:</label>
-      <select id="delimiter" class="field-select" style="width:auto">
+      <select id="delimiter" class="field-select" aria-label="CSV delimiter character" style="width:auto">
         <option value=",">Comma (,)</option>
         <option value=";">Semicolon (;)</option>
         <option value="	">Tab</option>
@@ -58,7 +58,7 @@ textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-he
 
     <div class="field-row">
       <label class="field-label">JSON input (array of objects)</label>
-      <textarea id="json-inp" class="field-input code-area" placeholder='[
+      <textarea id="json-inp" aria-label="JSON input — paste array of objects" class="field-input code-area" placeholder='[
   {"name":"Alice","age":30,"city":"London"},
   {"name":"Bob","age":25,"city":"New York"}
 ]'></textarea>
@@ -72,8 +72,8 @@ textarea.code-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-he
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-      <button class="btn btn-primary" id="download-btn" disabled>⬇ Download CSV</button>
-      <button class="btn btn-outline" id="copy-btn" disabled>Copy CSV</button>
+      <button class="btn btn-primary" id="download-btn" disabled aria-label="Download as CSV file">⬇ Download CSV</button>
+      <button class="btn btn-outline" id="copy-btn" disabled aria-label="Copy CSV to clipboard">Copy CSV</button>
       <button class="btn btn-outline" id="clear-btn">Clear</button>
     </div>
   </div>
@@ -152,16 +152,37 @@ function convert() {
   // Preview table
   const table = document.getElementById('preview-table');
   const displayRows = rows.slice(0, 50);
-  table.innerHTML = '<thead><tr>' + allKeys.map(k => `<th>${k}</th>`).join('') + '</tr></thead><tbody>' +
-    displayRows.map(r => '<tr>' + allKeys.map(k => `<td title="${String(r[k]??'')}">${String(r[k]??'')}</td>`).join('') + '</tr>').join('') +
-    '</tbody>';
+  // XSS-safe table rendering using DOM APIs
+const thead = document.createElement('thead');
+const headerRow = document.createElement('tr');
+allKeys.forEach(k => {
+  const th = document.createElement('th');
+  th.textContent = k;
+  headerRow.appendChild(th);
+});
+thead.appendChild(headerRow);
+const tbody = document.createElement('tbody');
+displayRows.forEach(r => {
+  const tr = document.createElement('tr');
+  allKeys.forEach(k => {
+    const td = document.createElement('td');
+    const val = String(r[k] ?? '');
+    td.textContent = val;
+    td.title = val;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+});
+table.innerHTML = '';
+table.appendChild(thead);
+table.appendChild(tbody);
 
   document.getElementById('preview-wrap').style.display = '';
   document.getElementById('stat-chips').innerHTML =
-    `<span class="chip">${rows.length} rows</span>` +
-    `<span class="chip">${allKeys.length} columns</span>` +
-    `<span class="chip">${csvOutput.length.toLocaleString()} chars</span>` +
-    (rows.length > 50 ? `<span class="chip">Showing first 50 rows in preview</span>` : '');
+    `<span class="omi-chip">${rows.length} rows</span>` +
+    `<span class="omi-chip">${allKeys.length} columns</span>` +
+    `<span class="omi-chip">${OMI.file.formatSize(new Blob([csvOutput]).size)}</span>` +
+    (rows.length > 50 ? `<span class="omi-chip">First 50 rows shown</span>` : '');
 
   document.getElementById('download-btn').disabled = false;
   document.getElementById('copy-btn').disabled = false;
@@ -170,17 +191,8 @@ function convert() {
 document.getElementById('json-inp').addEventListener('input', convert);
 ['delimiter','opt-quotes','opt-flatten'].forEach(id => document.getElementById(id).addEventListener('change', convert));
 
-document.getElementById('download-btn').addEventListener('click', () => {
-  const blob = new Blob([csvOutput], { type: 'text/csv' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'data.csv'; a.click();
-});
-document.getElementById('copy-btn').addEventListener('click', () => {
-  navigator.clipboard.writeText(csvOutput).then(() => {
-    const b = document.getElementById('copy-btn'); b.textContent = 'Copied!';
-    setTimeout(() => b.textContent = 'Copy CSV', 1200);
-  });
-});
+document.getElementById('download-btn').addEventListener('click', () => OMI.file.download(new Blob([csvOutput],{type:'text/csv'}),'data.csv','text/csv'));
+document.getElementById('copy-btn').addEventListener('click', () => OMI.clipboard.copy(csvOutput, document.getElementById('copy-btn')));
 document.getElementById('clear-btn').addEventListener('click', () => {
   document.getElementById('json-inp').value = '';
   convert();
@@ -193,6 +205,9 @@ document.getElementById('json-inp').value = JSON.stringify([
   {id:3,name:"Carol",age:35,city:"Sydney",score:91.0}
 ], null, 2);
 convert();
+
+window.addEventListener('error', e => OMI.error.handle(e.error || e.message, 'JSON to CSV'));
+window.addEventListener('unhandledrejection', e => { OMI.error.handle(e.reason, 'Promise'); e.preventDefault(); });
 </script>
 </body>
 </html>

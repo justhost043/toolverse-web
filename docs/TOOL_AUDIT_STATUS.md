@@ -50,7 +50,7 @@ Last Updated: Foundation Sprint 1 Complete
 | css-box-shadow-generator | ⬜ | — |
 | css-clamp-calculator | ⬜ | — |
 | css-flexbox-generator | ⬜ | — |
-| css-gradient-generator | ⬜ | — |
+| css-gradient-generator | ✅ | 90/100 |
 | css-grid-generator | ⬜ | — |
 | css-minifier | ⬜ | — |
 | hash-generator | ✅ | 91/100 |
@@ -58,7 +58,7 @@ Last Updated: Foundation Sprint 1 Complete
 | html-minifier | ⬜ | — |
 | http-status-codes | ⬜ | — |
 | json-formatter | ✅ | 92/100 |
-| json-to-csv | ⬜ | — |
+| json-to-csv | ✅ | 88/100 |
 | jwt-decoder | ⬜ | — |
 | markdown-editor | ✅ | 92/100 |
 | password-generator | 🔄 | — |
@@ -67,7 +67,7 @@ Last Updated: Foundation Sprint 1 Complete
 | screen-resolution | ⬜ | — |
 | sql-formatter | ⬜ | — |
 | svg-converter | ⬜ | — |
-| timestamp-converter | ⬜ | — |
+| timestamp-converter | ✅ | 91/100 |
 | url-encoder | ✅ | 91/100 |
 | uuid-generator | ⬜ | — |
 | text-diff | ⬜ | — |
@@ -78,7 +78,7 @@ Last Updated: Foundation Sprint 1 Complete
 | character-frequency | ⬜ | — |
 | flip-text | ⬜ | — |
 | html-to-markdown | ⬜ | — |
-| lorem-ipsum | ⬜ | — |
+| lorem-ipsum | ✅ | 88/100 |
 | markdown-converter | ⬜ | — |
 | markdown-table-generator | ⬜ | — |
 | number-sorter | ⬜ | — |
@@ -100,7 +100,7 @@ Last Updated: Foundation Sprint 1 Complete
 | image-color-picker | ⬜ | — |
 | image-compressor | 🔄 | — |
 | image-converter | ⬜ | — |
-| image-cropper | ⬜ | — |
+| image-cropper | ✅ | 89/100 |
 | image-resizer | ✅ | 90/100 |
 | image-rotator | ⬜ | — |
 | image-to-base64 | ⬜ | — |

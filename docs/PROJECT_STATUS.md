@@ -30,3 +30,4 @@ Batch 1 — Tool Enhancement (5 tools) ✅ COMPLETE
 
 | 2     | json-formatter, image-resizer, base64-encoder, text-case-converter, url-encoder | ✅ COMPLETE |
 | 3     | pdf-compressor, bulk-image-converter, markdown-editor, hash-generator, regex-tester | ✅ COMPLETE |
+| 4     | json-to-csv, image-cropper, css-gradient-generator, lorem-ipsum, timestamp-converter | ✅ COMPLETE |

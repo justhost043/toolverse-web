@@ -62,10 +62,10 @@
     </div>
 
     <!-- Type tabs -->
-    <div class="type-tabs">
-      <button class="type-tab active" data-type="linear">Linear</button>
-      <button class="type-tab" data-type="radial">Radial</button>
-      <button class="type-tab" data-type="conic">Conic</button>
+    <div class="type-tabs" role="tablist" aria-label="Gradient type">
+      <button class="type-tab active" data-type="linear" role="tab" aria-selected="true">Linear</button>
+      <button class="type-tab" data-type="radial" role="tab" aria-selected="false">Radial</button>
+      <button class="type-tab" data-type="conic" role="tab" aria-selected="false">Conic</button>
     </div>
 
     <!-- Angle (linear/conic only) -->
@@ -96,6 +96,11 @@
       <div id="css-code"></div>
     </div>
 
+    <!-- Tailwind copy -->
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="copy-tailwind" style="font-size:13px;padding:8px 16px" aria-label="Copy as Tailwind CSS class">Copy Tailwind</button>
+      <button class="btn btn-outline" id="copy-value-only" style="font-size:13px;padding:8px 16px" aria-label="Copy gradient value only">Copy value only</button>
+    </div>
     <!-- Presets -->
     <div class="field-label" style="margin:18px 0 10px">Preset gradients</div>
     <div class="presets-grid" id="presets-grid"></div>
@@ -178,8 +183,8 @@ function renderStops() {
 // Type tabs
 document.querySelectorAll('.type-tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+    document.querySelectorAll('.type-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
     gradType = tab.dataset.type;
     document.getElementById('angle-row').style.display = gradType === 'radial' ? 'none' : '';
     document.getElementById('radial-row').style.display = gradType === 'radial' ? '' : 'none';
@@ -202,11 +207,7 @@ document.getElementById('add-stop').addEventListener('click', () => {
 });
 
 // Copy
-document.getElementById('copy-css').addEventListener('click', () => {
-  navigator.clipboard.writeText(document.getElementById('css-code').textContent).then(() => {
-    const b = document.getElementById('copy-css'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy CSS',1200);
-  });
-});
+document.getElementById('copy-css').addEventListener('click', () => OMI.clipboard.copy(document.getElementById('css-code').textContent, document.getElementById('copy-css')));
 
 // Randomize on preview click
 document.getElementById('preview').addEventListener('click', () => {
@@ -234,6 +235,14 @@ PRESETS.forEach((preset, i) => {
 });
 
 document.getElementById('radial-shape').addEventListener('change', render);
+document.getElementById('copy-tailwind').addEventListener('click', () => {
+  const css = buildCSS();
+  const tw = `bg-gradient-to-br from-[${stops[0].color}] to-[${stops[stops.length-1].color}]`;
+  OMI.clipboard.copy(tw, document.getElementById('copy-tailwind'));
+});
+document.getElementById('copy-value-only').addEventListener('click', () => {
+  OMI.clipboard.copy(buildCSS(), document.getElementById('copy-value-only'));
+});
 renderStops();
 
 // Global error handler — OMI Foundation Sprint 1

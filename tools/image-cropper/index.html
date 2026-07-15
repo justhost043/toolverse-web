@@ -44,7 +44,7 @@
 </div>
 <div class="container">
   <div class="tool-panel" style="max-width:760px">
-    <div class="drop-zone" id="drop-zone">
+    <div class="drop-zone" id="drop-zone" role="button" tabindex="0" aria-label="Upload image to crop">
       <div style="font-size:36px;margin-bottom:10px">✂️</div>
       <div style="font-size:15px;font-weight:500;color:var(--color-text)">Drop an image here or click to select</div>
       <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP, GIF</div>
@@ -72,8 +72,13 @@
 
       <div class="crop-info" id="crop-info">Click and drag on the image to select crop area</div>
 
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-        <button class="btn btn-primary" id="crop-btn" disabled>✂️ Crop & Download</button>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <select id="out-fmt" class="field-select" style="max-width:130px" aria-label="Output format">
+          <option value="image/png">PNG</option>
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+        <button class="btn btn-primary" id="crop-btn" disabled aria-label="Crop and download image">✂️ Crop & Download</button>
         <button class="btn btn-outline" id="reset-selection">Reset selection</button>
         <button class="btn btn-outline" id="new-image">New image</button>
       </div>
@@ -106,6 +111,7 @@ let aspectRatio = null; // null = free
 const MAX_DISPLAY = 680;
 
 dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if(e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]); });
@@ -114,6 +120,7 @@ fileInput.addEventListener('change', () => { if(fileInput.files[0]) loadImage(fi
 function loadImage(file) {
   const url = URL.createObjectURL(file);
   imgEl = new Image();
+  imgEl.onerror = () => OMI.error.toast('Could not load this image file. Try a different format.', 'error');
   imgEl.onload = () => {
     imgW = imgEl.naturalWidth; imgH = imgEl.naturalHeight;
     const scale = Math.min(1, MAX_DISPLAY / Math.max(imgW, imgH));
@@ -175,6 +182,10 @@ canvas.addEventListener('mousemove', e => {
 });
 canvas.addEventListener('mouseup', finishDrag);
 canvas.addEventListener('mouseleave', finishDrag);
+// Touch support for mobile
+canvas.addEventListener('touchstart', e => { e.preventDefault(); canvas.dispatchEvent(new MouseEvent('mousedown', {clientX:e.touches[0].clientX,clientY:e.touches[0].clientY})); });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); canvas.dispatchEvent(new MouseEvent('mousemove', {clientX:e.touches[0].clientX,clientY:e.touches[0].clientY})); });
+canvas.addEventListener('touchend',   e => { e.preventDefault(); finishDrag(); });
 
 function finishDrag() {
   if (!dragging) return;
@@ -206,12 +217,20 @@ document.getElementById('crop-btn').addEventListener('click', () => {
   const out = document.createElement('canvas');
   out.width = rw; out.height = rh;
   out.getContext('2d').drawImage(imgEl, rx, ry, rw, rh, 0, 0, rw, rh);
-  out.toBlob(blob => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `cropped-${rw}x${rh}.png`;
-    a.click();
-  }, 'image/png');
+  const fmt = document.getElementById('out-fmt').value;
+  const ext = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+  if (fmt === 'image/jpeg') {
+    const fCtx = out.getContext('2d');
+    const tmp = document.createElement('canvas');
+    tmp.width = rw; tmp.height = rh;
+    const tCtx = tmp.getContext('2d');
+    tCtx.fillStyle = '#ffffff';
+    tCtx.fillRect(0, 0, rw, rh);
+    tCtx.drawImage(out, 0, 0);
+    tmp.toBlob(blob => { OMI.file.download(blob, `cropped-${rw}x${rh}.${ext}`, fmt); }, fmt, 0.92);
+  } else {
+    out.toBlob(blob => { OMI.file.download(blob, `cropped-${rw}x${rh}.${ext}`, fmt); }, fmt);
+  }
 });
 
 document.getElementById('reset-selection').addEventListener('click', () => {

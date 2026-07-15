@@ -44,15 +44,15 @@
     <div class="controls-grid">
       <div class="ctrl-box">
         <label>Paragraphs</label>
-        <input type="number" id="ctrl-para" value="3" min="1" max="50">
+        <input type="number" id="ctrl-para" aria-label="Number of paragraphs" value="3" min="1" max="50">
       </div>
       <div class="ctrl-box">
         <label>Sentences / para</label>
-        <input type="number" id="ctrl-sent" value="5" min="1" max="20">
+        <input type="number" id="ctrl-sent" aria-label="Sentences per paragraph" value="5" min="1" max="20">
       </div>
       <div class="ctrl-box">
         <label>Words / sentence</label>
-        <input type="number" id="ctrl-words" value="12" min="3" max="30">
+        <input type="number" id="ctrl-words" aria-label="Words per sentence" value="12" min="3" max="30">
       </div>
     </div>
 
@@ -74,7 +74,7 @@
     </div>
 
     <div class="field-row">
-      <textarea class="field-input output-area" id="output" readonly></textarea>
+      <textarea class="field-input output-area" id="output" readonly aria-label="Generated Lorem Ipsum text" aria-live="polite"></textarea>
     </div>
 
     <div class="stats-chips" id="stats-chips"></div>
@@ -189,18 +189,9 @@ document.querySelectorAll('.fmt-tab').forEach(btn => {
 
 document.getElementById('btn-generate').addEventListener('click', generate);
 
-document.getElementById('btn-copy').addEventListener('click', () => {
-  navigator.clipboard.writeText(document.getElementById('output').value).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy text', 1200);
-  });
-});
+document.getElementById('btn-copy').addEventListener('click', () => OMI.clipboard.copy(document.getElementById('output').value, document.getElementById('btn-copy')));
 
-document.getElementById('btn-download').addEventListener('click', () => {
-  const blob = new Blob([document.getElementById('output').value], {type:'text/plain'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'lorem-ipsum.txt'; a.click();
-});
+document.getElementById('btn-download').addEventListener('click', () => OMI.file.download(new Blob([document.getElementById('output').value],{type:'text/plain'}),'lorem-ipsum.txt','text/plain'));
 
 generate();
 
