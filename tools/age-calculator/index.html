@@ -41,13 +41,13 @@
   <div class="tool-panel" style="max-width:580px">
     <div class="field-row">
       <label class="field-label" for="dob">Date of birth</label>
-      <input type="date" id="dob" class="field-input">
+      <input type="date" id="dob" class="field-input" aria-label="Date of birth" aria-required="true">
     </div>
     <div class="field-row">
       <label class="field-label" for="as-of">Calculate age as of</label>
-      <input type="date" id="as-of" class="field-input">
+      <input type="date" id="as-of" class="field-input" aria-label="Calculate age as of this date">
     </div>
-    <button class="btn btn-primary" id="calc-btn" style="width:100%;justify-content:center;padding:13px">Calculate Age</button>
+    <button class="btn btn-primary" id="calc-btn" aria-label="Calculate exact age" style="width:100%;justify-content:center;padding:13px">Calculate Age</button>
 
     <div id="results" style="display:none">
       <div class="result-grid">
@@ -66,6 +66,9 @@
         <div class="n" style="color:var(--color-primary)" id="r-bday">—</div>
         <div class="l" style="color:var(--color-text-muted)" id="r-bday-label">Days until next birthday</div>
       </div>
+      <button class="btn btn-outline" id="copy-age-btn" style="width:100%;justify-content:center;padding:10px;margin-top:10px;font-size:13px" aria-label="Copy age result to clipboard">
+        📋 Copy Result
+      </button>
       <div class="zodiac-row">
         <div class="zodiac-sign" id="z-icon">♈</div>
         <div>
@@ -113,6 +116,13 @@ function getZodiac(month, day) {
   return ZODIAC[0];
 }
 
+// Auto-calculate on date change
+['dob','as-of'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const btn = document.getElementById('calc-btn');
+    if (document.getElementById('dob').value && document.getElementById('as-of').value) btn.click();
+  });
+});
 document.getElementById('calc-btn').addEventListener('click', () => {
   const dobVal = document.getElementById('dob').value;
   const asofVal = document.getElementById('as-of').value;
@@ -120,7 +130,12 @@ document.getElementById('calc-btn').addEventListener('click', () => {
 
   const dob = new Date(dobVal); dob.setHours(0,0,0,0);
   const asof = new Date(asofVal); asof.setHours(0,0,0,0);
-  if (dob >= asof) return;
+  if (isNaN(dob.getTime()) || isNaN(asof.getTime())) {
+    OMI.error.toast('Please enter valid dates.', 'warning', 3000); return;
+  }
+  if (dob >= asof) {
+    OMI.error.toast('Date of birth must be before the target date.', 'warning', 3000); return;
+  }
 
   // Years
   let years = asof.getFullYear() - dob.getFullYear();
@@ -154,6 +169,15 @@ document.getElementById('calc-btn').addEventListener('click', () => {
   document.getElementById('z-dates').textContent = `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.start[0]]} ${z.start[1]} – ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][z.end[0]]} ${z.end[1]}`;
 
   document.getElementById('results').style.display = '';
+
+  // Copy result handler
+  document.getElementById('copy-age-btn').onclick = () => {
+    const text = `Age: ${years} years, ${months} months, ${days} days\n` +
+      `Total days: ${totalDays.toLocaleString()}\n` +
+      `Total weeks: ${totalWeeks.toLocaleString()}\n` +
+      `Days until next birthday: ${daysUntil}`;
+    OMI.clipboard.copy(text, document.getElementById('copy-age-btn'));
+  };
 });
 
 // Global error handler — OMI Foundation Sprint 1

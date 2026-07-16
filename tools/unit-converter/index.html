@@ -48,22 +48,23 @@
     <div class="converter-row">
       <div>
         <label class="field-label" for="from-unit">From</label>
-        <select id="from-unit" class="field-select"></select>
+        <select id="from-unit" class="field-select" aria-label="Convert from unit"></select>
       </div>
-      <button class="swap-btn" id="swap-btn" title="Swap units">⇄</button>
+      <button class="swap-btn" id="swap-btn" title="Swap units (or press Ctrl+S)" aria-label="Swap from and to units">⇄</button>
       <div>
         <label class="field-label" for="to-unit">To</label>
-        <select id="to-unit" class="field-select"></select>
+        <select id="to-unit" class="field-select" aria-label="Convert to unit"></select>
       </div>
     </div>
     <div class="field-row" style="margin-top:16px">
       <label class="field-label" for="input-val">Value</label>
-      <input type="number" id="input-val" class="field-input" value="1" step="any">
+      <input type="number" id="input-val" class="field-input" value="1" step="any" aria-label="Value to convert">
     </div>
     <div class="result-display">
       <div class="result-num" id="result-num">—</div>
       <div class="result-unit" id="result-unit"></div>
     </div>
+    <button class="btn btn-outline" id="copy-result-btn" style="width:100%;justify-content:center;padding:10px;margin-top:10px;font-size:13px" aria-label="Copy conversion result">📋 Copy Result</button>
   </div>
 </div>
 <div class="ad-slot container">Ad slot — below tool</div>
@@ -82,6 +83,8 @@ const CATS={
   Temperature:{units:['Celsius','Fahrenheit','Kelvin'],special:true},
   Area:{units:['Square Meter','Square Kilometer','Square Foot','Square Inch','Acre','Hectare','Square Mile','Square Yard'],toBase:{'Square Meter':1,'Square Kilometer':1e6,'Square Foot':0.092903,'Square Inch':0.00064516,Acre:4046.86,Hectare:10000,'Square Mile':2589988,'Square Yard':0.836127}},
   Speed:{units:['m/s','km/h','mph','knot','ft/s'],toBase:{'m/s':1,'km/h':0.277778,mph:0.44704,knot:0.514444,'ft/s':0.3048}},
+  Time:{units:['Second','Minute','Hour','Day','Week','Month','Year'],toBase:{Second:1,Minute:60,Hour:3600,Day:86400,Week:604800,Month:2592000,Year:31536000}},
+  Data:{units:['Bit','Byte','Kilobyte','Megabyte','Gigabyte','Terabyte','Petabyte'],toBase:{Bit:0.125,Byte:1,Kilobyte:1024,Megabyte:1048576,Gigabyte:1073741824,Terabyte:1099511627776,Petabyte:1.1259e15}},
   Volume:{units:['Liter','Milliliter','Cubic Meter','Gallon (US)','Quart (US)','Pint (US)','Cup (US)','Fluid Ounce (US)','Cubic Foot','Cubic Inch'],toBase:{Liter:0.001,Milliliter:0.000001,'Cubic Meter':1,'Gallon (US)':0.00378541,'Quart (US)':0.000946353,'Pint (US)':0.000473176,'Cup (US)':0.000236588,'Fluid Ounce (US)':0.0000295735,'Cubic Foot':0.0283168,'Cubic Inch':0.0000163871}}
 };
 let activeCat='Length';
@@ -126,6 +129,12 @@ document.getElementById('swap-btn').addEventListener('click',()=>{
   const t=fromSel.value;fromSel.value=toSel.value;toSel.value=t;convert();
 });
 [fromSel,toSel,inputVal].forEach(el=>el.addEventListener('input',convert));
+document.getElementById('copy-result-btn').addEventListener('click',()=>{
+  const text=document.getElementById('result-unit').textContent;
+  if(text)OMI.clipboard.copy(text,document.getElementById('copy-result-btn'));
+});
+// Keyboard: Ctrl+S = swap
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();document.getElementById('swap-btn').click();}});
 buildTabs();buildUnits();
 
 // Global error handler — OMI Foundation Sprint 1

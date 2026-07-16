@@ -50,25 +50,25 @@
 <div class="container">
   <div class="tool-panel" style="max-width:520px">
     <div class="unit-toggle">
-      <button class="unit-btn active" id="btn-metric">Metric (kg / cm)</button>
-      <button class="unit-btn" id="btn-imperial">Imperial (lb / ft)</button>
+      <button class="unit-btn active" id="btn-metric" aria-pressed="true" aria-label="Use metric units (kg and cm)">Metric (kg / cm)</button>
+      <button class="unit-btn" id="btn-imperial" aria-pressed="false" aria-label="Use imperial units (lb and feet)">Imperial (lb / ft)</button>
     </div>
 
     <div id="metric-inputs">
-      <div class="field-row"><label class="field-label">Weight (kg)</label><input type="number" id="weight-kg" class="field-input" placeholder="70" min="1" max="500" step="0.1"></div>
-      <div class="field-row"><label class="field-label">Height (cm)</label><input type="number" id="height-cm" class="field-input" placeholder="170" min="50" max="300"></div>
+      <div class="field-row"><label class="field-label">Weight (kg)</label><input type="number" id="weight-kg" aria-label="Weight in kilograms" class="field-input" placeholder="70" min="1" max="500" step="0.1"></div>
+      <div class="field-row"><label class="field-label">Height (cm)</label><input type="number" id="height-cm" aria-label="Height in centimeters" class="field-input" placeholder="170" min="50" max="300"></div>
     </div>
     <div id="imperial-inputs" style="display:none">
-      <div class="field-row"><label class="field-label">Weight (lb)</label><input type="number" id="weight-lb" class="field-input" placeholder="154" min="1" max="1000"></div>
+      <div class="field-row"><label class="field-label">Weight (lb)</label><input type="number" id="weight-lb" aria-label="Weight in pounds" class="field-input" placeholder="154" min="1" max="1000"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="field-row">
-        <div><label class="field-label">Height (ft)</label><input type="number" id="height-ft" class="field-input" placeholder="5" min="1" max="9"></div>
-        <div><label class="field-label">Height (in)</label><input type="number" id="height-in" class="field-input" placeholder="7" min="0" max="11"></div>
+        <div><label class="field-label">Height (ft)</label><input type="number" id="height-ft" aria-label="Height feet" class="field-input" placeholder="5" min="1" max="9"></div>
+        <div><label class="field-label">Height (in)</label><input type="number" id="height-in" aria-label="Height inches" class="field-input" placeholder="7" min="0" max="11"></div>
       </div>
     </div>
 
-    <button class="btn btn-primary" id="calc-bmi" style="width:100%;justify-content:center;padding:13px">Calculate BMI</button>
+    <button class="btn btn-primary" id="calc-bmi" aria-label="Calculate BMI" style="width:100%;justify-content:center;padding:13px">Calculate BMI</button>
 
-    <div id="bmi-results" style="display:none;margin-top:22px">
+    <div id="bmi-results" style="display:none;margin-top:22px" role="region" aria-label="BMI results" aria-live="polite">
       <div class="bmi-result-box" id="result-box">
         <div class="bmi-num" id="bmi-num">—</div>
         <div class="bmi-cat" id="bmi-cat">—</div>
@@ -103,9 +103,13 @@
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 let isMetric = true;
-document.getElementById('btn-metric').addEventListener('click',()=>{isMetric=true;document.getElementById('metric-inputs').style.display='';document.getElementById('imperial-inputs').style.display='none';document.getElementById('btn-metric').classList.add('active');document.getElementById('btn-imperial').classList.remove('active');});
-document.getElementById('btn-imperial').addEventListener('click',()=>{isMetric=false;document.getElementById('metric-inputs').style.display='none';document.getElementById('imperial-inputs').style.display='';document.getElementById('btn-metric').classList.remove('active');document.getElementById('btn-imperial').classList.add('active');});
+document.getElementById('btn-metric').addEventListener('click',()=>{isMetric=true;document.getElementById('metric-inputs').style.display='';document.getElementById('imperial-inputs').style.display='none';document.getElementById('btn-metric').classList.add('active');document.getElementById('btn-metric').setAttribute('aria-pressed','true');document.getElementById('btn-imperial').classList.remove('active');document.getElementById('btn-imperial').setAttribute('aria-pressed','false');});
+document.getElementById('btn-imperial').addEventListener('click',()=>{isMetric=false;document.getElementById('metric-inputs').style.display='none';document.getElementById('imperial-inputs').style.display='';document.getElementById('btn-metric').classList.remove('active');document.getElementById('btn-metric').setAttribute('aria-pressed','false');document.getElementById('btn-imperial').classList.add('active');document.getElementById('btn-imperial').setAttribute('aria-pressed','true');});
 
+['weight-kg','height-cm','weight-lb','height-ft','height-in'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('input',()=>{ if((isMetric&&document.getElementById('weight-kg').value&&document.getElementById('height-cm').value)||(!isMetric&&document.getElementById('weight-lb').value&&document.getElementById('height-ft').value)) document.getElementById('calc-bmi').click(); });
+});
 document.getElementById('calc-bmi').addEventListener('click',()=>{
   let weightKg, heightM;
   if(isMetric){
@@ -118,7 +122,9 @@ document.getElementById('calc-bmi').addEventListener('click',()=>{
     weightKg=lb*0.453592;
     heightM=(ft*12+inp)*0.0254;
   }
-  if(!weightKg||!heightM||heightM<=0) return;
+  if(!weightKg||weightKg<=0){OMI.error.toast('Please enter a valid weight.','warning',3000);return;}
+  if(!heightM||heightM<=0){OMI.error.toast('Please enter a valid height.','warning',3000);return;}
+  if(weightKg>500||heightM>3){OMI.error.toast('Please check your values — they seem too high.','warning',3000);return;}
   const bmi=weightKg/(heightM*heightM);
 
   let cat,color,bg;

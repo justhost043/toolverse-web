@@ -56,10 +56,10 @@ input[type="color"]{width:56px;height:56px;border:1px solid var(--color-border);
     </div>
 
     <div class="picker-row">
-      <input type="color" id="color-picker" value="#4F46E5">
+      <input type="color" id="color-picker" value="#4F46E5" aria-label="Color picker — choose a color">
       <div class="color-input-wrap">
         <label class="field-label">HEX value</label>
-        <input type="text" class="field-input" id="hex-input" value="#4F46E5" placeholder="#000000" maxlength="7" style="font-family:var(--font-mono)">
+        <input type="text" class="field-input" id="hex-input" value="#4F46E5" aria-label="HEX color value" placeholder="#000000" maxlength="7" style="font-family:var(--font-mono)">
       </div>
     </div>
 
@@ -68,10 +68,10 @@ input[type="color"]{width:56px;height:56px;border:1px solid var(--color-border);
     </div>
 
     <div class="section-sep">Shades &amp; Tints</div>
-    <div class="palette-grid" id="shades-grid"></div>
+    <div class="palette-grid" id="shades-grid" role="list" aria-label="Color shades and tints"></div>
 
     <div class="section-sep">Complementary Colors</div>
-    <div class="palette-grid" id="comp-grid"></div>
+    <div class="palette-grid" id="comp-grid" role="list" aria-label="Complementary color harmonies"></div>
   </div>
 </div>
 <div class="ad-slot container">Ad slot — below tool</div>
@@ -100,7 +100,7 @@ function hslToRgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12;const a=s*Math.min
 function rgbToCmyk(r,g,b){r/=255;g/=255;b/=255;const k=1-Math.max(r,g,b);if(k===1)return{c:0,m:0,y:0,k:100};return{c:Math.round((1-r-k)/(1-k)*100),m:Math.round((1-g-k)/(1-k)*100),y:Math.round((1-b-k)/(1-k)*100),k:Math.round(k*100)};}
 function luminance(r,g,b){return 0.299*r+0.587*g+0.114*b;}
 
-function copyText(text,btn){navigator.clipboard.writeText(text).then(()=>{const t=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=t,1000);});}
+function copyText(text,btn){OMI.clipboard.copy(text,btn);}
 
 function update(hex){
   if(!/^#[0-9A-Fa-f]{6}$/.test(hex))return;
@@ -119,11 +119,19 @@ function update(hex){
     {label:'HSL',value:`hsl(${h}, ${s}%, ${l}%)`},
     {label:'CMYK',value:`cmyk(${c}%, ${m}%, ${y}%, ${k}%)`},
   ];
-  formatGrid.textContent = formats.map(f=>`
-    <div class="format-box">
-      <div><div class="format-label">${f.label}</div><div class="format-value">${f.value}</div></div>
-      <button class="copy-small" onclick="copyText('${f.value}',this)">Copy</button>
-    </div>`).join('');
+  // XSS-safe DOM construction
+  formatGrid.innerHTML = '';
+  formats.forEach(f => {
+    const box = document.createElement('div'); box.className = 'format-box';
+    const info = document.createElement('div');
+    const lbl = document.createElement('div'); lbl.className = 'format-label'; lbl.textContent = f.label;
+    const val = document.createElement('div'); val.className = 'format-value'; val.textContent = f.value;
+    info.appendChild(lbl); info.appendChild(val);
+    const btn = document.createElement('button'); btn.className = 'copy-small'; btn.textContent = 'Copy';
+    btn.addEventListener('click', () => copyText(f.value, btn));
+    box.appendChild(info); box.appendChild(btn);
+    formatGrid.appendChild(box);
+  });
 
   // Shades & tints
   const steps=[-40,-25,-12,0,12,25,40,55,70,80];

@@ -20,8 +20,8 @@ Last Updated: Foundation Sprint 1 Complete
 ### Calculator (16)
 | Tool | Status | Score |
 |------|--------|-------|
-| age-calculator | ⬜ | — |
-| bmi-calculator | ⬜ | — |
+| age-calculator | ✅ | 91/100 |
+| bmi-calculator | ✅ | 90/100 |
 | calorie-calculator | ⬜ | — |
 | countdown-timer | ⬜ | — |
 | currency-converter | ⬜ | — |
@@ -34,7 +34,7 @@ Last Updated: Foundation Sprint 1 Complete
 | temperature-converter | ⬜ | — |
 | timezone-converter | ⬜ | — |
 | tip-calculator | ⬜ | — |
-| unit-converter | ⬜ | — |
+| unit-converter | ✅ | 92/100 |
 | aspect-ratio-calculator | ⬜ | — |
 
 ### Developer (31)
@@ -46,7 +46,7 @@ Last Updated: Foundation Sprint 1 Complete
 | code-to-image | ⬜ | — |
 | color-contrast-checker | ⬜ | — |
 | color-palette-generator | ⬜ | — |
-| color-picker | ⬜ | — |
+| color-picker | ✅ | 91/100 |
 | css-box-shadow-generator | ⬜ | — |
 | css-clamp-calculator | ⬜ | — |
 | css-flexbox-generator | ⬜ | — |
@@ -129,7 +129,7 @@ Last Updated: Foundation Sprint 1 Complete
 | Tool | Status | Score |
 |------|--------|-------|
 | favicon-generator | ⬜ | — |
-| invoice-generator | ⬜ | — |
+| invoice-generator | ✅ | 90/100 |
 | morse-code-translator | ⬜ | — |
 | password-manager-note | ⬜ | — |
 | pomodoro-timer | ⬜ | — |
