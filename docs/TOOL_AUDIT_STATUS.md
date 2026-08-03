@@ -27,10 +27,10 @@ Last Updated: Foundation Sprint 1 Complete
 | currency-converter | ✅ | 90/100 |
 | emi-calculator | ⬜ | — |
 | interest-calculator | ⬜ | — |
-| number-to-words | ⬜ | — |
+| number-to-words | ✅ | 89/100 |
 | percentage-calculator | ⬜ | — |
 | random-number-generator | ⬜ | — |
-| scientific-calculator | ⬜ | — |
+| scientific-calculator | ✅ | 90/100 |
 | temperature-converter | ⬜ | — |
 | timezone-converter | ⬜ | — |
 | tip-calculator | ⬜ | — |
@@ -65,7 +65,7 @@ Last Updated: Foundation Sprint 1 Complete
 | qr-code-generator | 🔄 | — |
 | regex-tester | ✅ | 93/100 |
 | screen-resolution | ⬜ | — |
-| sql-formatter | ⬜ | — |
+| sql-formatter | ✅ | 90/100 |
 | svg-converter | ⬜ | — |
 | timestamp-converter | ✅ | 91/100 |
 | url-encoder | ✅ | 91/100 |
@@ -132,11 +132,11 @@ Last Updated: Foundation Sprint 1 Complete
 | invoice-generator | ✅ | 90/100 |
 | morse-code-translator | ⬜ | — |
 | password-manager-note | ⬜ | — |
-| pomodoro-timer | ⬜ | — |
+| pomodoro-timer | ✅ | 91/100 |
 | qr-code-scanner | ⬜ | — |
 | speech-to-text | ✅ | 92/100 |
 | stopwatch | ⬜ | — |
-| text-to-speech | ⬜ | — |
+| text-to-speech | ✅ | 89/100 |
 | typing-speed-test | ✅ | 91/100 |
 | microphone-recorder | ⬜ | — |
 

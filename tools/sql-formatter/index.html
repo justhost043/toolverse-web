@@ -50,9 +50,9 @@ textarea.sql-area{font-family:'JetBrains Mono',monospace;font-size:13px;line-hei
         <option value="4">4 spaces</option>
         <option value="tab">Tab</option>
       </select>
-      <button class="btn btn-primary" id="format-btn">Format SQL</button>
-      <button class="btn btn-outline" id="copy-btn">Copy</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-primary" id="format-btn" aria-label="Format SQL query">Format SQL</button>
+      <button class="btn btn-outline" id="copy-btn" aria-label="Copy formatted SQL">Copy</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all content">Clear</button>
     </div>
 
     <div class="sql-layout">
@@ -181,7 +181,7 @@ document.getElementById('format-btn').addEventListener('click',run);
 document.getElementById('inp').addEventListener('input',()=>{if(document.getElementById('output').textContent!=='Formatted SQL will appear here…')run();});
 document.getElementById('copy-btn').addEventListener('click',()=>{
   const text=document.getElementById('output').textContent;
-  navigator.clipboard.writeText(text).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1200);});
+  OMI.clipboard.copy(text,document.getElementById('copy-btn'));
 });
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('output').textContent='Formatted SQL will appear here…';});
 

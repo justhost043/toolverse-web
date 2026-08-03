@@ -42,13 +42,13 @@
 <div class="container">
   <div class="tool-panel" style="max-width:620px">
     <div class="mode-row">
-      <button class="mode-btn active" data-mode="standard">Standard</button>
-      <button class="mode-btn" data-mode="currency">Currency (USD)</button>
-      <button class="mode-btn" data-mode="ordinal">Ordinal (1st, 2nd…)</button>
+      <button class="mode-btn active" data-mode="standard" aria-pressed="true" aria-label="Standard number mode">Standard</button>
+      <button class="mode-btn" data-mode="currency" aria-pressed="false" aria-label="Currency mode">Currency (USD)</button>
+      <button class="mode-btn" data-mode="ordinal" aria-pressed="false" aria-label="Ordinal number mode">Ordinal (1st, 2nd…)</button>
     </div>
     <div class="field-row">
       <label class="field-label">Enter a number</label>
-      <input type="text" id="num-input" class="field-input" placeholder="e.g. 1234567" style="font-size:20px;font-weight:600;letter-spacing:.02em" maxlength="20">
+      <input type="text" id="num-input" class="field-input" aria-label="Enter a number to convert to words" placeholder="e.g. 1234567" style="font-size:20px;font-weight:600;letter-spacing:.02em" maxlength="20">
     </div>
     <div class="output-result" id="output-result">
       <p id="output-text" style="color:var(--color-text-muted);font-weight:400">Words will appear here…</p>
@@ -129,7 +129,7 @@ function update(){
 }
 
 document.getElementById('num-input').addEventListener('input',update);
-document.getElementById('copy-btn').addEventListener('click',()=>{const t=document.getElementById('output-text').textContent;navigator.clipboard.writeText(t).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy words',1200);});});
+document.getElementById('copy-btn').addEventListener('click',()=>{OMI.clipboard.copy(document.getElementById('output-text').textContent,document.getElementById('copy-btn'));});
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('num-input').value='';update();});
 
 // Global error handler — OMI Foundation Sprint 1

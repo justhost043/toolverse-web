@@ -278,7 +278,13 @@ function renderTasks() {
   tasks.forEach((t,i)=>{
     const row=document.createElement('div');
     row.className='task-item'+(t.done?' done':'');
-    row.innerHTML=`<input type="checkbox" ${t.done?'checked':''}><span class="task-name">${t.name}</span><button class="task-del" data-i="${i}">×</button>`;
+    const chk=document.createElement('input'); chk.type='checkbox'; if(t.done) chk.checked=true;
+    chk.setAttribute('aria-label','Mark task complete: '+t.name);
+    chk.addEventListener('change',()=>{tasks[i].done=chk.checked;saveTasks();renderTasks();});
+    const span=document.createElement('span'); span.className='task-name'; span.textContent=t.name;
+    const del=document.createElement('button'); del.className='task-del'; del.dataset.i=i; del.textContent='×';
+    del.setAttribute('aria-label','Delete task: '+t.name);
+    row.appendChild(chk); row.appendChild(span); row.appendChild(del);
     row.querySelector('input').addEventListener('change',e=>{tasks[i].done=e.target.checked;renderTasks();tasksCompleted=tasks.filter(x=>x.done).length;document.getElementById('s-tasks').textContent=tasksCompleted;});
     row.querySelector('.task-del').addEventListener('click',()=>{tasks.splice(i,1);renderTasks();});
     list.appendChild(row);
@@ -297,6 +303,8 @@ document.getElementById('task-input').addEventListener('keydown',e=>{if(e.key===
 // Init
 renderSessionDots();
 updateDisplay();
+window.addEventListener('error',e=>OMI.error.handle(e.error||e.message,'Pomodoro'));
+window.addEventListener('unhandledrejection',e=>{OMI.error.handle(e.reason,'Promise');e.preventDefault();});
 </script>
 </body>
 </html>

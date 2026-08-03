@@ -62,7 +62,7 @@
 <div class="container">
   <div class="tool-panel" style="max-width:500px">
     <div class="calc-wrap">
-      <div class="calc-display">
+      <div class="calc-display" role="log" aria-label="Calculator display" aria-live="polite">
         <div class="calc-expr" id="calc-expr"></div>
         <div class="calc-result" id="calc-result">0</div>
         <div class="calc-mode">
@@ -81,7 +81,7 @@
         <div class="field-label">Calculation history</div>
         <button class="btn btn-outline" id="clear-history" style="font-size:12px;padding:5px 12px">Clear</button>
       </div>
-      <div class="history-panel" id="history-panel">
+      <div class="history-panel" id="history-panel" role="list" aria-label="Calculation history">
         <div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:13.5px">No calculations yet</div>
       </div>
     </div>
@@ -202,7 +202,8 @@ function handleKey(k) {
 function renderHistory() {
   const panel = document.getElementById('history-panel');
   if(!history.length) { panel.innerHTML='<div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:13.5px">No calculations yet</div>'; return; }
-  panel.innerHTML = history.map((h,i) => `
+  panel.innerHTML = '';
+  history.forEach((h,i) => { const item=document.createElement('div'); item.className='hist-item'; item.setAttribute('role','listitem');
     <div class="history-item" data-i="${i}">
       <div><div class="h-expr">${h.expr}</div></div>
       <div class="h-result">= ${h.result}</div>
@@ -226,6 +227,8 @@ document.addEventListener('keydown', e => {
 });
 
 buildGrid();
+window.addEventListener('error',e=>OMI.error.handle(e.error||e.message,'Calculator'));
+window.addEventListener('unhandledrejection',e=>{OMI.error.handle(e.reason,'Promise');e.preventDefault();});
 </script>
 </body>
 </html>
