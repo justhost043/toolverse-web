@@ -31,23 +31,23 @@
   <p>Convert each PDF page to a high-quality PNG or JPG image — download individually or all at once.</p>
 </div>
 <div class="container"><div class="tool-panel" style="max-width:760px">
-  <div class="dz" id="dz">
+  <div class="dz" id="dz" role="button" tabindex="0" aria-label="Upload a PDF file to convert to images">
     <div style="font-size:36px;margin-bottom:10px">&#128196;</div>
     <div style="font-size:15px;font-weight:600">Drop a PDF here or click to select</div>
-    <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none">
+    <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none" aria-label="Select PDF file">
   </div>
   <div id="editor" style="display:none;margin-top:16px">
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
       <div style="display:flex;gap:8px">
-        <button class="btn btn-outline fmt-btn active" data-f="png">PNG</button>
-        <button class="btn btn-outline fmt-btn" data-f="jpeg">JPG</button>
+        <button class="btn btn-outline fmt-btn active" data-f="png" aria-pressed="true" aria-label="Output format PNG">PNG</button>
+        <button class="btn btn-outline fmt-btn" data-f="jpeg" aria-pressed="false" aria-label="Output format JPEG">JPG</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <label class="field-label" style="margin:0;white-space:nowrap">Scale: <strong id="scale-lbl" style="color:var(--color-primary)">1.5x</strong></label>
-        <input type="range" id="scale" min="1" max="3" step="0.5" value="1.5" style="width:100px;accent-color:var(--color-primary)">
+        <input type="range" id="scale" min="1" max="3" step="0.5" value="1.5" style="width:100px;accent-color:var(--color-primary)" aria-label="Render scale factor">
       </div>
-      <button class="btn btn-primary" id="convert-btn">Convert All Pages</button>
-      <button class="btn btn-outline" id="dl-all-btn" style="display:none">&#11015; Download All</button>
+      <button class="btn btn-primary" id="convert-btn" aria-label="Convert all PDF pages to images">Convert All Pages</button>
+      <button class="btn btn-outline" id="dl-all-btn" style="display:none" aria-label="Download all converted images">⬇ Download All</button>
     </div>
     <div id="status" style="font-size:13.5px;color:var(--color-text-muted);margin-bottom:10px"></div>
     <div class="img-grid" id="img-grid"></div>
@@ -65,23 +65,28 @@ pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/p
 let pdfDoc=null, fmt="png", blobs=[];
 const dz=document.getElementById("dz"),fi=document.getElementById("fi");
 dz.addEventListener("click",()=>fi.click());
+dz.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")fi.click();});
 dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
 dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
 dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0])});
 fi.addEventListener("change",()=>{if(fi.files[0])loadF(fi.files[0])});
 document.getElementById("scale").addEventListener("input",e=>document.getElementById("scale-lbl").textContent=e.target.value+"x");
-document.querySelectorAll(".fmt-btn").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".fmt-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");fmt=b.dataset.f}));
+document.querySelectorAll(".fmt-btn").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".fmt-btn").forEach(x=>{x.classList.remove("active");x.setAttribute("aria-pressed","false");});b.classList.add("active");b.setAttribute("aria-pressed","true");fmt=b.dataset.f}));
 async function loadF(file){
+  if(!file.type.includes("pdf")&&!file.name.toLowerCase().endsWith(".pdf")){OMI.error.toast("Please select a PDF file.","warning");return;}
+  try{
   const buf=await file.arrayBuffer();
   pdfDoc=await pdfjsLib.getDocument({data:buf}).promise;
   document.getElementById("editor").style.display="";
   document.getElementById("status").textContent="Loaded: "+pdfDoc.numPages+" pages. Click Convert All Pages.";
   document.getElementById("img-grid").innerHTML="";
+  }catch(err){OMI.error.handle(err,"PDF to Images — Load");}
 }
 document.getElementById("convert-btn").addEventListener("click",async()=>{
   if(!pdfDoc)return;
   blobs=[];
-  document.getElementById("convert-btn").disabled=true;
+  const btn=document.getElementById("convert-btn");
+  OMI.ui.setLoading(btn,true,"⏳ Converting…");
   document.getElementById("img-grid").innerHTML="";
   const scale=parseFloat(document.getElementById("scale").value)||1.5;
   for(let i=1;i<=pdfDoc.numPages;i++){
@@ -107,7 +112,8 @@ document.getElementById("convert-btn").addEventListener("click",async()=>{
   }
   document.getElementById("status").textContent="All "+pdfDoc.numPages+" pages converted!";
   document.getElementById("dl-all-btn").style.display="";
-  document.getElementById("convert-btn").disabled=false;
+  OMI.error.toast(pdfDoc.numPages+" pages converted!","success");
+  OMI.ui.setLoading(btn,false);
 });
 document.getElementById("dl-all-btn").addEventListener("click",()=>{
   blobs.forEach((b,i)=>setTimeout(()=>{const a=document.createElement("a");a.href=b.url;a.download=b.name;a.click()},i*400));

@@ -64,7 +64,7 @@
     <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
       <div>
         <label class="field-label">Language</label>
-        <select id="lang-sel" class="field-select lang-select">
+        <select id="lang-sel" class="field-select lang-select" aria-label="Select speech recognition language">
           <option value="en-US">English (US)</option>
           <option value="en-GB">English (UK)</option>
           <option value="ur-PK">Urdu (Pakistan)</option>
@@ -87,25 +87,25 @@
           <option value="th-TH">Thai</option>
         </select>
       </div>
-      <label class="checkbox-item" style="margin-top:18px"><input type="checkbox" id="continuous"> Continuous mode</label>
+      <label class="checkbox-item" style="margin-top:18px"><input type="checkbox" id="continuous" aria-label="Keep listening continuously without stopping after silence"> Continuous mode</label>
     </div>
 
     <div class="volume-bars" id="vol-bars">
       <!-- bars injected by JS -->
     </div>
 
-    <button class="mic-btn" id="mic-btn">🎤</button>
+    <button class="mic-btn" id="mic-btn" aria-label="Start or stop voice recognition" aria-pressed="false">🎤</button>
     <div class="mic-status ready" id="mic-status">Click the mic to start</div>
 
-    <div class="transcript-box" id="transcript-box">
+    <div class="transcript-box" id="transcript-box" role="region" aria-label="Speech transcript" aria-live="polite">
       <span class="final" id="final-text"></span><span class="interim" id="interim-text"></span>
     </div>
     <div class="word-count" id="word-count">0 words · 0 characters</div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-      <button class="btn btn-primary" id="copy-btn">Copy transcript</button>
-      <button class="btn btn-outline" id="download-btn">Download .txt</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-primary" id="copy-btn" aria-label="Copy transcript to clipboard">Copy transcript</button>
+      <button class="btn btn-outline" id="download-btn" aria-label="Download transcript as text file">Download .txt</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all transcript text">Clear</button>
     </div>
 
     <div id="history-section" style="display:none">
@@ -163,6 +163,7 @@ function startRecognition(){
     listening=true;
     document.getElementById('mic-btn').classList.add('listening');
     document.getElementById('mic-btn').textContent='⏹';
+    document.getElementById('mic-btn').setAttribute('aria-pressed','true');
     document.getElementById('mic-status').textContent='Listening…';
     document.getElementById('mic-status').className='mic-status listening';
     animateBars(true);
@@ -184,6 +185,7 @@ function startRecognition(){
     listening=false;
     document.getElementById('mic-btn').classList.remove('listening');
     document.getElementById('mic-btn').textContent='🎤';
+    document.getElementById('mic-btn').setAttribute('aria-pressed','false');
     document.getElementById('mic-status').textContent='Click the mic to start';
     document.getElementById('mic-status').className='mic-status ready';
     cancelAnimationFrame(animFrame);
@@ -211,16 +213,9 @@ document.getElementById('mic-btn').addEventListener('click',()=>{
   else startRecognition();
 });
 
-document.getElementById('copy-btn').addEventListener('click',()=>{
-  navigator.clipboard.writeText(finalText.trim()).then(()=>{
-    const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy transcript',1200);
-  });
-});
+document.getElementById('copy-btn').addEventListener('click',()=>OMI.clipboard.copy(finalText.trim(),document.getElementById('copy-btn')));
 
-document.getElementById('download-btn').addEventListener('click',()=>{
-  const blob=new Blob([finalText.trim()],{type:'text/plain'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transcript.txt';a.click();
-});
+document.getElementById('download-btn').addEventListener('click',()=>OMI.file.download(new Blob([finalText.trim()],{type:'text/plain'}),'transcript.txt','text/plain'));
 
 document.getElementById('clear-btn').addEventListener('click',()=>{
   finalText='';
@@ -232,11 +227,22 @@ document.getElementById('clear-btn').addEventListener('click',()=>{
 function renderHistory(){
   if(!sessionHistory.length) return;
   document.getElementById('history-section').style.display='';
-  document.getElementById('history-list').innerHTML=sessionHistory.map((t,i)=>`
-    <div class="history-item">
-      <span class="hi-text">${t.substring(0,80)}${t.length>80?'…':''}</span>
-      <button class="hi-copy" onclick="navigator.clipboard.writeText(\`${t.replace(/`/g,'\\`')}\`)">Copy</button>
-    </div>`).join('');
+  const list=document.getElementById('history-list');
+  list.innerHTML='';
+  sessionHistory.forEach(t=>{
+    const item=document.createElement('div');
+    item.className='history-item';
+    const span=document.createElement('span');
+    span.className='hi-text';
+    span.textContent=t.substring(0,80)+(t.length>80?'…':'');
+    const btn=document.createElement('button');
+    btn.className='hi-copy';
+    btn.textContent='Copy';
+    btn.addEventListener('click',()=>OMI.clipboard.copy(t,btn));
+    item.appendChild(span);
+    item.appendChild(btn);
+    list.appendChild(item);
+  });
 }
 
 // Global error handler — OMI Foundation Sprint 1

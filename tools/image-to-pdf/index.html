@@ -47,11 +47,11 @@
 </div>
 <div class="container">
   <div class="tool-panel" style="max-width:700px">
-    <div class="drop-zone" id="drop-zone">
+    <div class="drop-zone" id="drop-zone" role="button" tabindex="0" aria-label="Upload images to convert to PDF">
       <div style="font-size:36px;margin-bottom:10px">🖼️</div>
       <div style="font-size:16px;font-weight:500;color:var(--color-text)">Drop images here or click to select</div>
       <div style="font-size:13px;margin-top:6px">JPEG, PNG, WebP — select multiple at once</div>
-      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none" aria-label="Select image files">
     </div>
 
     <div class="img-grid" id="img-grid"></div>
@@ -59,7 +59,7 @@
     <div class="options-grid" id="options-grid" style="display:none">
       <div class="field-row">
         <label class="field-label">Page size</label>
-        <select id="page-size" class="field-select">
+        <select id="page-size" class="field-select" aria-label="PDF page size">
           <option value="A4">A4</option>
           <option value="Letter">US Letter</option>
           <option value="A3">A3</option>
@@ -69,14 +69,14 @@
       </div>
       <div class="field-row">
         <label class="field-label">Orientation</label>
-        <select id="orientation" class="field-select">
+        <select id="orientation" class="field-select" aria-label="Page orientation">
           <option value="portrait">Portrait</option>
           <option value="landscape">Landscape</option>
         </select>
       </div>
       <div class="field-row">
         <label class="field-label">Margin (px)</label>
-        <select id="margin" class="field-select">
+        <select id="margin" class="field-select" aria-label="Page margin">
           <option value="0">None</option>
           <option value="20" selected>Small</option>
           <option value="40">Medium</option>
@@ -91,8 +91,8 @@
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap" id="action-row" style="display:none">
-      <button class="btn btn-primary" id="convert-btn" disabled>Convert to PDF</button>
-      <button class="btn btn-outline" id="clear-btn">Clear all</button>
+      <button class="btn btn-primary" id="convert-btn" disabled aria-label="Convert images to PDF">Convert to PDF</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all images">Clear all</button>
     </div>
   </div>
 </div>
@@ -112,6 +112,7 @@ let images=[], dragSrc=null;
 const PAGE_SIZES={A4:[595,842],Letter:[612,792],A3:[842,1191],A5:[420,595]};
 
 dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')fileInput.click();});
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
 dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');addFiles(e.dataTransfer.files);});
@@ -198,12 +199,12 @@ document.getElementById('convert-btn').addEventListener('click',async()=>{
     fill.style.width='100%'; status.textContent='Creating PDF…';
     const bytes=await pdfDoc.save();
     const blob=new Blob([bytes],{type:'application/pdf'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`images-${images.length}-pages.pdf`; a.click();
+    OMI.file.download(blob,`images-${images.length}-pages.pdf`,'application/pdf');
     status.textContent=`✓ Done! ${images.length} images converted to PDF.`;
+    OMI.error.toast(`${images.length} images converted to PDF!`,'success');
   }catch(e){
     status.textContent='Error: '+e.message;
+    OMI.error.handle(e,'Image to PDF');
   }
   btn.disabled=false; btn.textContent='Convert to PDF';
 });

@@ -24,7 +24,7 @@ Last Updated: Foundation Sprint 1 Complete
 | bmi-calculator | ✅ | 90/100 |
 | calorie-calculator | ⬜ | — |
 | countdown-timer | ⬜ | — |
-| currency-converter | ⬜ | — |
+| currency-converter | ✅ | 90/100 |
 | emi-calculator | ⬜ | — |
 | interest-calculator | ⬜ | — |
 | number-to-words | ⬜ | — |
@@ -114,7 +114,7 @@ Last Updated: Foundation Sprint 1 Complete
 ### PDF (10)
 | Tool | Status | Score |
 |------|--------|-------|
-| image-to-pdf | ⬜ | — |
+| image-to-pdf | ✅ | 90/100 |
 | images-to-pdf | ⬜ | — |
 | pdf-compressor | ✅ | 89/100 |
 | pdf-merger | 🔄 | — |
@@ -122,7 +122,7 @@ Last Updated: Foundation Sprint 1 Complete
 | pdf-reorder | ⬜ | — |
 | pdf-rotator | ⬜ | — |
 | pdf-splitter | ⬜ | — |
-| pdf-to-images | ⬜ | — |
+| pdf-to-images | ✅ | 89/100 |
 | watermark-pdf | ⬜ | — |
 
 ### Productivity (11)
@@ -134,10 +134,10 @@ Last Updated: Foundation Sprint 1 Complete
 | password-manager-note | ⬜ | — |
 | pomodoro-timer | ⬜ | — |
 | qr-code-scanner | ⬜ | — |
-| speech-to-text | ⬜ | — |
+| speech-to-text | ✅ | 92/100 |
 | stopwatch | ⬜ | — |
 | text-to-speech | ⬜ | — |
-| typing-speed-test | ⬜ | — |
+| typing-speed-test | ✅ | 91/100 |
 | microphone-recorder | ⬜ | — |
 
 ### Video (20) — All ⬜

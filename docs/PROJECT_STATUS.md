@@ -32,3 +32,4 @@ Batch 1 — Tool Enhancement (5 tools) ✅ COMPLETE
 | 3     | pdf-compressor, bulk-image-converter, markdown-editor, hash-generator, regex-tester | ✅ COMPLETE |
 | 4     | json-to-csv, image-cropper, css-gradient-generator, lorem-ipsum, timestamp-converter | ✅ COMPLETE |
 | 5     | age-calculator, bmi-calculator, unit-converter, color-picker, invoice-generator | ✅ COMPLETE |
+| 6     | pdf-to-images, image-to-pdf, speech-to-text, typing-speed-test, currency-converter | ✅ COMPLETE |

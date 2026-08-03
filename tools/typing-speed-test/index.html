@@ -65,19 +65,19 @@
   <div class="tool-panel" style="max-width:760px">
 
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
-      <div class="diff-tabs">
-        <button class="d-tab active" data-d="easy">Easy</button>
-        <button class="d-tab" data-d="medium">Medium</button>
-        <button class="d-tab" data-d="hard">Hard</button>
-        <button class="d-tab" data-d="code">Code</button>
+      <div class="diff-tabs" role="group" aria-label="Difficulty level">
+        <button class="d-tab active" data-d="easy" aria-pressed="true" aria-label="Easy difficulty">Easy</button>
+        <button class="d-tab" data-d="medium" aria-pressed="false" aria-label="Medium difficulty">Medium</button>
+        <button class="d-tab" data-d="hard" aria-pressed="false" aria-label="Hard difficulty">Hard</button>
+        <button class="d-tab" data-d="code" aria-pressed="false" aria-label="Code difficulty">Code</button>
       </div>
       <div style="display:flex;gap:8px;margin-left:auto">
-        <select id="duration-sel" class="field-select" style="width:auto">
+        <select id="duration-sel" class="field-select" style="width:auto" aria-label="Test duration">
           <option value="30">30 sec</option>
           <option value="60" selected>1 min</option>
           <option value="120">2 min</option>
         </select>
-        <button class="btn btn-outline" id="new-test">New test</button>
+        <button class="btn btn-outline" id="new-test" aria-label="Start a new typing test">New test</button>
       </div>
     </div>
 
@@ -88,17 +88,17 @@
         <div class="stat-box"><div class="sv" id="stat-words">0</div><div class="sl">Words</div></div>
         <div class="stat-box"><div class="sv" id="stat-errors">0</div><div class="sl">Errors</div></div>
       </div>
-      <div class="timer-circle" id="timer-circle">60</div>
+      <div class="timer-circle" id="timer-circle" role="timer" aria-label="Time remaining" aria-live="polite">60</div>
     </div>
 
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:100%"></div></div>
 
-    <div class="text-display" id="text-display" onclick="document.getElementById('typing-input').focus()">
+    <div class="text-display" id="text-display" onclick="document.getElementById('typing-input').focus()" role="region" aria-label="Typing test text — click to focus">
       <input type="text" id="typing-input" class="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div style="font-size:13px;color:var(--color-text-muted);text-align:center;margin-bottom:16px" id="hint-text">Click the text above or start typing to begin</div>
 
-    <div class="result-card" id="result-card">
+    <div class="result-card" id="result-card" role="region" aria-label="Typing test results" aria-live="polite">
       <div class="result-wpm" id="r-wpm">0</div>
       <div class="result-label">Words per minute</div>
       <div class="result-grid">
@@ -106,7 +106,7 @@
         <div class="rg-item"><div class="rg-val" id="r-words">0</div><div class="rg-lbl">Words typed</div></div>
         <div class="rg-item"><div class="rg-val" id="r-errors">0</div><div class="rg-lbl">Errors</div></div>
       </div>
-      <button class="btn btn-primary" id="retry-btn" style="margin-top:8px">Try again</button>
+      <button class="btn btn-primary" id="retry-btn" style="margin-top:8px" aria-label="Retry the typing test">Try again</button>
     </div>
   </div>
 </div>
@@ -153,8 +153,8 @@ let timeLeft, totalTime;
 let charIdx = 0, errors = 0, totalTyped = 0;
 
 document.querySelectorAll('.d-tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.d-tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active'); difficulty=t.dataset.d; resetTest();
+  document.querySelectorAll('.d-tab').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false');});
+  t.classList.add('active');t.setAttribute('aria-pressed','true'); difficulty=t.dataset.d; resetTest();
 }));
 
 document.getElementById('duration-sel').addEventListener('change', resetTest);

@@ -62,15 +62,16 @@
     <div id="converter" style="display:none">
       <div class="converter-card">
         <div class="conv-row">
-          <input type="number" id="amount-from" class="conv-amount" value="1" min="0" step="any" placeholder="0">
-          <select id="sel-from" class="conv-select"></select>
+          <input type="number" id="amount-from" class="conv-amount" value="1" min="0" step="any" placeholder="0" aria-label="Amount to convert">
+          <select id="sel-from" class="conv-select" aria-label="Convert from currency"></select>
         </div>
-        <div class="swap-row"><button class="swap-conv" id="swap-btn" title="Swap currencies">⇅</button></div>
+        <div class="swap-row"><button class="swap-conv" id="swap-btn" title="Swap currencies" aria-label="Swap from and to currencies">⇅</button></div>
         <div class="conv-row" style="margin-top:14px">
-          <input type="number" id="amount-to" class="conv-amount" readonly placeholder="0">
-          <select id="sel-to" class="conv-select"></select>
+          <input type="number" id="amount-to" class="conv-amount" readonly placeholder="0" aria-label="Converted amount" aria-live="polite">
+          <select id="sel-to" class="conv-select" aria-label="Convert to currency"></select>
         </div>
-        <div class="rate-pill" id="rate-pill"></div>
+        <div class="rate-pill" id="rate-pill" aria-live="polite"></div>
+        <button id="copy-rate-btn" style="margin-top:12px;width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#A78BFA;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s" aria-label="Copy conversion rate to clipboard">📋 Copy Rate</button>
       </div>
       <div class="updated-badge" id="updated-badge"></div>
 
@@ -177,7 +178,9 @@ function renderQuickGrid() {
     const rate = rates[c] || '—';
     const div = document.createElement('div');
     div.className = 'quick-pair';
-    div.innerHTML = `<div class="qp-pair">USD/${c}</div><div class="qp-rate">${typeof rate==='number'?rate.toFixed(4):rate}</div>`;
+    const pair=document.createElement('div'); pair.className='qp-pair'; pair.textContent=`USD/${c}`;
+    const rateEl=document.createElement('div'); rateEl.className='qp-rate'; rateEl.textContent=typeof rate==='number'?rate.toFixed(4):rate;
+    div.appendChild(pair); div.appendChild(rateEl);
     div.style.cursor = 'pointer';
     div.addEventListener('click', () => {
       document.getElementById('sel-from').value = 'USD';
@@ -195,6 +198,10 @@ document.getElementById('swap-btn').addEventListener('click', () => {
   convert();
 });
 
+document.getElementById('copy-rate-btn').addEventListener('click',()=>{
+  const pill=document.getElementById('rate-pill').textContent;
+  if(pill)OMI.clipboard.copy(pill,document.getElementById('copy-rate-btn'));
+});
 ['sel-from','sel-to','amount-from'].forEach(id => {
   document.getElementById(id).addEventListener('input', convert);
   document.getElementById(id).addEventListener('change', convert);
@@ -209,6 +216,8 @@ document.getElementById('swap-btn').addEventListener('click', () => {
   renderQuickGrid();
   convert();
 })();
+window.addEventListener("error",e=>OMI.error.handle(e.error||e.message,"Runtime"));
+window.addEventListener("unhandledrejection",e=>{OMI.error.handle(e.reason,"Promise");e.preventDefault();});
 </script>
 </body>
 </html>
