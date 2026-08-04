@@ -55,9 +55,9 @@
       <div class="field-row">
         <label class="field-label">What is</label>
         <div class="inline-row">
-          <input type="number" id="p0-pct" class="field-input" placeholder="20" step="any">
+          <input type="number" id="p0-pct" class="field-input" placeholder="20" step="any" aria-label="Percentage value">
           <span>% of</span>
-          <input type="number" id="p0-num" class="field-input" placeholder="500" step="any">
+          <input type="number" id="p0-num" class="field-input" placeholder="500" step="any" aria-label="Total number">
         </div>
       </div>
       <div class="formula-hint">Result = (Percentage ÷ 100) × Number</div>
@@ -67,8 +67,8 @@
 
     <!-- Mode 1: % change from X to Y -->
     <div class="calc-panel" id="panel-1">
-      <div class="field-row"><label class="field-label">From (original value)</label><input type="number" id="p1-from" class="field-input" placeholder="200" step="any"></div>
-      <div class="field-row"><label class="field-label">To (new value)</label><input type="number" id="p1-to" class="field-input" placeholder="250" step="any"></div>
+      <div class="field-row"><label class="field-label">From (original value)</label><input type="number" id="p1-from" aria-label="Original value" class="field-input" placeholder="200" step="any"></div>
+      <div class="field-row"><label class="field-label">To (new value)</label><input type="number" id="p1-to" aria-label="New value" class="field-input" placeholder="250" step="any"></div>
       <div class="formula-hint">% Change = ((New − Old) ÷ Old) × 100</div>
       <div class="answer-box" id="ans-1" style="display:none"><div class="answer-num" id="ans-1-num"></div><div class="answer-label" id="ans-1-label"></div></div>
       <button class="btn btn-primary" onclick="calc(1)" style="width:100%;justify-content:center;margin-top:14px;padding:13px">Calculate</button>
@@ -79,9 +79,9 @@
       <div class="field-row">
         <label class="field-label">Value</label>
         <div class="inline-row">
-          <input type="number" id="p2-x" class="field-input" placeholder="75" step="any">
+          <input type="number" id="p2-x" class="field-input" placeholder="75" step="any" aria-label="First number">
           <span>is what % of</span>
-          <input type="number" id="p2-y" class="field-input" placeholder="300" step="any">
+          <input type="number" id="p2-y" class="field-input" placeholder="300" step="any" aria-label="Second number">
         </div>
       </div>
       <div class="formula-hint">Result = (X ÷ Y) × 100</div>

@@ -153,7 +153,13 @@ function renderSaved(){
     const days=diff>0?Math.floor(diff/86400000):0;
     const item=document.createElement('div');
     item.className='saved-item';
-    item.innerHTML=`<div><div class="s-name">${s.name}</div><div style="font-size:12px;color:var(--color-text-muted)">${new Date(s.ts).toLocaleString()}</div></div><div class="s-cd">${diff>0?days+'d remaining':'Finished'}</div><button class="s-del" data-i="${i}" title="Remove">×</button>`;
+    // XSS-safe DOM construction — s.name is user input
+    const nameDiv=document.createElement('div'); nameDiv.className='s-name'; nameDiv.textContent=s.name;
+    const dateDiv=document.createElement('div'); dateDiv.style.cssText='font-size:12px;color:var(--color-text-muted)'; dateDiv.textContent=new Date(s.ts).toLocaleString();
+    const infoDiv=document.createElement('div'); infoDiv.appendChild(nameDiv); infoDiv.appendChild(dateDiv);
+    const cdDiv=document.createElement('div'); cdDiv.className='s-cd'; cdDiv.textContent=diff>0?days+'d remaining':'Finished';
+    const delBtn=document.createElement('button'); delBtn.className='s-del'; delBtn.dataset.i=i; delBtn.title='Remove'; delBtn.setAttribute('aria-label','Remove '+s.name); delBtn.textContent='×';
+    item.appendChild(infoDiv); item.appendChild(cdDiv); item.appendChild(delBtn);
     item.addEventListener('click',e=>{if(e.target.classList.contains('s-del'))return;startCountdown(s.ts,s.name);});
     item.querySelector('.s-del').addEventListener('click',()=>{savedTimers.splice(i,1);localStorage.setItem('omi-countdowns',JSON.stringify(savedTimers));renderSaved();});
     list.appendChild(item);

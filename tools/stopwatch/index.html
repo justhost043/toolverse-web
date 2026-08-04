@@ -61,15 +61,15 @@
       <div class="sw-time" id="sw-time">00:00<span class="sw-ms" id="sw-ms">.000</span></div>
     </div>
     <div class="sw-btn-row">
-      <button class="sw-btn btn-reset" id="btn-reset" title="Reset (R)">
+      <button class="sw-btn btn-reset" id="btn-reset" title="Reset (R)" aria-label="Reset stopwatch (R)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         Reset
       </button>
-      <button class="sw-btn btn-start" id="btn-startstop" title="Start/Stop (Space)">
+      <button class="sw-btn btn-start" id="btn-startstop" title="Start/Stop (Space)" aria-label="Start or stop stopwatch (Space)">
         <svg id="btn-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span id="btn-label">Start</span>
       </button>
-      <button class="sw-btn btn-lap" id="btn-lap" title="Lap (L)" disabled>
+      <button class="sw-btn btn-lap" id="btn-lap" title="Lap (L)" disabled aria-label="Record lap time (L)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Lap
       </button>
@@ -82,8 +82,8 @@
       </table>
     </div>
     <div style="display:flex;gap:10px;margin-top:14px;display:none" id="export-row">
-      <button class="btn btn-outline" id="copy-laps">Copy laps</button>
-      <button class="btn btn-outline" id="clear-laps">Clear laps</button>
+      <button class="btn btn-outline" id="copy-laps" aria-label="Copy all lap times to clipboard">Copy laps</button>
+      <button class="btn btn-outline" id="clear-laps" aria-label="Clear all lap times">Clear laps</button>
     </div>
   </div>
 </div>
@@ -175,7 +175,7 @@ function renderLaps(){
 
 document.getElementById('copy-laps').addEventListener('click',()=>{
   const text=[...laps].reverse().map(l=>`Lap ${l.num}\t${fmtPlain(l.lap)}\t${fmtPlain(l.total)}`).join('\n');
-  navigator.clipboard.writeText(text);
+  OMI.clipboard.copy(text, document.getElementById('copy-laps'));
 });
 document.getElementById('clear-laps').addEventListener('click',()=>{
   laps.length=0; lapStart=elapsed;

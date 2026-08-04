@@ -56,8 +56,8 @@
     <div class="field-row">
       <label class="field-label">Enter your password</label>
       <div class="pw-input-wrap">
-        <input type="password" id="pw" class="field-input" placeholder="Type your password…" autocomplete="off" spellcheck="false">
-        <button class="show-pw" id="toggle-vis" title="Show/hide">👁</button>
+        <input type="password" id="pw" class="field-input" aria-label="Password to check strength" placeholder="Type your password…" autocomplete="off" spellcheck="false">
+        <button class="show-pw" id="toggle-vis" title="Show/hide" aria-label="Show or hide password">👁</button>
       </div>
     </div>
     <div class="strength-bar"><div class="strength-fill" id="s-fill" style="width:0%"></div></div>
@@ -128,7 +128,7 @@ function analyse(){
   document.getElementById('entropy').textContent=v?Math.round(entropy)+' bits':'0 bits';
   document.getElementById('m-len').textContent=v.length;
   document.getElementById('m-pool').textContent=pool;
-  document.getElementById('check-list').innerHTML=CHECKS.map(c=>{
+  document.getElementById('check-list').innerHTML=CHECKS.map(c=>{ // values are hardcoded strings — safe
     const pass=c.fn(v);
     return`<li class="check-item"><div class="dot ${pass?'pass':'fail'}">${pass?'✓':'✗'}</div>${c.label}</li>`;
   }).join('');

@@ -23,12 +23,12 @@ Last Updated: Foundation Sprint 1 Complete
 | age-calculator | ✅ | 91/100 |
 | bmi-calculator | ✅ | 90/100 |
 | calorie-calculator | ⬜ | — |
-| countdown-timer | ⬜ | — |
+| countdown-timer | ✅ | 91/100 |
 | currency-converter | ✅ | 90/100 |
-| emi-calculator | ⬜ | — |
+| emi-calculator | ✅ | 91/100 |
 | interest-calculator | ⬜ | — |
 | number-to-words | ✅ | 89/100 |
-| percentage-calculator | ⬜ | — |
+| percentage-calculator | ✅ | 90/100 |
 | random-number-generator | ⬜ | — |
 | scientific-calculator | ✅ | 90/100 |
 | temperature-converter | ⬜ | — |
@@ -135,7 +135,7 @@ Last Updated: Foundation Sprint 1 Complete
 | pomodoro-timer | ✅ | 91/100 |
 | qr-code-scanner | ⬜ | — |
 | speech-to-text | ✅ | 92/100 |
-| stopwatch | ⬜ | — |
+| stopwatch | ✅ | 89/100 |
 | text-to-speech | ✅ | 89/100 |
 | typing-speed-test | ✅ | 91/100 |
 | microphone-recorder | ⬜ | — |
