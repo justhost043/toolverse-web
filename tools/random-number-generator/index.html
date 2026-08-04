@@ -62,12 +62,12 @@
         <div class="field-row"><label class="field-label">Max</label><input type="number" id="s-max" class="field-input" value="100"></div>
       </div>
       <div class="big-result" id="big-result" title="Click to generate">
-        <div class="big-num" id="big-num">?</div>
+        <div class="big-num" id="big-num" role="status" aria-label="Generated random number" aria-live="polite">?</div>
         <div class="big-hint">Click anywhere here to generate</div>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-primary" id="gen-single" style="flex:1;justify-content:center">Generate</button>
-        <button class="btn btn-outline" id="copy-single">Copy</button>
+        <button class="btn btn-primary" id="gen-single" aria-label="Generate one random number" style="flex:1;justify-content:center">Generate</button>
+        <button class="btn btn-outline" id="copy-single" aria-label="Copy generated number">Copy</button>
       </div>
       <div class="history-list" id="history"></div>
     </div>
@@ -82,8 +82,8 @@
       <label class="checkbox-item" style="margin:10px 0"><input type="checkbox" id="m-unique" checked> No duplicates (unique)</label>
       <div class="multi-output" id="multi-out">Press Generate to see numbers…</div>
       <div style="display:flex;gap:10px;margin-top:12px">
-        <button class="btn btn-primary" id="gen-multi" style="flex:1;justify-content:center">Generate</button>
-        <button class="btn btn-outline" id="copy-multi">Copy</button>
+        <button class="btn btn-primary" id="gen-multi" aria-label="Generate multiple random numbers" style="flex:1;justify-content:center">Generate</button>
+        <button class="btn btn-outline" id="copy-multi" aria-label="Copy all generated numbers">Copy</button>
         <button class="btn btn-outline" id="sort-multi">Sort</button>
       </div>
     </div>
@@ -153,7 +153,7 @@ function genSingle(){
 }
 document.getElementById('gen-single').addEventListener('click',genSingle);
 document.getElementById('big-result').addEventListener('click',genSingle);
-document.getElementById('copy-single').addEventListener('click',()=>{const v=document.getElementById('big-num').textContent;if(v!=='?')navigator.clipboard.writeText(v);});
+document.getElementById('copy-single').addEventListener('click',()=>{const v=document.getElementById('big-num').textContent;if(v!=='?')OMI.clipboard.copy(v,document.getElementById('copy-single'));});
 
 // Multi
 let lastMulti=[];
@@ -174,7 +174,7 @@ function genMulti(){
   document.getElementById('multi-out').textContent=lastMulti.join(', ');
 }
 document.getElementById('gen-multi').addEventListener('click',genMulti);
-document.getElementById('copy-multi').addEventListener('click',()=>navigator.clipboard.writeText(lastMulti.join(', ')));
+document.getElementById('copy-multi').addEventListener('click',()=>OMI.clipboard.copy(lastMulti.join(', '),document.getElementById('copy-multi')));
 document.getElementById('sort-multi').addEventListener('click',()=>{lastMulti.sort((a,b)=>a-b);document.getElementById('multi-out').textContent=lastMulti.join(', ');});
 
 // Dice

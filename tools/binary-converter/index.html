@@ -83,7 +83,7 @@
 
     <div id="bit-section" style="display:none">
       <div style="font-size:13px;font-weight:500;color:var(--color-text-muted);margin:4px 0 10px">8-bit representation</div>
-      <div class="bit-grid" id="bit-grid"></div>
+      <div class="bit-grid" id="bit-grid" role="group" aria-label="Binary bit visualization"></div>
       <div class="bit-labels" id="bit-labels"></div>
     </div>
   </div>
@@ -138,7 +138,7 @@ document.querySelectorAll('.copy-icon[data-src]').forEach(btn => {
   btn.addEventListener('click', () => {
     const val = inputs[btn.dataset.src].el.value;
     if (!val) return;
-    navigator.clipboard.writeText(val).then(() => { const t=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=t,1000); });
+    OMI.clipboard.copy(val, btn);
   });
 });
 

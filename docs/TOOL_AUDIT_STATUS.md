@@ -29,20 +29,20 @@ Last Updated: Foundation Sprint 1 Complete
 | interest-calculator | ⬜ | — |
 | number-to-words | ✅ | 89/100 |
 | percentage-calculator | ✅ | 90/100 |
-| random-number-generator | ⬜ | — |
+| random-number-generator | ✅ | 90/100 |
 | scientific-calculator | ✅ | 90/100 |
-| temperature-converter | ⬜ | — |
+| temperature-converter | ✅ | 89/100 |
 | timezone-converter | ⬜ | — |
 | tip-calculator | ⬜ | — |
 | unit-converter | ✅ | 92/100 |
-| aspect-ratio-calculator | ⬜ | — |
+| aspect-ratio-calculator | ✅ | 89/100 |
 
 ### Developer (31)
 | Tool | Status | Score |
 |------|--------|-------|
 | base64-encoder | ✅ | 91/100 |
 | base64-encoder-decoder | ⬜ | — |
-| binary-converter | ⬜ | — |
+| binary-converter | ✅ | 90/100 |
 | code-to-image | ⬜ | — |
 | color-contrast-checker | ⬜ | — |
 | color-palette-generator | ⬜ | — |
@@ -83,7 +83,7 @@ Last Updated: Foundation Sprint 1 Complete
 | markdown-table-generator | ⬜ | — |
 | number-sorter | ⬜ | — |
 | readability-checker | ⬜ | — |
-| roman-numeral-converter | ⬜ | — |
+| roman-numeral-converter | ✅ | 90/100 |
 | text-case-converter | ✅ | 89/100 |
 | text-cleaner | ⬜ | — |
 | text-repeater | ⬜ | — |

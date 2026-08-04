@@ -61,25 +61,25 @@
 
     <div class="grid-4">
       <div class="temp-input-row">
-        <input type="number" id="inp-c" value="100" step="any" placeholder="°C">
+        <input type="number" id="inp-c" aria-label="Temperature in Celsius" value="100" step="any" placeholder="°C">
         <span class="unit-lbl">°C</span>
       </div>
       <div class="temp-input-row">
-        <input type="number" id="inp-f" step="any" placeholder="°F">
+        <input type="number" id="inp-f" aria-label="Temperature in Fahrenheit" step="any" placeholder="°F">
         <span class="unit-lbl">°F</span>
       </div>
       <div class="temp-input-row">
-        <input type="number" id="inp-k" step="any" placeholder="K">
+        <input type="number" id="inp-k" aria-label="Temperature in Kelvin" step="any" placeholder="K">
         <span class="unit-lbl">K</span>
       </div>
       <div class="temp-input-row">
-        <input type="number" id="inp-r" step="any" placeholder="°R">
+        <input type="number" id="inp-r" aria-label="Temperature in Rankine" step="any" placeholder="°R">
         <span class="unit-lbl">°R</span>
       </div>
     </div>
 
     <div class="field-label" style="margin-bottom:10px">Common temperature references</div>
-    <div class="ref-grid" id="ref-grid"></div>
+    <div class="ref-grid" id="ref-grid" role="list" aria-label="Reference temperature points"></div>
   </div>
 </div>
 <div class="ad-slot container">Ad slot — below tool</div>
