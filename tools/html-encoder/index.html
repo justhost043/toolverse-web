@@ -53,19 +53,19 @@ textarea.code{font-family:'JetBrains Mono',monospace;font-size:13.5px;resize:ver
 
     <div class="layout">
       <div><label class="field-label" id="inp-label">Input text</label>
-        <textarea id="inp" class="field-input code" placeholder="Type or paste text with special characters…"><h1>Hello & "World"</h1>
+        <textarea id="inp" aria-label="Text to encode or decode HTML entities" class="field-input code" placeholder="Type or paste text with special characters…"><h1>Hello & "World"</h1>
 <p>© 2024 OMIToolKit — All rights reserved.</p></textarea>
       </div>
       <div><label class="field-label" id="out-label">HTML entities output</label>
-        <textarea id="out" class="field-input code" readonly style="background:#F9F9F9"></textarea>
+        <textarea id="out" aria-label="Encoded or decoded output" aria-live="polite" class="field-input code" readonly style="background:#F9F9F9"></textarea>
       </div>
     </div>
 
     <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-primary" id="convert-btn">Convert</button>
-      <button class="btn btn-outline" id="copy-btn">Copy output</button>
+      <button class="btn btn-outline" id="copy-btn" aria-label="Copy encoded output">Copy output</button>
       <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all content">Clear</button>
     </div>
 
     <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--color-border)">
@@ -141,9 +141,7 @@ document.getElementById('inp').addEventListener('input',convert);
 ['opt-named','opt-all'].forEach(id=>document.getElementById(id).addEventListener('change',convert));
 
 document.getElementById('copy-btn').addEventListener('click',()=>{
-  navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{
-    const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);
-  });
+  OMI.clipboard.copy(document.getElementById('out').value,document.getElementById('copy-btn'));
 });
 document.getElementById('swap-btn').addEventListener('click',()=>{
   const t=document.getElementById('inp').value;
@@ -159,7 +157,7 @@ COMMON.forEach(([char,entity])=>{
   const div=document.createElement('div');
   div.className='entity-item';
   div.innerHTML=`<span class="entity-char">${char==' '?'&nbsp;':char}</span><span class="entity-code">${entity}</span>`;
-  div.addEventListener('click',()=>navigator.clipboard.writeText(entity));
+  div.addEventListener('click',()=>OMI.clipboard.copy(entity,div));div.setAttribute('role','button');div.setAttribute('tabindex','0');div.setAttribute('aria-label','Copy entity '+entity);div.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')OMI.clipboard.copy(entity,div);});
   ref.appendChild(div);
 });
 

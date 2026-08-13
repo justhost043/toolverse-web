@@ -46,7 +46,7 @@
   <div class="tool-panel" style="max-width:760px">
     <div class="field-row">
       <label class="field-label">Input text</label>
-      <textarea id="inp" class="field-input" rows="7" placeholder="Paste or type your text here…"></textarea>
+      <textarea id="inp" aria-label="Text to analyze word frequency" class="field-input" rows="7" placeholder="Paste or type your text here…"></textarea>
     </div>
 
     <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
@@ -54,7 +54,7 @@
       <label class="checkbox-item"><input type="checkbox" id="opt-case"> Case-sensitive</label>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
         <label class="field-label" style="margin:0;white-space:nowrap">Show top:</label>
-        <select id="top-n" class="field-select" style="width:80px">
+        <select id="top-n" aria-label="Number of top words to display" class="field-select" style="width:80px">
           <option value="10">10</option>
           <option value="20" selected>20</option>
           <option value="50">50</option>
@@ -76,7 +76,7 @@
         <button class="sort-btn active" data-s="freq">Frequency ↓</button>
         <button class="sort-btn" data-s="alpha">A–Z</button>
         <button class="sort-btn" data-s="len">Length ↓</button>
-        <button class="btn btn-outline" id="copy-btn" style="margin-left:auto;font-size:13px">Copy list</button>
+        <button class="btn btn-outline" id="copy-btn" aria-label="Copy frequency list to clipboard" style="margin-left:auto;font-size:13px">Copy list</button>
       </div>
 
       <div class="freq-bar-wrap" id="freq-bars"></div>
@@ -161,12 +161,21 @@ function renderBars(entries, limit) {
   const display = sorted.slice(0, topN);
   const max = Math.max(...display.map(([,n])=>n), 1);
 
-  document.getElementById('freq-bars').innerHTML = display.map(([w,n]) => `
-    <div class="freq-row">
-      <div class="freq-word" title="${w}">${w}</div>
-      <div class="freq-bar-bg"><div class="freq-bar-fill" style="width:${(n/max*100).toFixed(1)}%"></div></div>
-      <div class="freq-count">${n}</div>
-    </div>`).join('');
+  const barsEl = document.getElementById('freq-bars');
+  barsEl.innerHTML = '';
+  display.forEach(([w,n]) => {
+    const row = document.createElement('div'); row.className = 'freq-row';
+    const wordEl = document.createElement('div'); wordEl.className = 'freq-word';
+    wordEl.textContent = w; wordEl.title = w;  // XSS-safe
+    const barBg = document.createElement('div'); barBg.className = 'freq-bar-bg';
+    const barFill = document.createElement('div'); barFill.className = 'freq-bar-fill';
+    barFill.style.width = (n/max*100).toFixed(1) + '%';
+    barBg.appendChild(barFill);
+    const countEl = document.createElement('div'); countEl.className = 'freq-count';
+    countEl.textContent = n;
+    row.appendChild(wordEl); row.appendChild(barBg); row.appendChild(countEl);
+    barsEl.appendChild(row);
+  });
 }
 
 ['inp','opt-stopwords','opt-case','top-n'].forEach(id =>
@@ -177,10 +186,7 @@ document.getElementById('top-n').addEventListener('change', analyze);
 
 document.getElementById('copy-btn').addEventListener('click', () => {
   const text = lastFreq.map(([w,n])=>`${w}: ${n}`).join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    const b = document.getElementById('copy-btn'); b.textContent='Copied!';
-    setTimeout(()=>b.textContent='Copy list',1200);
-  });
+  OMI.clipboard.copy(text, document.getElementById('copy-btn'));
 });
 
 // Demo

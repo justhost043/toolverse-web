@@ -46,14 +46,14 @@ textarea.diff-input{font-family:var(--font-mono);font-size:13px;line-height:1.7;
   <div class="tool-panel" style="max-width:960px">
     <div class="mode-row">
       <button class="mode-btn active" data-m="line">Line-by-line</button>
-      <button class="mode-btn" data-m="word">Word diff</button>
+      <button class="mode-btn" data-m="word" aria-pressed="false" aria-label="Word by word diff mode">Word diff</button>
     </div>
     <div class="diff-layout">
-      <div><label class="field-label">Original text</label><textarea id="text-a" class="field-input diff-input" placeholder="Paste original text here…"></textarea></div>
-      <div><label class="field-label">Modified text</label><textarea id="text-b" class="field-input diff-input" placeholder="Paste modified text here…"></textarea></div>
+      <div><label class="field-label">Original text</label><textarea id="text-a" class="field-input diff-input" aria-label="Original text to compare" placeholder="Paste original text here…"></textarea></div>
+      <div><label class="field-label">Modified text</label><textarea id="text-b" class="field-input diff-input" aria-label="Modified text to compare" placeholder="Paste modified text here…"></textarea></div>
     </div>
     <div style="display:flex;gap:10px;margin:14px 0">
-      <button class="btn btn-primary" id="diff-btn" style="flex:1;justify-content:center">Compare</button>
+      <button class="btn btn-primary" id="diff-btn" aria-label="Compare texts and show differences" style="flex:1;justify-content:center">Compare</button>
       <button class="btn btn-outline" id="swap-btn">↕ Swap</button>
       <button class="btn btn-outline" id="clear-btn">Clear</button>
     </div>
@@ -64,7 +64,7 @@ textarea.diff-input{font-family:var(--font-mono);font-size:13px;line-height:1.7;
     </div>
     <div id="diff-out-wrap" style="display:none">
       <label class="field-label" style="margin-bottom:8px">Diff result</label>
-      <div class="diff-output" id="diff-output"></div>
+      <div class="diff-output" id="diff-output" role="region" aria-label="Difference result" aria-live="polite"></div>
     </div>
   </div>
 </div>
@@ -119,12 +119,14 @@ function runDiff() {
   let html = '';
   chunks.forEach(c => {
     const v = esc(c.val);
-    if (c.type === 'add') { html += `<span class="diff-add">+ ${v}</span>`; added++; }
-    else if (c.type === 'del') { html += `<span class="diff-del">− ${v}</span>`; removed++; }
-    else { html += `<span class="diff-same">  ${v}</span>`; same++; }
+    if (c.type === 'add') { const s=document.createElement('span');s.className='diff-add';s.textContent='+ '+v;frag.appendChild(s);added++; }
+    else if (c.type === 'del') { const s=document.createElement('span');s.className='diff-del';s.textContent='− '+v;frag.appendChild(s);removed++; }
+    else { const s=document.createElement('span');s.className='diff-same';s.textContent='  '+v;frag.appendChild(s);same++; }
   });
 
-  document.getElementById('diff-output').innerHTML = html;
+  const out = document.getElementById('diff-output');
+  out.innerHTML = '';
+  out.appendChild(frag);
   document.getElementById('sp-add').textContent = `+ ${added} added`;
   document.getElementById('sp-del').textContent = `− ${removed} removed`;
   document.getElementById('sp-same').textContent = `= ${same} unchanged`;

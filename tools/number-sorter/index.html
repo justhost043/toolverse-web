@@ -47,12 +47,12 @@ textarea.code-area{font-family:var(--font-mono);font-size:14px;resize:vertical;m
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
       <div>
         <label class="field-label">Input list</label>
-        <textarea id="inp" class="field-input code-area" placeholder="One item per line:&#10;banana&#10;apple&#10;cherry&#10;&#10;Or paste numbers:&#10;42&#10;7&#10;156&#10;3"></textarea>
+        <textarea id="inp" aria-label="Enter numbers to sort, one per line or comma-separated" class="field-input code-area" placeholder="One item per line:&#10;banana&#10;apple&#10;cherry&#10;&#10;Or paste numbers:&#10;42&#10;7&#10;156&#10;3"></textarea>
         <div class="stats-row" id="inp-stats"></div>
       </div>
       <div>
         <label class="field-label">Output</label>
-        <textarea id="out" class="field-input code-area" readonly style="background:#F9F9F9"></textarea>
+        <textarea id="out" aria-label="Sorted numbers output" aria-live="polite" class="field-input code-area" readonly style="background:#F9F9F9"></textarea>
         <div class="stats-row" id="out-stats"></div>
       </div>
     </div>
@@ -88,8 +88,8 @@ textarea.code-area{font-family:var(--font-mono);font-size:14px;resize:vertical;m
 
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-primary" id="sort-btn">Sort List</button>
-      <button class="btn btn-outline" id="copy-btn">Copy output</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-outline" id="copy-btn" aria-label="Copy sorted output">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all content">Clear</button>
     </div>
   </div>
 </div>
@@ -157,7 +157,7 @@ function sortAndRender() {
 }
 
 document.getElementById('sort-btn').addEventListener('click',sortAndRender);
-document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
+document.getElementById('copy-btn').addEventListener('click',()=>OMI.clipboard.copy(document.getElementById('out').value,document.getElementById('copy-btn')));
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';['inp-stats','out-stats'].forEach(id=>document.getElementById(id).innerHTML='');});
 
 // Demo

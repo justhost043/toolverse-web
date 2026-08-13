@@ -69,8 +69,8 @@
     <div class="morse-output" id="output">Your Morse code will appear here…</div>
 
     <div style="display:flex;gap:10px;margin-top:12px">
-      <button class="btn btn-outline" id="copy-btn">Copy output</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-outline" id="copy-btn" aria-label="Copy translation result">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all content">Clear</button>
     </div>
 
     <div class="audio-controls">
@@ -173,7 +173,7 @@ document.getElementById('btn-decode').addEventListener('click',()=>{
 });
 document.getElementById('inp').addEventListener('input',translate);
 document.getElementById('wpm').addEventListener('input',()=>document.getElementById('wpm-val').textContent=document.getElementById('wpm').value);
-document.getElementById('copy-btn').addEventListener('click',()=>navigator.clipboard.writeText(document.getElementById('output').textContent).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);}));
+document.getElementById('copy-btn').addEventListener('click',()=>OMI.clipboard.copy(document.getElementById('output').textContent,document.getElementById('copy-btn')));
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';translate();});
 
 // Audio playback

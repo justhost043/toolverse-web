@@ -54,7 +54,7 @@ Last Updated: Foundation Sprint 1 Complete
 | css-grid-generator | ⬜ | — |
 | css-minifier | ✅ | 89/100 |
 | hash-generator | ✅ | 91/100 |
-| html-encoder | ⬜ | — |
+| html-encoder | ✅ | 91/100 |
 | html-minifier | ⬜ | — |
 | http-status-codes | ⬜ | — |
 | json-formatter | ✅ | 92/100 |
@@ -70,7 +70,7 @@ Last Updated: Foundation Sprint 1 Complete
 | timestamp-converter | ✅ | 91/100 |
 | url-encoder | ✅ | 91/100 |
 | uuid-generator | ✅ | 91/100 |
-| text-diff | ⬜ | — |
+| text-diff | ✅ | 92/100 |
 
 ### Text Tools (15)
 | Tool | Status | Score |
@@ -81,7 +81,7 @@ Last Updated: Foundation Sprint 1 Complete
 | lorem-ipsum | ✅ | 88/100 |
 | markdown-converter | ⬜ | — |
 | markdown-table-generator | ⬜ | — |
-| number-sorter | ⬜ | — |
+| number-sorter | ✅ | 89/100 |
 | readability-checker | ⬜ | — |
 | roman-numeral-converter | ✅ | 90/100 |
 | text-case-converter | ✅ | 89/100 |
@@ -89,7 +89,7 @@ Last Updated: Foundation Sprint 1 Complete
 | text-repeater | ⬜ | — |
 | text-to-handwriting | ⬜ | — |
 | word-counter | 🔄 | — |
-| word-frequency-counter | ⬜ | — |
+| word-frequency-counter | ✅ | 92/100 |
 
 ### Image (16)
 | Tool | Status | Score |
@@ -130,7 +130,7 @@ Last Updated: Foundation Sprint 1 Complete
 |------|--------|-------|
 | favicon-generator | ⬜ | — |
 | invoice-generator | ✅ | 90/100 |
-| morse-code-translator | ⬜ | — |
+| morse-code-translator | ✅ | 90/100 |
 | password-manager-note | ⬜ | — |
 | pomodoro-timer | ✅ | 91/100 |
 | qr-code-scanner | ⬜ | — |
