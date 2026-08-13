@@ -59,11 +59,11 @@
       <div>
         <label class="field-label">Base color</label>
         <div style="display:flex;gap:8px;align-items:center">
-          <input type="color" id="base-color" value="#6366F1" style="width:52px;height:44px;border-radius:var(--radius-sm);border:1px solid var(--color-border);padding:2px;cursor:pointer">
-          <input type="text" id="hex-input" class="field-input" value="#6366F1" style="width:120px;font-family:var(--font-mono);font-size:15px;font-weight:500" maxlength="7">
+          <input type="color" id="base-color" aria-label="Pick base color" value="#6366F1" style="width:52px;height:44px;border-radius:var(--radius-sm);border:1px solid var(--color-border);padding:2px;cursor:pointer">
+          <input type="text" id="hex-input" aria-label="Enter hex color code" class="field-input" value="#6366F1" style="width:120px;font-family:var(--font-mono);font-size:15px;font-weight:500" maxlength="7">
         </div>
       </div>
-      <button class="btn btn-outline" id="random-btn">🎲 Random</button>
+      <button class="btn btn-outline" id="random-btn" aria-label="Generate random color">🎲 Random</button>
       <button class="btn btn-primary" id="copy-css">Copy CSS vars</button>
     </div>
 
@@ -160,15 +160,13 @@ function render() {
     '\n}';
 }
 
-function copyHex(hex) {
-  navigator.clipboard.writeText(hex);
-}
+function copyHex(hex,btn) { OMI.clipboard.copy(hex,btn||null); }
 
 document.getElementById('base-color').addEventListener('input',e=>{baseHex=e.target.value;document.getElementById('hex-input').value=baseHex;render();});
 document.getElementById('hex-input').addEventListener('input',e=>{const v=e.target.value;if(/^#[0-9a-fA-F]{6}$/.test(v)){baseHex=v;document.getElementById('base-color').value=v;render();}});
 document.querySelectorAll('.s-tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.s-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');scheme=t.dataset.scheme;render();}));
 document.getElementById('random-btn').addEventListener('click',()=>{const r=()=>Math.floor(Math.random()*256).toString(16).padStart(2,'0');baseHex='#'+r()+r()+r();document.getElementById('base-color').value=baseHex;document.getElementById('hex-input').value=baseHex;render();});
-document.getElementById('copy-css').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('css-export').textContent).then(()=>{const b=document.getElementById('copy-css');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy CSS vars',1200);});});
+document.getElementById('copy-css').addEventListener('click',()=>OMI.clipboard.copy(document.getElementById('css-export').textContent,document.getElementById('copy-css')));
 
 render();
 

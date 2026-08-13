@@ -80,7 +80,7 @@
     </div>
 
     <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear JWT input">Clear</button>
       <button class="btn btn-outline" id="sample-btn">Load sample JWT</button>
     </div>
   </div>
@@ -184,6 +184,8 @@ document.getElementById('sample-btn').addEventListener('click', () => {
   document.getElementById('jwt-inp').value = `${header}.${payload}.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
   decode();
 });
+window.addEventListener('error',e=>OMI.error.handle(e.error||e.message,'JWT Decoder'));
+window.addEventListener('unhandledrejection',e=>{OMI.error.handle(e.reason,'Promise');e.preventDefault();});
 </script>
 </body>
 </html>

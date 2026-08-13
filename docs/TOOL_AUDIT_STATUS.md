@@ -33,7 +33,7 @@ Last Updated: Foundation Sprint 1 Complete
 | scientific-calculator | ✅ | 90/100 |
 | temperature-converter | ✅ | 89/100 |
 | timezone-converter | ⬜ | — |
-| tip-calculator | ⬜ | — |
+| tip-calculator | ✅ | 90/100 |
 | unit-converter | ✅ | 92/100 |
 | aspect-ratio-calculator | ✅ | 89/100 |
 
@@ -45,21 +45,21 @@ Last Updated: Foundation Sprint 1 Complete
 | binary-converter | ✅ | 90/100 |
 | code-to-image | ⬜ | — |
 | color-contrast-checker | ⬜ | — |
-| color-palette-generator | ⬜ | — |
+| color-palette-generator | ✅ | 90/100 |
 | color-picker | ✅ | 91/100 |
 | css-box-shadow-generator | ⬜ | — |
 | css-clamp-calculator | ⬜ | — |
 | css-flexbox-generator | ⬜ | — |
 | css-gradient-generator | ✅ | 90/100 |
 | css-grid-generator | ⬜ | — |
-| css-minifier | ⬜ | — |
+| css-minifier | ✅ | 89/100 |
 | hash-generator | ✅ | 91/100 |
 | html-encoder | ⬜ | — |
 | html-minifier | ⬜ | — |
 | http-status-codes | ⬜ | — |
 | json-formatter | ✅ | 92/100 |
 | json-to-csv | ✅ | 88/100 |
-| jwt-decoder | ⬜ | — |
+| jwt-decoder | ✅ | 90/100 |
 | markdown-editor | ✅ | 92/100 |
 | password-generator | 🔄 | — |
 | qr-code-generator | 🔄 | — |
@@ -69,7 +69,7 @@ Last Updated: Foundation Sprint 1 Complete
 | svg-converter | ⬜ | — |
 | timestamp-converter | ✅ | 91/100 |
 | url-encoder | ✅ | 91/100 |
-| uuid-generator | ⬜ | — |
+| uuid-generator | ✅ | 91/100 |
 | text-diff | ⬜ | — |
 
 ### Text Tools (15)

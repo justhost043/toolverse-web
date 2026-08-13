@@ -47,8 +47,8 @@ textarea.code-area{font-family:var(--font-mono);font-size:13px;line-height:1.55;
       <label class="checkbox-item"><input type="checkbox" id="opt-semi" checked> Remove last semicolon</label>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-      <div><label class="field-label">Input CSS</label><textarea id="inp" class="field-input code-area" placeholder="Paste your CSS here…"></textarea></div>
-      <div><label class="field-label">Minified output</label><textarea id="out" class="field-input code-area" readonly></textarea></div>
+      <div><label class="field-label">Input CSS</label><textarea id="inp" aria-label="CSS input — paste CSS to minify" class="field-input code-area" placeholder="Paste your CSS here…"></textarea></div>
+      <div><label class="field-label">Minified output</label><textarea id="out" aria-label="Minified CSS output" aria-live="polite" class="field-input code-area" readonly></textarea></div>
     </div>
     <div class="stats-row">
       <div class="stat-b"><div class="n" id="s-orig">0 B</div><div class="l">Original size</div></div>
@@ -57,8 +57,8 @@ textarea.code-area{font-family:var(--font-mono);font-size:13px;line-height:1.55;
     </div>
     <div style="display:flex;gap:10px">
       <button class="btn btn-primary" id="minify-btn">Minify CSS</button>
-      <button class="btn btn-outline" id="copy-btn">Copy output</button>
-      <button class="btn btn-outline" id="clear-btn">Clear</button>
+      <button class="btn btn-outline" id="copy-btn" aria-label="Copy minified CSS">Copy output</button>
+      <button class="btn btn-outline" id="clear-btn" aria-label="Clear all content">Clear</button>
     </div>
   </div>
 </div>
@@ -92,7 +92,7 @@ function minify(){
 document.getElementById('minify-btn').addEventListener('click',minify);
 document.getElementById('inp').addEventListener('input',minify);
 ['opt-comments','opt-space','opt-zeros','opt-semi'].forEach(id=>document.getElementById(id).addEventListener('change',minify));
-document.getElementById('copy-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('out').value).then(()=>{const b=document.getElementById('copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy output',1200);});});
+document.getElementById('copy-btn').addEventListener('click',()=>OMI.clipboard.copy(document.getElementById('out').value,document.getElementById('copy-btn')));
 document.getElementById('clear-btn').addEventListener('click',()=>{document.getElementById('inp').value='';document.getElementById('out').value='';});
 
 // Global error handler — OMI Foundation Sprint 1
